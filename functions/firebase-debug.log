@@ -1,0 +1,44 @@
+[debug] [2018-08-12T18:21:28.193Z] ----------------------------------------------------------------------
+[debug] [2018-08-12T18:21:28.195Z] Command:       /usr/bin/node /home/arek/.npm-global/bin/firebase deploy
+[debug] [2018-08-12T18:21:28.195Z] CLI Version:   4.0.3
+[debug] [2018-08-12T18:21:28.195Z] Platform:      linux
+[debug] [2018-08-12T18:21:28.195Z] Node Version:  v8.11.3
+[debug] [2018-08-12T18:21:28.195Z] Time:          Sun Aug 12 2018 20:21:28 GMT+0200 (DST)
+[debug] [2018-08-12T18:21:28.195Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-08-12T18:21:28.211Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-12T18:21:28.211Z] > authorizing via signed-in user
+[debug] [2018-08-12T18:21:28.213Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-08-12T18:21:28.213Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/5eQP3uMs2bNiVWclI8rbzJH5sW6NlXUA1hPbInFuCu4',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Sun Aug 12 2018 20:21:28 GMT+0200 (DST)
+[debug] [2018-08-12T18:21:28.534Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-12T18:21:28.542Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/guild-wars-2-exchange  
+  
+ Sun Aug 12 2018 20:21:28 GMT+0200 (DST)
+[debug] [2018-08-12T18:21:29.412Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-12T18:21:29.414Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/guild-wars-2-exchange/tokens  
+  
+ Sun Aug 12 2018 20:21:29 GMT+0200 (DST)
+[debug] [2018-08-12T18:21:30.206Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'guild-wars-2-exchange'...
+[info] 
+[info] i  deploying functions
+[debug] [2018-08-12T18:21:31.032Z] TypeError: Path must be a string. Received undefined
+    at assertPath (path.js:28:11)
+    at Object.join (path.js:1236:7)
+    at Config.path (/home/arek/.npm-global/lib/node_modules/firebase-tools/lib/config.js:166:37)
+    at /home/arek/.npm-global/lib/node_modules/firebase-tools/lib/deploy/lifecycleHooks.js:68:38
+    at _chain (/home/arek/.npm-global/lib/node_modules/firebase-tools/lib/deploy/index.js:26:38)
+    at deploy (/home/arek/.npm-global/lib/node_modules/firebase-tools/lib/deploy/index.js:81:10)
+    at Command._action (/home/arek/.npm-global/lib/node_modules/firebase-tools/commands/deploy.js:53:12)
+    at /home/arek/.npm-global/lib/node_modules/firebase-tools/lib/command.js:200:29
+    at <anonymous>
+    at process._tickDomainCallback (internal/process/next_tick.js:228:7)
+[error] 
+[error] Error: An unexpected error has occurred.

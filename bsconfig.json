@@ -1,0 +1,13 @@
+{
+  "name": "pixel-strategy",
+  "bsc-flags": ["-bs-super-errors"],
+  "reason": { "react-jsx": 2 },
+  "bs-dependencies": ["bs-webapi"],
+  "sources": ["src"],
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "refmt": 3
+}
