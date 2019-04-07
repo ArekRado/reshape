@@ -1,36 +1,48 @@
-bs_package_flags = -bs-package-name pixel-strategy
-src_root_dir = /home/arek/Desktop/pixel-strategy
-bsc = /home/arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsc.exe
-bsdep = /home/arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsb_helper.exe
+bs_package_flags = -bs-package-name pixel-strategy -bs-package-map PixelStrategy
+src_root_dir = /mnt/c/Users/Arek/Desktop/pixel-strategy
+bsc = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsc.exe
+bsdep = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsb_helper.exe
 warnings = -w -30-40+6+7+27+32..39+44+45+101
-bsc_flags = -bs-suffix -nostdlib -I '/home/arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml' -bs-no-version-header -bs-super-errors -color always
+bsc_flags = -bs-suffix -nostdlib -I '/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml' -bs-super-errors -color always
 ppx_flags = 
-bs_package_includes = -I /home/arek/Desktop/pixel-strategy/node_modules/bs-webapi/lib/ocaml
+bs_package_includes = -I /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/reprocessing/lib/ocaml
 bs_package_dev_includes = 
-namespace = 
+namespace = -ns PixelStrategy
 bsb_dir_group = 0
-refmt = /home/arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/refmt.exe
-reason_react_jsx = -ppx '/home/arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/reactjs_jsx_ppx_2.exe'
+refmt = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/refmt.exe
+reason_react_jsx = -ppx '/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/reactjs_jsx_ppx_2.exe'
 refmt_flags = --print binary
-bsc_lib_includes = -I src
+bsc_lib_includes = -I . -I src
 rule build_ast_and_module_sets_from_re
   command = ${bsc} -pp "${refmt} ${refmt_flags}" ${reason_react_jsx}  ${ppx_flags} ${warnings} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast -impl ${in}
   description = [34mBuilding[39m [2m${out}[22m
-build src/index.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/index.re
+build src/Game.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Game.re
 rule build_deps
   command = ${bsdep} ${namespace} -g ${bsb_dir_group} -MD ${in}
+  restat = 1
   description = [34mBuilding[39m [2m${out}[22m
-build src/index.mlast.d : build_deps src/index.mlast
+build src/Game.mlast.d : build_deps src/Game.mlast
 rule build_cmj_cmi
-  command = ${bsc} ${bs_package_flags} -bs-assume-no-mli -bs-no-builtin-ppx-ml -bs-no-implicit-include ${bs_package_includes} ${bsc_lib_includes} ${bsc_extra_includes} ${warnings} ${bsc_flags} -o ${out} -c  ${in} $postbuild
+  command = ${bsc} ${bs_package_flags} -bs-assume-no-mli -bs-no-builtin-ppx-ml -bs-no-implicit-include ${bs_package_includes} ${bsc_lib_includes} ${bsc_extra_includes} ${warnings} ${bsc_flags} ${gentypeconfig} -o ${out} -c  ${in} $postbuild
   depfile = ${in}.d
+  restat = 1
   description = [34mBuilding[39m [2m${out}[22m
-build src/index.cmj |  $src_root_dir/src/index.bs.js src/index.cmi : build_cmj_cmi src/index.mlast
+build src/Game-PixelStrategy.cmj |  $src_root_dir/src/Game.bs.js src/Game-PixelStrategy.cmi : build_cmj_cmi src/Game.mlast
+  bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
+  bs_package_flags = $bs_package_flags  -bs-package-output es6:src
+build src/Mouse.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Mouse.re
+build src/Mouse.mlast.d : build_deps src/Mouse.mlast
+build src/Mouse-PixelStrategy.cmj |  $src_root_dir/src/Mouse.bs.js src/Mouse-PixelStrategy.cmi : build_cmj_cmi src/Mouse.mlast
   bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
   bs_package_flags = $bs_package_flags  -bs-package-output es6:src
 build src/Window.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Window.re
 build src/Window.mlast.d : build_deps src/Window.mlast
-build src/Window.cmj |  $src_root_dir/src/Window.bs.js src/Window.cmi : build_cmj_cmi src/Window.mlast
+build src/Window-PixelStrategy.cmj |  $src_root_dir/src/Window.bs.js src/Window-PixelStrategy.cmi : build_cmj_cmi src/Window.mlast
   bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
   bs_package_flags = $bs_package_flags  -bs-package-output es6:src
-build build.ninja : phony  ||  src/Window.mlast.d src/index.mlast.d
+rule build_package
+  command = ${bsc} -w -49 -no-alias-deps -bs-cmi-only -c ${in}
+  restat = 1
+  description = [34mBuilding[39m [2m${out}[22m
+build PixelStrategy.cmi : build_package PixelStrategy.mlmap
+build build.ninja : phony  ||  PixelStrategy.cmi src/Window.mlast.d src/Mouse.mlast.d src/Game.mlast.d

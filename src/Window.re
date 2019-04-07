@@ -1,4 +1,4 @@
-type window;
+/* type window;
 
 let window: window = [%bs.raw "window"];
 
@@ -7,4 +7,4 @@ let window: window = [%bs.raw "window"];
 [@bs.val] external requestAnimationFrame : (unit => unit) => unit = "";
 [@bs.val] external cancelAnimationFrame : int => unit = "";
 
-external windowToJsObj : window => Js.t({..}) = "%identity";
+external windowToJsObj : window => Js.t({..}) = "%identity"; */
