@@ -1,6 +1,4 @@
-/node_modules
-/lib
-/dist
-firebase-debug.log
-.merlin
 .cache
+node-modules
+dist
+lib

@@ -1,26 +1,27 @@
 {
   "name": "pixel-strategy",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/parcel index.html"
+    "start": "parcel ./src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArekRado/pixel-strategy.git"
+  },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArekRado/pixel-strategy/issues"
+  },
+  "homepage": "https://github.com/ArekRado/pixel-strategy#readme",
   "dependencies": {
-    "@babel/core": "7.4.3",
-    "@babel/preset-env": "7.4.3",
-    "@glennsl/bs-json": "3.0.0",
-    "babel-loader": "8.0.5",
-    "bs-fetch": "0.3.1",
-    "bs-platform": "5.0.0",
-    "parcel-bundler": "1.12.3",
-    "reprocessing": "0.3.1"
+    "bs-platform": "^5.2.1",
+    "pixi.js": "^5.2.0"
   },
   "devDependencies": {
-    "bsb-js": "1.1.7"
+    "bsb-js": "^1.1.7"
   }
 }

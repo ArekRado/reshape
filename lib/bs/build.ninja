@@ -1,48 +1,61 @@
-bs_package_flags = -bs-package-name pixel-strategy -bs-package-map PixelStrategy
+g_std_incl = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml
+g_pkg_flg = -bs-package-name whatever -bs-ns Whatever
 src_root_dir = /mnt/c/Users/Arek/Desktop/pixel-strategy
 bsc = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsc.exe
 bsdep = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/bsb_helper.exe
-warnings = -w -30-40+6+7+27+32..39+44+45+101
-bsc_flags = -bs-suffix -nostdlib -I '/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml' -bs-super-errors -color always
+warnings = -w -30-40+6+7+27+32..39+44+45+101 -warn-error +101
+bsc_flags = 
 ppx_flags = 
-bs_package_includes = -I /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/reprocessing/lib/ocaml
-bs_package_dev_includes = 
-namespace = -ns PixelStrategy
+g_dpkg_incls = 
+g_ns = -bs-ns Whatever
 bsb_dir_group = 0
-refmt = /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/refmt.exe
-reason_react_jsx = -ppx '/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/reactjs_jsx_ppx_2.exe'
-refmt_flags = --print binary
-bsc_lib_includes = -I . -I src
-rule build_ast_and_module_sets_from_re
-  command = ${bsc} -pp "${refmt} ${refmt_flags}" ${reason_react_jsx}  ${ppx_flags} ${warnings} ${bsc_flags} -c -o ${out} -bs-syntax-only -bs-binary-ast -impl ${in}
+g_lib_incls = -I . -I src/component -I src/system -I src/utils -I src
+rule build_ast_from_re
+  command = $bsc  $warnings -color always $bsc_flags -o $out -bs-syntax-only -bs-binary-ast $in
   description = [34mBuilding[39m [2m${out}[22m
-build src/Game.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Game.re
+build  src/Game.reast : build_ast_from_re $src_root_dir/src/Game.re
 rule build_deps
-  command = ${bsdep} ${namespace} -g ${bsb_dir_group} -MD ${in}
+  command = $bsdep -hash e866e224aaf7a2a35c276d428cc4b886 $g_ns -g $bsb_dir_group $in
   restat = 1
   description = [34mBuilding[39m [2m${out}[22m
-build src/Game.mlast.d : build_deps src/Game.mlast
-rule build_cmj_cmi
-  command = ${bsc} ${bs_package_flags} -bs-assume-no-mli -bs-no-builtin-ppx-ml -bs-no-implicit-include ${bs_package_includes} ${bsc_lib_includes} ${bsc_extra_includes} ${warnings} ${bsc_flags} ${gentypeconfig} -o ${out} -c  ${in} $postbuild
-  depfile = ${in}.d
+build  src/Game.d : build_deps src/Game.reast
+rule ml_cmj_cmi
+  command = $bsc -nostdlib $g_pkg_flg -color always -bs-suffix $g_lib_incls -I $g_std_incl $warnings $bsc_flags -o $out $in
+  dyndep = $in_e.d
   restat = 1
   description = [34mBuilding[39m [2m${out}[22m
-build src/Game-PixelStrategy.cmj |  $src_root_dir/src/Game.bs.js src/Game-PixelStrategy.cmi : build_cmj_cmi src/Game.mlast
-  bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
-  bs_package_flags = $bs_package_flags  -bs-package-output es6:src
-build src/Mouse.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Mouse.re
-build src/Mouse.mlast.d : build_deps src/Mouse.mlast
-build src/Mouse-PixelStrategy.cmj |  $src_root_dir/src/Mouse.bs.js src/Mouse-PixelStrategy.cmi : build_cmj_cmi src/Mouse.mlast
-  bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
-  bs_package_flags = $bs_package_flags  -bs-package-output es6:src
-build src/Window.mlast : build_ast_and_module_sets_from_re $src_root_dir/src/Window.re
-build src/Window.mlast.d : build_deps src/Window.mlast
-build src/Window-PixelStrategy.cmj |  $src_root_dir/src/Window.bs.js src/Window-PixelStrategy.cmi : build_cmj_cmi src/Window.mlast
-  bsc_flags = $bsc_flags -bs-re-out -bs-super-errors
-  bs_package_flags = $bs_package_flags  -bs-package-output es6:src
+build  src/Game-Whatever.cmj |  src/Game-Whatever.cmi $src_root_dir/src/Game.bs.js : ml_cmj_cmi src/Game.reast ||  src/Game.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src
+build  src/Type.reast : build_ast_from_re $src_root_dir/src/Type.re
+build  src/Type.d : build_deps src/Type.reast
+build  src/Type-Whatever.cmj |  src/Type-Whatever.cmi $src_root_dir/src/Type.bs.js : ml_cmj_cmi src/Type.reast ||  src/Type.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src
+build  src/utils/Vector.reast : build_ast_from_re $src_root_dir/src/utils/Vector.re
+build  src/utils/Vector.d : build_deps src/utils/Vector.reast
+build  src/utils/Vector-Whatever.cmj |  src/utils/Vector-Whatever.cmi $src_root_dir/src/utils/Vector.bs.js : ml_cmj_cmi src/utils/Vector.reast ||  src/utils/Vector.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/utils
+build  src/system/System.reast : build_ast_from_re $src_root_dir/src/system/System.re
+build  src/system/System.d : build_deps src/system/System.reast
+build  src/system/System-Whatever.cmj |  src/system/System-Whatever.cmi $src_root_dir/src/system/System.bs.js : ml_cmj_cmi src/system/System.reast ||  src/system/System.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
+build  src/system/Draw_System.reast : build_ast_from_re $src_root_dir/src/system/Draw_System.re
+build  src/system/Draw_System.d : build_deps src/system/Draw_System.reast
+build  src/system/Draw_System-Whatever.cmj |  src/system/Draw_System-Whatever.cmi $src_root_dir/src/system/Draw_System.bs.js : ml_cmj_cmi src/system/Draw_System.reast ||  src/system/Draw_System.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
+build  src/component/Component.reast : build_ast_from_re $src_root_dir/src/component/Component.re
+build  src/component/Component.d : build_deps src/component/Component.reast
+build  src/component/Component-Whatever.cmj |  src/component/Component-Whatever.cmi $src_root_dir/src/component/Component.bs.js : ml_cmj_cmi src/component/Component.reast ||  src/component/Component.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/component
+build  src/component/Image_Component.reast : build_ast_from_re $src_root_dir/src/component/Image_Component.re
+build  src/component/Image_Component.d : build_deps src/component/Image_Component.reast
+build  src/component/Image_Component-Whatever.cmj |  src/component/Image_Component-Whatever.cmi $src_root_dir/src/component/Image_Component.bs.js : ml_cmj_cmi src/component/Image_Component.reast ||  src/component/Image_Component.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/component
+build  src/component/Position_Component.reast : build_ast_from_re $src_root_dir/src/component/Position_Component.re
+build  src/component/Position_Component.d : build_deps src/component/Position_Component.reast
+build  src/component/Position_Component-Whatever.cmj |  src/component/Position_Component-Whatever.cmi $src_root_dir/src/component/Position_Component.bs.js : ml_cmj_cmi src/component/Position_Component.reast ||  src/component/Position_Component.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/component
 rule build_package
-  command = ${bsc} -w -49 -no-alias-deps -bs-cmi-only -c ${in}
+  command = $bsc -w -49 -color always -no-alias-deps  $in
   restat = 1
   description = [34mBuilding[39m [2m${out}[22m
-build PixelStrategy.cmi : build_package PixelStrategy.mlmap
-build build.ninja : phony  ||  PixelStrategy.cmi src/Window.mlast.d src/Mouse.mlast.d src/Game.mlast.d
+build  Whatever.cmi : build_package Whatever.mlmap
