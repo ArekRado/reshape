@@ -15,41 +15,44 @@ let images = []
 const debugGraphics = new PIXI.Graphics()
 pixiApp.stage.addChild(debugGraphics)
 
-export default () => {
-  return (state, devMode = false) => {
-    // debugGraphics.clear()
-    // Object.values(app.gameObjects).forEach(gameObject => {
-    //   const image = images.find(image => image.id === gameObject.id)
-    //   if (gameObject.image.url) {
-    //     if (image) {
-    //       if (image.texture.baseTexture.imageUrl !== gameObject.image.url) {
-    //         changeImage(image, gameObject)
-    //       }
-    //       drawGameObject(image, gameObject, devMode, debugGraphics)
-    //     } else {
-    //       drawGameObject(
-    //         createImage(images, pixiApp, gameObject),
-    //         gameObject,
-    //         devMode,
-    //         debugGraphics,
-    //       )
-    //     }
-    //   }
-    // })
+export default (state, devMode = false) => {
+  console.log(state)
+
+  debugGraphics.clear()
+
+  for (let i = 0; i < images.length; i++) {
+    const image = images[i]
+    const pixiImage = images.find(image => image.id === entity)
+
+    if (pixiImage.src) {
+      if (pixiImage) {
+        if (pixiImage.texture.baseTexture.imageUrl !== image.src) {
+          changeImage(pixiImage, image)
+        }
+        drawImage(pixiImage, image, devMode, debugGraphics)
+      } else {
+        drawImage(
+          createImage(images, pixiApp, image),
+          image,
+          devMode,
+          debugGraphics,
+        )
+      }
+    }
   }
 }
 
-const drawGameObject = (image, gameObject, devMode, debugGraphic) => {
-  if (gameObject.image.stickToRigidbody) {
-    image.x = gameObject.rigidbody.position.x
-    image.y = gameObject.rigidbody.position.y
-  } else {
-    image.x = gameObject.image.position.x
-    image.y = gameObject.image.position.y
-  }
+const drawImage = (pixiImage, image, devMode, debugGraphic) => {
+  // if (gameObject.image.stickToRigidbody) {
+  //   image.x = gameObject.rigidbody.position.x
+  //   image.y = gameObject.rigidbody.position.y
+  // } else {
+  pixiImage.x = image.position[0]
+  pixiImage.y = image.position[1]
+  // }
 
-  image.rotation = gameObject.rigidbody.rotation
-  image.anchor.set(0, 0)
+  // image.rotation = gameObject.rigidbody.rotation
+  pixiImage.anchor.set(0, 0)
 
   if (devMode) {
     const r = gameObject.rigidbody
@@ -59,16 +62,16 @@ const drawGameObject = (image, gameObject, devMode, debugGraphic) => {
   }
 }
 
-const createImage = (images, pixiApp, gameObject) => {
-  const image = PIXI.Sprite.from(gameObject.image.url)
-  image.id = gameObject.id
-  pixiApp.stage.addChild(image)
-  images.push(image)
+const createImage = (images, pixiApp, image) => {
+  const pixiImage = PIXI.Sprite.from(image.src)
+  impixiImageage.id = image.id
+  pixiApp.stage.addChild(pixiImage)
+  images.push(pixiImage)
 
-  return image
+  return pixiImage
 }
 
-const changeImage = (image, gameObject) => {
-  image.texture = PIXI.Texture.from(gameObject.image.url)
-  return gameObject
+const changeImage = (pixiImage, image) => {
+  pixiImage.texture = PIXI.Texture.from(image.src)
+  return image
 }

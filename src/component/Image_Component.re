@@ -1,6 +1,5 @@
-let create = (src: string, position: Type.vector): Type.image => {
-  {
-    src, 
-    position
-  }
-}
+let create = (src: string): Type.image => {
+  let cipa:Type.image = { src: src };
+
+  cipa;
+};

@@ -2,8 +2,11 @@
 'use strict';
 
 
-function create(param) {
-  return 5;
+function create(x, y) {
+  return /* tuple */[
+          x,
+          y
+        ];
 }
 
 exports.create = create;

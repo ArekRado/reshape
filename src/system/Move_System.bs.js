@@ -2,9 +2,9 @@
 'use strict';
 
 
-function create(src) {
-  return /* record */[/* src */src];
+function update(entity, state) {
+  return state;
 }
 
-exports.create = create;
+exports.update = update;
 /* No side effect */

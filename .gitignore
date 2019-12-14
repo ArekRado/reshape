@@ -1,4 +1,4 @@
 .cache
-node-modules
+node_modules
 dist
 lib

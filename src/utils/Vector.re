@@ -1,3 +1,4 @@
+let create = (x:float, y:float):Type.vector => (x,y);
 
 /* export type Vector2D = [number, number]
 

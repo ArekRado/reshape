@@ -1,3 +1,1 @@
-let create = () => {
-  5
-}
+let create = (x,y) => (x,y)

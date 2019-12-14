@@ -1,12 +1,17 @@
 type vector = (float, float);
 
+type transform = {
+  translation: vector,
+  rotation: float,
+  scale: vector,
+}
+
 type image = {
   src: string,
-  position: vector,
 };
 
 type state = {
-  entity: list(int),
-  position: list(int),
-  image: list(image),
+  entity: list(string),
+  position: Belt.Map.String.t(vector),
+  image: Belt.Map.String.t(image),
 };

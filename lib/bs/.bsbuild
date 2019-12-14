@@ -1,13 +1,15 @@
-èfâ$ª÷¢£\'mBŒÄ¸†
+Ï†ð®º à×µ}*Â
 1
-8
+10
 Game
 Type
 System
 Vector
 Component
 Draw_System
+Move_System
 Image_Component
 Position_Component
+Transform_Component
 src	src/system	src/utils	src/component	
-1
+1

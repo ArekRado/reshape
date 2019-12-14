@@ -4,5 +4,8 @@
 
 var Draw = 0;
 
+var Move = 0;
+
 exports.Draw = Draw;
+exports.Move = Move;
 /* No side effect */
