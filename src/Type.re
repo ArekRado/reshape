@@ -14,4 +14,6 @@ type state = {
   entity: list(string),
   position: Belt.Map.String.t(vector),
   image: Belt.Map.String.t(image),
+  timeNow: float,
+  delta: float,
 };

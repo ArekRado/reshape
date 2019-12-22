@@ -1,24 +1,25 @@
-type drawObject = {
-  entity: string,
-  position: Type.vector,
-};
-
-[@bs.module "../utils/pixiDraw"] external pixiDraw : list(drawObject) => unit = "default";
+[@bs.module "../utils/pixiDraw"] external pixiDraw : list(string) => unit = "default";
 
 let update = (state: Type.state) => {
-  let drawState: list(drawObject) = Belt.List.reduce(state.entity, [], (images, entity) => {
+  let drawState: list(string) = Belt.List.reduce(state.entity, [], (images, entity) => {
     let image = Belt.Map.String.get(state.image, entity);
 
     switch (image) {
       | None => images
-      | Some(image) => {
-          Belt.List.add(images, {
-            entity: entity,
-            position: Belt.Map.String.getWithDefault(state.position, entity, Vector.create(0.0, 0.0))
-          })
+      | Some(img) => {
+          let (x, y) = Belt.Map.String.getWithDefault(state.position, entity, Vector.create(0.0, 0.0));
+          let src = img.src;
+
+          Belt.List.add(images, {j|{
+            "entity":"$(entity)",
+            "src":"$(src)",
+            "x":"$(x)",
+            "y":"$(y)"
+          }|j})
         }
       };
   });
 
   pixiDraw(drawState);
+  state;
 };

@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 
-// export const createDraw = () => {
 const pixiApp = new PIXI.Application({
   width: document.body.clientWidth,
   height: document.body.clientHeight,
@@ -16,28 +15,24 @@ const debugGraphics = new PIXI.Graphics()
 pixiApp.stage.addChild(debugGraphics)
 
 export default (state, devMode = false) => {
-  console.log(state)
-
   debugGraphics.clear()
 
-  for (let i = 0; i < images.length; i++) {
-    const image = images[i]
-    const pixiImage = images.find(image => image.id === entity)
+  for (let i = 0; i < state.length; i++) {
+    const image = JSON.parse(state[i])
+    const pixiImage = images.find(img => img.id === image.entity)
 
-    if (pixiImage.src) {
-      if (pixiImage) {
-        if (pixiImage.texture.baseTexture.imageUrl !== image.src) {
-          changeImage(pixiImage, image)
-        }
-        drawImage(pixiImage, image, devMode, debugGraphics)
-      } else {
-        drawImage(
-          createImage(images, pixiApp, image),
-          image,
-          devMode,
-          debugGraphics,
-        )
+    if (pixiImage) {
+      if (pixiImage.texture.baseTexture.imageUrl !== image.src) {
+        changeImage(pixiImage, image)
       }
+      drawImage(pixiImage, image, devMode, debugGraphics)
+    } else {
+      drawImage(
+        createImage(images, pixiApp, image),
+        image,
+        devMode,
+        debugGraphics,
+      )
     }
   }
 }
@@ -47,8 +42,8 @@ const drawImage = (pixiImage, image, devMode, debugGraphic) => {
   //   image.x = gameObject.rigidbody.position.x
   //   image.y = gameObject.rigidbody.position.y
   // } else {
-  pixiImage.x = image.position[0]
-  pixiImage.y = image.position[1]
+  pixiImage.x = image.x
+  pixiImage.y = image.y
   // }
 
   // image.rotation = gameObject.rigidbody.rotation
@@ -64,7 +59,7 @@ const drawImage = (pixiImage, image, devMode, debugGraphic) => {
 
 const createImage = (images, pixiApp, image) => {
   const pixiImage = PIXI.Sprite.from(image.src)
-  impixiImageage.id = image.id
+  pixiImage.id = image.id
   pixiApp.stage.addChild(pixiImage)
   images.push(pixiImage)
 

@@ -6,6 +6,12 @@ var Draw = 0;
 
 var Move = 0;
 
+var IO = 0;
+
+var Time = 0;
+
 exports.Draw = Draw;
 exports.Move = Move;
+exports.IO = IO;
+exports.Time = Time;
 /* No side effect */

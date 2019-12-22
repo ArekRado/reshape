@@ -3,7 +3,7 @@
 
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
-var Vector$Whatever = require("../utils/Vector.bs.js");
+var Vector$Whatever = require("../util/Vector.bs.js");
 var PixiDraw = require("../utils/pixiDraw");
 
 function pixiDraw(prim) {
@@ -12,19 +12,18 @@ function pixiDraw(prim) {
 }
 
 function update(state) {
-  var prim = Belt_List.reduce(state[/* entity */0], /* [] */0, (function (images, entity) {
+  var drawState = Belt_List.reduce(state[/* entity */0], /* [] */0, (function (images, entity) {
           var image = Belt_MapString.get(state[/* image */2], entity);
           if (image !== undefined) {
-            return Belt_List.add(images, /* record */[
-                        /* entity */entity,
-                        /* position */Belt_MapString.getWithDefault(state[/* position */1], entity, Vector$Whatever.create(0.0, 0.0))
-                      ]);
+            var match = Belt_MapString.getWithDefault(state[/* position */1], entity, Vector$Whatever.create(0.0, 0.0));
+            var src = image[/* src */0];
+            return Belt_List.add(images, "{\r\n            \"entity\":\"" + (String(entity) + ("\",\r\n            \"src\":\"" + (String(src) + ("\",\r\n            \"x\":\"" + (String(match[0]) + ("\",\r\n            \"y\":\"" + (String(match[1]) + "\"\r\n          }"))))))));
           } else {
             return images;
           }
         }));
-  PixiDraw.default(prim);
-  return /* () */0;
+  PixiDraw.default(drawState);
+  return state;
 }
 
 exports.pixiDraw = pixiDraw;

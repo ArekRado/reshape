@@ -9,13 +9,13 @@ ppx_flags =
 g_dpkg_incls = 
 g_ns = -bs-ns Whatever
 bsb_dir_group = 0
-g_lib_incls = -I . -I src/component -I src/system -I src/utils -I src
+g_lib_incls = -I . -I src/blueprint -I src/component -I src/system -I src/util -I src -I /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-webapi/lib/ocaml
 rule build_ast_from_re
   command = $bsc  $warnings -color always $bsc_flags -o $out -bs-syntax-only -bs-binary-ast $in
   description = [34mBuilding[39m [2m${out}[22m
 build  src/Game.reast : build_ast_from_re $src_root_dir/src/Game.re
 rule build_deps
-  command = $bsdep -hash 130bcf86f0aeba20e0d7121fb57d2ac2 $g_ns -g $bsb_dir_group $in
+  command = $bsdep -hash 303e8dbb2c20037f510c031ed900cf68 $g_ns -g $bsb_dir_group $in
   restat = 1
   description = [34mBuilding[39m [2m${out}[22m
 build  src/Game.d : build_deps src/Game.reast
@@ -30,13 +30,25 @@ build  src/Type.reast : build_ast_from_re $src_root_dir/src/Type.re
 build  src/Type.d : build_deps src/Type.reast
 build  src/Type-Whatever.cmj |  src/Type-Whatever.cmi $src_root_dir/src/Type.bs.js : ml_cmj_cmi src/Type.reast ||  src/Type.d
   g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src
-build  src/utils/Vector.reast : build_ast_from_re $src_root_dir/src/utils/Vector.re
-build  src/utils/Vector.d : build_deps src/utils/Vector.reast
-build  src/utils/Vector-Whatever.cmj |  src/utils/Vector-Whatever.cmi $src_root_dir/src/utils/Vector.bs.js : ml_cmj_cmi src/utils/Vector.reast ||  src/utils/Vector.d
-  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/utils
+build  src/util/Util.reast : build_ast_from_re $src_root_dir/src/util/Util.re
+build  src/util/Util.d : build_deps src/util/Util.reast
+build  src/util/Util-Whatever.cmj |  src/util/Util-Whatever.cmi $src_root_dir/src/util/Util.bs.js : ml_cmj_cmi src/util/Util.reast ||  src/util/Util.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/util
+build  src/util/Vector.reast : build_ast_from_re $src_root_dir/src/util/Vector.re
+build  src/util/Vector.d : build_deps src/util/Vector.reast
+build  src/util/Vector-Whatever.cmj |  src/util/Vector-Whatever.cmi $src_root_dir/src/util/Vector.bs.js : ml_cmj_cmi src/util/Vector.reast ||  src/util/Vector.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/util
+build  src/util/Uuid_Util.reast : build_ast_from_re $src_root_dir/src/util/Uuid_Util.re
+build  src/util/Uuid_Util.d : build_deps src/util/Uuid_Util.reast
+build  src/util/Uuid_Util-Whatever.cmj |  src/util/Uuid_Util-Whatever.cmi $src_root_dir/src/util/Uuid_Util.bs.js : ml_cmj_cmi src/util/Uuid_Util.reast ||  src/util/Uuid_Util.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/util
 build  src/system/System.reast : build_ast_from_re $src_root_dir/src/system/System.re
 build  src/system/System.d : build_deps src/system/System.reast
 build  src/system/System-Whatever.cmj |  src/system/System-Whatever.cmi $src_root_dir/src/system/System.bs.js : ml_cmj_cmi src/system/System.reast ||  src/system/System.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
+build  src/system/IO_System.reast : build_ast_from_re $src_root_dir/src/system/IO_System.re
+build  src/system/IO_System.d : build_deps src/system/IO_System.reast
+build  src/system/IO_System-Whatever.cmj |  src/system/IO_System-Whatever.cmi $src_root_dir/src/system/IO_System.bs.js : ml_cmj_cmi src/system/IO_System.reast ||  src/system/IO_System.d
   g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
 build  src/system/Draw_System.reast : build_ast_from_re $src_root_dir/src/system/Draw_System.re
 build  src/system/Draw_System.d : build_deps src/system/Draw_System.reast
@@ -45,6 +57,10 @@ build  src/system/Draw_System-Whatever.cmj |  src/system/Draw_System-Whatever.cm
 build  src/system/Move_System.reast : build_ast_from_re $src_root_dir/src/system/Move_System.re
 build  src/system/Move_System.d : build_deps src/system/Move_System.reast
 build  src/system/Move_System-Whatever.cmj |  src/system/Move_System-Whatever.cmi $src_root_dir/src/system/Move_System.bs.js : ml_cmj_cmi src/system/Move_System.reast ||  src/system/Move_System.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
+build  src/system/Time_System.reast : build_ast_from_re $src_root_dir/src/system/Time_System.re
+build  src/system/Time_System.d : build_deps src/system/Time_System.reast
+build  src/system/Time_System-Whatever.cmj |  src/system/Time_System-Whatever.cmi $src_root_dir/src/system/Time_System.bs.js : ml_cmj_cmi src/system/Time_System.reast ||  src/system/Time_System.d
   g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/system
 build  src/component/Component.reast : build_ast_from_re $src_root_dir/src/component/Component.re
 build  src/component/Component.d : build_deps src/component/Component.reast
@@ -62,6 +78,14 @@ build  src/component/Transform_Component.reast : build_ast_from_re $src_root_dir
 build  src/component/Transform_Component.d : build_deps src/component/Transform_Component.reast
 build  src/component/Transform_Component-Whatever.cmj |  src/component/Transform_Component-Whatever.cmi $src_root_dir/src/component/Transform_Component.bs.js : ml_cmj_cmi src/component/Transform_Component.reast ||  src/component/Transform_Component.d
   g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/component
+build  src/blueprint/Blueprint.reast : build_ast_from_re $src_root_dir/src/blueprint/Blueprint.re
+build  src/blueprint/Blueprint.d : build_deps src/blueprint/Blueprint.reast
+build  src/blueprint/Blueprint-Whatever.cmj |  src/blueprint/Blueprint-Whatever.cmi $src_root_dir/src/blueprint/Blueprint.bs.js : ml_cmj_cmi src/blueprint/Blueprint.reast ||  src/blueprint/Blueprint.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/blueprint
+build  src/blueprint/HumanPorter_Blueprint.reast : build_ast_from_re $src_root_dir/src/blueprint/HumanPorter_Blueprint.re
+build  src/blueprint/HumanPorter_Blueprint.d : build_deps src/blueprint/HumanPorter_Blueprint.reast
+build  src/blueprint/HumanPorter_Blueprint-Whatever.cmj |  src/blueprint/HumanPorter_Blueprint-Whatever.cmi $src_root_dir/src/blueprint/HumanPorter_Blueprint.bs.js : ml_cmj_cmi src/blueprint/HumanPorter_Blueprint.reast ||  src/blueprint/HumanPorter_Blueprint.d
+  g_pkg_flg = $g_pkg_flg  -bs-package-output commonjs:src/blueprint
 rule build_package
   command = $bsc -w -49 -color always -no-alias-deps  $in
   restat = 1

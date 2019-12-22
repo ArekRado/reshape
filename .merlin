@@ -6,12 +6,16 @@ S /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml
 B /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform/lib/ocaml
 FLG -nostdlib
 FLG -w -30-40+6+7+27+32..39+44+45+101
+S /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-webapi/lib/ocaml
+B /mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-webapi/lib/ocaml
 S src
 B lib/bs/src
-S src/utils
-B lib/bs/src/utils
+S src/util
+B lib/bs/src/util
 S src/system
 B lib/bs/src/system
 S src/component
 B lib/bs/src/component
+S src/blueprint
+B lib/bs/src/blueprint
 ####BSB GENERATED: NO EDIT}
