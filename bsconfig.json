@@ -1,5 +1,6 @@
 {
   "name": "whatever",
+  "bsc-flags": ["-bs-super-errors"],
   "sources": {
     "dir": "src",
     "subdirs": true

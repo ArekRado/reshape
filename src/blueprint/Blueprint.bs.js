@@ -2,7 +2,7 @@
 'use strict';
 
 
-var Position = 0;
+var HumanPorter = 0;
 
-exports.Position = Position;
+exports.HumanPorter = HumanPorter;
 /* No side effect */
