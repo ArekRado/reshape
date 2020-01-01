@@ -10,6 +10,7 @@ let initialState: Type.state = {
   image: Belt.Map.String.empty,
   timeNow: 0.0,
   delta: 0.0,
+  currentScene: "game",
 };
 
 let rec logic = (state: Type.state) => {

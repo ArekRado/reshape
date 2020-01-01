@@ -16,4 +16,6 @@ type state = {
   image: Belt.Map.String.t(image),
   timeNow: float,
   delta: float,
+  currentScene: string,
+  sceneInicjalized: bool,
 };
