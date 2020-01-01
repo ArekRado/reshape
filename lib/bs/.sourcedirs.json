@@ -1,1 +1,0 @@
-{ "dirs" : [ "src" , "src/util" , "src/system" , "src/component" , "src/blueprint" , "src/assets" ] , "pkgs" : [ [ "bs-platform" , "/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-platform" ] , [ "bs-webapi" , "/mnt/c/Users/Arek/Desktop/pixel-strategy/node_modules/bs-webapi" ] ] , "generated" : [] }
