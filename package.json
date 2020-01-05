@@ -20,21 +20,19 @@
   },
   "homepage": "https://github.com/ArekRado/pixel-strategy#readme",
   "dependencies": {
-    "bs-platform": "^5.2.1",
+    "bs-platform": "^7.0.1",
     "bs-webapi": "^0.15.6",
     "pixi.js": "^5.2.0",
     "uuid": "^3.3.3",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.5",
-    "@babel/preset-env": "^7.7.6",
+    "webpack-dev-server": "^3.10.1",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
     "babel-loader": "^8.0.6",
     "bsb-js": "^1.1.7",
     "file-loader": "^5.0.2",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
-    "webpack": "^4.41.2"
+    "webpack": "^4.41.5"
   }
 }

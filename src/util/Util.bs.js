@@ -2,7 +2,7 @@
 'use strict';
 
 
-var Uuid = 0;
+var Uuid = /* alias */0;
 
 exports.Uuid = Uuid;
 /* No side effect */

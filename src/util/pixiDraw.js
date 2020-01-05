@@ -14,8 +14,10 @@ let images = []
 const debugGraphics = new PIXI.Graphics()
 pixiApp.stage.addChild(debugGraphics)
 
-export default (state, devMode = false) => {
+export default (params, devMode = false) => {
   debugGraphics.clear()
+
+  const state = params.flat(Infinity).slice(0, -1)
 
   for (let i = 0; i < state.length; i++) {
     const image = JSON.parse(state[i])

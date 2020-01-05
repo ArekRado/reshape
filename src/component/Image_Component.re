@@ -1,3 +1,1 @@
-let create = (src: string): Type.image => {
-  { src: src };
-};
+let create = (src: string) : Type.image => {src: src};

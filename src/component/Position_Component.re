@@ -1,1 +1,1 @@
-let create = (x,y) => (x,y)
+let create = (x, y) => (x, y);
