@@ -1,23 +1,21 @@
 [@bs.module "../util/pixiDraw"]
 external pixiDraw : list(string) => unit = "default";
 
-let update = (state: Type.state) => {
+let update = (state: Shared.state): Shared.state => {
   let drawState: Belt.List.t(string) =
     Belt.List.reduce(
       state.entity,
       [],
       (images, entity) => {
         let image = Belt.Map.String.get(state.image, entity);
+        let transform = Belt.Map.String.get(state.transform, entity);
 
-        switch (image) {
-          | None => images
-          | Some(img) =>
-            let (x, y) =
-              Belt.Map.String.getWithDefault(
-                state.position,
-                entity,
-                Vector.create(0.0, 0.0),
-              );
+        switch ((image, transform)) {
+          | (None, None) => images
+          | (Some(_), None) => images
+          | (None, Some(_)) => images
+          | (Some(img), Some(transform)) =>
+            let (x, y) = transform.position;
             let src = img.src;
 
             Belt.List.add(

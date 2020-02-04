@@ -1,15 +1,13 @@
 open Webapi.Dom;
 
-module IO = {
-  type t = {
-    mutable mouseButtons: int,
-    mutable mousePosition: Type.vector,
-  };
+type t = {
+  mutable mouseButtons: int,
+  mutable mousePosition: Shared.vector,
 };
 
-let io: IO.t = {
+let io: t = {
   mouseButtons: (-1),
-  mousePosition: Vector.create(0.0, 0.0) /* keys */,
+  mousePosition: Vector_Util.create(0.0, 0.0) /* keys */,
 };
 
 switch (Document.querySelector("body", document)) {
@@ -18,7 +16,7 @@ switch (Document.querySelector("body", document)) {
     e => {
       io.mouseButtons = MouseEvent.buttons(e);
       io.mousePosition =
-        Vector.create(
+        Vector_Util.create(
           float_of_int(MouseEvent.x(e)),
           float_of_int(MouseEvent.y(e)),
         );
@@ -36,6 +34,15 @@ let disableContextMenu = [%raw
     });
   }
 |}
-] /* disableContextMenu(); */;
+];
 
-let update = () => io;
+disableContextMenu();
+
+let update = (state: Shared.state): Shared.state => {
+
+  {
+    ...statem
+    mouseButtons: io.mouseButtons,
+    mousePosition: io.mousePosition,
+  }
+};

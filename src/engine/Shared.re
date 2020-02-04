@@ -1,18 +1,14 @@
-type vector = (float, float);
-
 type entity = Belt.List.t(string);
 
+type vector = (float, float);
+
 type transform = {
-  translation: vector,
   rotation: float,
+  localRotation: float,
   scale: vector,
+  localScale: vector,
   position: vector,
   localPosition: vector,
-};
-
-type io = {
-  mutable mouseButtons: int,
-  mutable mousePosition: vector,
 };
 
 type timer = {
@@ -51,13 +47,18 @@ type scenes =
 type state = {
   entity: entity,
   children: Belt.Map.String.t(entity),
-  transform: Belt.Map.String.t(vector),
+  transform: Belt.Map.String.t(transform),
   image: Belt.Map.String.t(image),
   timer: Belt.Map.String.t(timer),
   area: Belt.Map.String.t(area),
   rigidbody: Belt.Map.String.t(rigidbody),
+
+  mutable mouseButtons: int,
+  mutable mousePosition: vector,
+
   timeNow: float,
   delta: float,
+
   scene: scenes,
   isSceneInicialized: bool,
-};
+}
