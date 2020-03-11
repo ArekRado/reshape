@@ -38,11 +38,8 @@ let disableContextMenu = [%raw
 
 disableContextMenu();
 
-let update = (state: Shared.state): Shared.state => {
-
-  {
-    ...statem
-    mouseButtons: io.mouseButtons,
-    mousePosition: io.mousePosition,
-  }
+let update = (state: Shared.state) : Shared.state => {
+  ...state,
+  mouseButtons: io.mouseButtons,
+  mousePosition: io.mousePosition,
 };

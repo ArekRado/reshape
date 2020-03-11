@@ -1,11 +1,6 @@
-let create = (engine, entity, image: Shared.image) : Shared.state => {
-  {
-    ...engine,
-    image:
-      Belt.Map.String.set(
-        state.image,
-        entity,
-        {src: src}
-      ),
-  }
+let create =
+    (~src: string, entity: Belt.Map.String.key, engine: Shared.state)
+    : Shared.state => {
+  ...engine,
+  image: Belt.Map.String.set(engine.image, entity, {src: src}),
 };
