@@ -1,13 +1,11 @@
-let update =
-    ((state: Type.state, engine: Engine.Shared.state))
-    : (Type.state, Engine.Shared.state) => {
-  if (! state.isSceneInicialized) {
-    let (newState, newEngine) =
-      switch (state.scene) {
-      | TestMap => Blueprint.TestMap.create((state, engine))
+let update = (state: Type.state): Type.state =>
+  if (!state.game.isSceneInicialized) {
+    let newState =
+      switch (state.game.scene) {
+      | TestMap => Blueprint.TestMap.create(state)
       };
 
-    (newState, newEngine);
+    newState;
   } else {
-    (state, engine);
+    state;
   };

@@ -2,13 +2,13 @@ let humanImageUrl: string = [%raw {|require('../assets/human.png').default|}];
 
 let create =
     (
-      (state, engine): (Type.state, Engine.Shared.state),
+      state: Type.state,
       ~position: Engine.Util.Vector.t,
     ) => {
   let entity = Engine.Entity.generate();
 
   let newEngine =
-    engine
+    state.engine
     |> Engine.Entity.create(entity)
     |> Engine.Component.Transform.create(entity)
     |> Engine.Component.Image.create(entity, ~src=humanImageUrl) /* {
@@ -23,5 +23,5 @@ let create =
        ),
    }; */;
 
-  (state, newEngine);
+  state
 };

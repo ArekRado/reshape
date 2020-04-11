@@ -46,16 +46,13 @@ type image = {src: string};
 type scenes =
   | TestMap;
 
+type gameState = {
+    area: Belt.Map.String.t(area),
+    scene: scenes,
+    isSceneInicialized: bool,
+}  
+
 type state = {
-  entity,
-  children: Belt.Map.String.t(entity),
-  transform: Belt.Map.String.t(vector),
-  image: Belt.Map.String.t(image),
-  timer: Belt.Map.String.t(timer),
-  area: Belt.Map.String.t(area),
-  rigidbody: Belt.Map.String.t(rigidbody),
-  timeNow: float,
-  delta: float,
-  scene: scenes,
-  isSceneInicialized: bool,
+  game: gameState,
+  engine: Engine.Shared.state
 };

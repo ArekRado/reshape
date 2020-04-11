@@ -1,19 +1,21 @@
-let update =
-    ((state: Type.state, engine: Engine.Shared.state))
-    : (Type.state, Engine.Shared.state) => {
-  let timerState =
-    Belt.Map.String.map(
-      state.timer,
-      timer => {
-        let newValue = timer.value +. state.delta;
+let update = (state: Type.state): Type.state => {
+  // let timerState =
+  //   Belt.Map.String.map(
+  //     game.timer,
+  //     timer => {
+  //       let newValue = timer.value +. game.delta;
 
-        {
-          ...timer,
-          value: newValue > timer.maxValue ? 0.0 : newValue,
-          isDone: newValue > timer.maxValue,
-        };
-      },
-    );
+  //       {
+  //         ...timer,
+  //         value: newValue > timer.maxValue ? 0.0 : newValue,
+  //         isDone: newValue > timer.maxValue,
+  //       };
+  //     },
+  //   );
 
-  ({...state, timer: timerState}, engine);
+    {
+      game: state.game,
+        // timer: timerState,
+      engine: state.engine
+    }
 };

@@ -20,8 +20,7 @@ let circleImageUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 }; */; */;
 
 let create =
-    ((state: Type.state, engine: Engine.Shared.state), ~position: Type.vector)
-    : (Type.state, Engine.Shared.state) => {
+    (state: Type.state, ~position: Type.vector) => {
   let entity = Engine.Entity.generate();
   let circleEntity = Engine.Entity.generate() /* ->Engine.Component.Image.create(
         entity,
@@ -33,16 +32,22 @@ let create =
       ->Engine.Component.Image.create(entity, ~src=circleImageUrl)
       ->Engine.Component.Transform.create(entity) */ /* Engine.Entity.create(entity, engine) */ /* city */;
 
-  ({
-    ...state /* entity: List.add(state.entity, entity),
-      position: Map.String.set(state.position, entity, position),
-      image:
-        Map.String.set(
-          state.image,
-          entity,
-          Component.Image.create(cityImage),
-        ), */,
-    area: Map.String.set(state.area, entity, {areaType: City}) /* children: Map.String.set(state.children, entity, [circleEntity]), */ /* timer:
-        Map.String.set(state.timer, entity, Component.Timer.create(20.0)), */,
-  }, engine)
+state
+  // {
+  //   game: {
+  // ...state.game,
+  //  /* entity: List.add(state.entity, entity),
+  //     position: Map.String.set(state.position, entity, position),
+  //     image:
+  //       Map.String.set(
+  //         state.image,
+  //         entity,
+  //         Component.Image.create(cityImage),
+  //       ), */
+  //   area: Map.String.set(state.area, entity, {areaType: City}) /* children: Map.String.set(state.children, entity, [circleEntity]), */ /* timer:
+  //       Map.String.set(state.timer, entity, Component.Timer.create(20.0)), */,
+
+  //   },
+  //   engine: state.engine
+  //   }
 };
