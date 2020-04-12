@@ -11,21 +11,6 @@ type transform = {
   localPosition: vector,
 };
 
-type timer = {
-  value: float,
-  maxValue: float,
-  isDone: bool,
-};
-
-type areaType =
-  | Empty
-  | City
-  | Tower
-  | Baracks
-  | Farm;
-
-type area = {areaType};
-
 type rigidbodyType =
   | Circle
   | Square;
@@ -37,18 +22,51 @@ type rigidbody = {
   isHovered: bool,
 };
 
-type image = {src: string};
+type transitionValue =
+  | FloatTransition(float, float)
+  | VectorTransition(Vector_Util.t, Vector_Util.t);
 
-type scenes =
-  | TestMap;
+type timingFunction =
+  | Linear
+  | EaseInQuad
+  | EaseOutQuad
+  | EaseInOutQuad
+  | EaseInCubic
+  | EaseOutCubic
+  | EaseInOutCubic
+  | EaseInQuart
+  | EaseOutQuart
+  | EaseInOutQuart
+  | EaseInQuint
+  | EaseOutQuint
+  | EaseInOutQuint
+  | CubicBezier(float, float, float, float);
+
+type keyframe = {
+  duration: float,
+  currentTime: float,
+  timingFunction,
+  valueRange: (transitionValue,transitionValue),
+  currentValue: transitionValue,
+};
+
+type transition = {
+  keyframes: Belt.List.t(keyframe),
+  isPlaying: bool,
+  playingFrameIndex: int,
+};
+
+type image = {src: string};
 
 type state = {
   entity,
   transform: Belt.Map.String.t(transform),
   image: Belt.Map.String.t(image),
   rigidbody: Belt.Map.String.t(rigidbody),
+  transition: Belt.Map.String.t(transition),
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   timeNow: float,
   delta: float,
+  // event: todo
 };

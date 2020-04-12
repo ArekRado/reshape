@@ -4,22 +4,22 @@ module System = {
   module Time = Time_System;
   /* module Scene = Scene_System; */
   module Collide = Collide_System;
-}
+};
 
 module Component = {
   module Image = Image_Component;
   module Transform = Transform_Component;
   module Rigidbody = Rigidbody_Component;
-}
+};
 
 module Util = {
-  module Uuid = Uuid_Util
-  module Vector = Vector_Util
-}
+  module Uuid = Uuid_Util;
+  module Vector = Vector_Util;
+};
 
-module Entity = Entity
+module Entity = Entity;
 
-module Shared = Shared
+module Shared = Shared;
 
 let initialState: Shared.state = {
   entity: [],
@@ -30,16 +30,16 @@ let initialState: Shared.state = {
   delta: 0.0,
 
   mouseButtons: 0,
-  mousePosition: Vector_Util.zero()
+  mousePosition: Vector_Util.zero(),
 };
 
 let rec runOneFrame = (state: Shared.state): Shared.state => {
-  let newState = state 
+  let newState =
+    state
     |> Time_System.update
     |> IO_System.update
     |> Collide_System.update
-    |> Draw_System.update
+    |> Draw_System.update;
 
   newState;
 };
-

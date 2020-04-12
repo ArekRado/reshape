@@ -1,7 +1,7 @@
 [@bs.scope "performance"] [@bs.val]
-external performanceNow : unit => float = "now";
+external performanceNow: unit => float = "now";
 
-let update = (state: Shared.state) : Shared.state => {
+let update = (state: Shared.state): Shared.state => {
   let last = state.timeNow;
   let now = performanceNow();
 

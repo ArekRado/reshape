@@ -1,6 +1,6 @@
 type t = (float, float);
 
-let create = (x: float, y: float) : t => (x, y);
+let create = (x: float, y: float): t => (x, y);
 
 let zero = () => (0.0, 0.0);
 let up = () => (0.0, 1.0);
@@ -13,7 +13,9 @@ let add = ((x1, y1), (x2, y2)) => (x1 +. x2, y1 +. y2);
 let sub = ((x1, y1), (x2, y2)) => (x1 -. x2, y1 -. y2);
 
 let isBetween = ((x1, y1), (x2, y2), (x3, y3)) =>
-  x1 < x3 && x2 > x3 && y1 < y3 && y2 > y3 /* export type Vector2D = [number, number]
+  x1 < x3 && x2 > x3 && y1 < y3 && y2 > y3;
+
+  /* export type Vector2D = [number, number]
 
 type Divide = (v1: Vector2D, v2: Vector2D) => Vector2D
 export const divide: Divide = (v1, v2) => [v1[0] / v2[1], v1[1] / v2[1]]

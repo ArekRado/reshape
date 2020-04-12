@@ -1,5 +1,5 @@
 [@bs.module "../util/pixiDraw"]
-external pixiDraw : list(string) => unit = "default";
+external pixiDraw: list(string) => unit = "default";
 
 let update = (state: Shared.state): Shared.state => {
   let drawState: Belt.List.t(string) =
@@ -10,17 +10,17 @@ let update = (state: Shared.state): Shared.state => {
         let image = Belt.Map.String.get(state.image, entity);
         let transform = Belt.Map.String.get(state.transform, entity);
 
-        switch ((image, transform)) {
-          | (None, None) => images
-          | (Some(_), None) => images
-          | (None, Some(_)) => images
-          | (Some(img), Some(transform)) =>
-            let (x, y) = transform.position;
-            let src = img.src;
+        switch (image, transform) {
+        | (None, None) => images
+        | (Some(_), None) => images
+        | (None, Some(_)) => images
+        | (Some(img), Some(transform)) =>
+          let (x, y) = transform.position;
+          let src = img.src;
 
-            Belt.List.add(
-              images,
-              {j|{
+          Belt.List.add(
+            images,
+            {j|{
                 "entity":"$(entity)",
                 "src":"$(src)",
                 "x":"$(x)",
