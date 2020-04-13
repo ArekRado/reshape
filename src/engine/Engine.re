@@ -26,6 +26,7 @@ let initialState: Shared.state = {
   transform: Belt.Map.String.empty,
   image: Belt.Map.String.empty,
   rigidbody: Belt.Map.String.empty,
+  transition: Belt.Map.String.empty,
   timeNow: 0.0,
   delta: 0.0,
 

@@ -12,16 +12,15 @@ let one = () => (1.0, 1.0);
 let add = ((x1, y1), (x2, y2)) => (x1 +. x2, y1 +. y2);
 let sub = ((x1, y1), (x2, y2)) => (x1 -. x2, y1 -. y2);
 
+let multiply = ((x1, y1), (x2, y2)) => (x1 *. x2, y1 *. y2);
+let divide = ((x1, y1), (x2, y2)) => (x1 /. x2, y1 /. y2);
+
+let scale = (scalar:float, (x1, y1)) => (x1 *. scalar, y1 *. scalar);
+
 let isBetween = ((x1, y1), (x2, y2), (x3, y3)) =>
   x1 < x3 && x2 > x3 && y1 < y3 && y2 > y3;
 
-  /* export type Vector2D = [number, number]
-
-type Divide = (v1: Vector2D, v2: Vector2D) => Vector2D
-export const divide: Divide = (v1, v2) => [v1[0] / v2[1], v1[1] / v2[1]]
-
-type Multiply = (v1: Vector2D, v2: Vector2D) => Vector2D
-export const multiply: Multiply = (v1, v2) => [v1[0] * v2[0], v1[1] * v2[1]]
+  /*
 
 type Scale = (scalar: number, v: Vector2D) => Vector2D
 export const scale: Scale = (scalar, v) => [v[0] * scalar, v[1] * scalar]
@@ -78,4 +77,4 @@ type RadianToVector = (radian: number) => Vector2D
 export const radianToVector: RadianToVector = (radian: number): Vector2D => [
   Math.cos(radian),
   Math.sin(radian),
-] */;
+] */

@@ -1,5 +1,3 @@
-open Belt;
-
 let linear = t => t;
 // accelerating from zero velocity
 let easeInQuad = t => t *. t;
@@ -34,13 +32,35 @@ let easeInOutQuint = t =>
     ? 16.0 *. t *. t *. t *. t *. t
     : 1.0 +. 16.0 *. (t -. 1.0) *. t *. t *. t *. t;
 
+// let Bezier =  p = (1-t)^3 *P0 + 3*t*(1-t)^2*P1 + 3*t^2*(1-t)*P2 + t^3*P3
+
+let getProgress =
+    (timingFunction: Shared.timingFunction, percentageProgress: float) => {
+  switch (timingFunction) {
+  | Linear => linear(percentageProgress)
+  | EaseInQuad => easeInQuad(percentageProgress)
+  | EaseOutQuad => easeOutQuad(percentageProgress)
+  | EaseInOutQuad => easeInOutQuad(percentageProgress)
+  | EaseInCubic => easeInCubic(percentageProgress)
+  | EaseOutCubic => easeOutCubic(percentageProgress)
+  | EaseInOutCubic => easeInOutCubic(percentageProgress)
+  | EaseInQuart => easeInQuart(percentageProgress)
+  | EaseOutQuart => easeOutQuart(percentageProgress)
+  | EaseInOutQuart => easeInOutQuart(percentageProgress)
+  | EaseInQuint => easeInQuint(percentageProgress)
+  | EaseOutQuint => easeOutQuint(percentageProgress)
+  | EaseInOutQuint => easeInOutQuint(percentageProgress)
+  | CubicBezier(_, _, _, _) => linear(percentageProgress)
+  };
+};
+
 let update = (state: Shared.state): Shared.state => {
   ...state,
   transition:
-    Map.String.mapWithKey(state.transition, (entity, transition) =>
+    Belt.Map.String.map(state.transition, (transition) =>
       if (transition.isPlaying) {
         let keyframe =
-          List.get(transition.keyframes, transition.playingFrameIndex);
+          Belt.Map.Int.get(transition.keyframes, transition.playingFrameIndex);
 
         switch (keyframe) {
         | None => transition
@@ -49,30 +69,40 @@ let update = (state: Shared.state): Shared.state => {
             keyframe.currentTime *. 100.0 /. keyframe.duration;
 
           let progress =
-            switch (keyframe.timingFunction) {
-            | Linear => linear(percentageProgress)
-            | EaseInQuad => easeInQuad(percentageProgress)
-            | EaseOutQuad => easeOutQuad(percentageProgress)
-            | EaseInOutQuad => easeInOutQuad(percentageProgress)
-            | EaseInCubic => easeInCubic(percentageProgress)
-            | EaseOutCubic => easeOutCubic(percentageProgress)
-            | EaseInOutCubic => easeInOutCubic(percentageProgress)
-            | EaseInQuart => easeInQuart(percentageProgress)
-            | EaseOutQuart => easeOutQuart(percentageProgress)
-            | EaseInOutQuart => easeInOutQuart(percentageProgress)
-            | EaseInQuint => easeInQuint(percentageProgress)
-            | EaseOutQuint => easeOutQuint(percentageProgress)
-            | EaseInOutQuint => easeInOutQuint(percentageProgress)
-            | CubicBezier(v1, v2, v3, v4) => transition
+            getProgress(keyframe.timingFunction, percentageProgress);
+
+          let newValue: Shared.transitionValue =
+            switch (keyframe.valueRange) {
+            | (Shared.FloatTransition(v1), Shared.FloatTransition(v2)) =>
+              // x - progress%
+              // (v2 - v1) - 100%
+              let normalizedMax = v2 -. v1;
+              Shared.FloatTransition(progress *. normalizedMax /. 100.0);
+
+            | (Shared.VectorTransition(v1), Shared.VectorTransition(v2)) =>
+              let normalizedMax = Vector_Util.sub(v2, v1);
+              Shared.VectorTransition(
+                Vector_Util.scale(
+                  1.0 /. 100.0,
+                  Vector_Util.scale(progress, normalizedMax),
+                ),
+              );
+            | _ => keyframe.value
             };
 
-          // switch (keyframe.value) {
-          //   | FloatTransition(v1, v2) => transition
-          //   | VectorTransition(v1, v2) => transition
-          //   | BoolTransition(v1, v2) => transition
-          //   }
-
-          transition;
+          {
+            ...transition,
+            keyframes:
+              Belt.Map.Int.set(
+                transition.keyframes,
+                transition.playingFrameIndex,
+                {
+                  ...keyframe,
+                  value: newValue,
+                  duration: keyframe.currentTime +. state.delta,
+                },
+              ),
+          };
         };
       } else {
         transition;

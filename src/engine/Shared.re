@@ -23,8 +23,8 @@ type rigidbody = {
 };
 
 type transitionValue =
-  | FloatTransition(float, float)
-  | VectorTransition(Vector_Util.t, Vector_Util.t);
+  | FloatTransition(float)
+  | VectorTransition(Vector_Util.t);
 
 type timingFunction =
   | Linear
@@ -47,11 +47,11 @@ type keyframe = {
   currentTime: float,
   timingFunction,
   valueRange: (transitionValue,transitionValue),
-  currentValue: transitionValue,
+  value: transitionValue,
 };
 
 type transition = {
-  keyframes: Belt.List.t(keyframe),
+  keyframes: Belt.Map.Int.t(keyframe),
   isPlaying: bool,
   playingFrameIndex: int,
 };

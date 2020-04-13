@@ -1,7 +1,7 @@
 let create =
     (
       ~isPlaying=true,
-      keyframes:Belt.List.t(Shared.keyframe),
+      keyframes:Belt.Map.Int.t(Shared.keyframe),
       entity: Belt.Map.String.key,
       engine: Shared.state,
     )
