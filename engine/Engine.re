@@ -4,12 +4,14 @@ module System = {
   module Time = Time_System;
   /* module Scene = Scene_System; */
   module Collide = Collide_System;
+  module Transition = Transition_System;
 };
 
 module Component = {
   module Image = Image_Component;
   module Transform = Transform_Component;
   module Rigidbody = Rigidbody_Component;
+  module Transition = Transition_Component;
 };
 
 module Util = {
@@ -34,7 +36,7 @@ let initialState: Shared.state = {
   mousePosition: Vector_Util.zero(),
 };
 
-let rec runOneFrame = (state: Shared.state): Shared.state => {
+let runOneFrame = (state: Shared.state): Shared.state => {
   let newState =
     state
     |> Time_System.update

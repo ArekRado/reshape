@@ -21,8 +21,8 @@ let circleImageUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 
 let create =
     (state: Type.state, ~position: Type.vector) => {
-  let entity = Engine.Entity.generate();
-  let circleEntity = Engine.Entity.generate() /* ->Engine.Component.Image.create(
+  let entity = Engine.Entity.generate("City");
+  let circleEntity = Engine.Entity.generate("CityCircle") /* ->Engine.Component.Image.create(
         entity,
          ~src=cityImageUrl
          )

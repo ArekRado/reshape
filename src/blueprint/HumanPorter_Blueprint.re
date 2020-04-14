@@ -5,7 +5,7 @@ let create =
       state: Type.state,
       ~position: Engine.Util.Vector.t,
     ) => {
-  let entity = Engine.Entity.generate();
+  let entity = Engine.Entity.generate("HumanPorter");
 
   let newEngine =
     state.engine

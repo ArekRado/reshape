@@ -1,4 +1,4 @@
-let generate = () => Uuid_Util.v4();
+let generate = (debugName:string) => debugName ++ Uuid_Util.v4();
 
 let create = (entity: string, engine: Shared.state): Shared.state => {
   ...engine,
