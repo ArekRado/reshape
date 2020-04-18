@@ -11,7 +11,8 @@ module Component = {
   module Image = Image_Component;
   module Transform = Transform_Component;
   module Rigidbody = Rigidbody_Component;
-  module Transition = Transition_Component;
+  module TransitionFloat = TransitionFloat_Component;
+  module TransitionVector = TransitionVector_Component;
 };
 
 module Util = {
@@ -28,7 +29,8 @@ let initialState: Shared.state = {
   transform: Belt.Map.String.empty,
   image: Belt.Map.String.empty,
   rigidbody: Belt.Map.String.empty,
-  transition: Belt.Map.String.empty,
+  transitionFloat: Belt.Map.String.empty,
+  transitionVector: Belt.Map.String.empty,
   timeNow: 0.0,
   delta: 0.0,
 
@@ -36,13 +38,16 @@ let initialState: Shared.state = {
   mousePosition: Vector_Util.zero(),
 };
 
-let runOneFrame = (state: Shared.state): Shared.state => {
+let runOneFrame =
+    (~state: Shared.state, ~enableDraw=true, ~performanceNow=?, ())
+    : Shared.state => {
+
   let newState =
     state
-    |> Time_System.update
-    |> IO_System.update
-    |> Collide_System.update
-    |> Draw_System.update;
+    ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
+    ->IO_System.update(~state=_)
+    ->Collide_System.update(~state=_)
+    ->Draw_System.update(~enableDraw, ~state=_);
 
   newState;
 };

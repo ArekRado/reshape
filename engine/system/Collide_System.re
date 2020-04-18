@@ -1,6 +1,6 @@
 open Belt;
 
-let update = (state: Shared.state): Shared.state => {
+let update = (~state: Shared.state): Shared.state => {
   ...state,
   rigidbody:
     Map.String.mapWithKey(

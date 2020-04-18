@@ -35,7 +35,14 @@ let easeInOutQuint = t =>
 // let Bezier =  p = (1-t)^3 *P0 + 3*t*(1-t)^2*P1 + 3*t^2*(1-t)*P2 + t^3*P3
 
 let getProgress =
-    (timingFunction: Shared.timingFunction, percentageProgress: float) => {
+    (
+      currentTime: float,
+      duration: float,
+      timingFunction: Shared.timingFunction,
+    )
+    : float => {
+  let percentageProgress = currentTime *. 100.0 /. duration;
+
   switch (timingFunction) {
   | Linear => linear(percentageProgress)
   | EaseInQuad => easeInQuad(percentageProgress)
@@ -54,41 +61,77 @@ let getProgress =
   };
 };
 
-let update = (state: Shared.state): Shared.state => {
+let update = (~state: Shared.state): Shared.state => {
   ...state,
-  transition:
-    Belt.Map.String.map(state.transition, (transition) =>
+  transitionFloat:
+    Belt.Map.String.map(state.transitionFloat, transition =>
       if (transition.isPlaying) {
         let keyframe =
-          Belt.Map.Int.get(transition.keyframes, transition.playingFrameIndex);
+          Belt.Map.Int.get(
+            transition.keyframes,
+            transition.playingFrameIndex,
+          );
 
         switch (keyframe) {
         | None => transition
         | Some(keyframe) =>
-          let percentageProgress =
-            keyframe.currentTime *. 100.0 /. keyframe.duration;
-
           let progress =
-            getProgress(keyframe.timingFunction, percentageProgress);
+            getProgress(
+              keyframe.currentTime,
+              keyframe.duration,
+              keyframe.timingFunction,
+            );
 
-          let newValue: Shared.transitionValue =
-            switch (keyframe.valueRange) {
-            | (Shared.FloatTransition(v1), Shared.FloatTransition(v2)) =>
-              // x - progress%
-              // (v2 - v1) - 100%
-              let normalizedMax = v2 -. v1;
-              Shared.FloatTransition(progress *. normalizedMax /. 100.0);
+          // x - progress%
+          // (v2 - v1) - 100%
+          let (v1, v2) = keyframe.valueRange;
+          let normalizedMax = v2 -. v1;
+          let newValue = progress *. normalizedMax /. 100.0;
 
-            | (Shared.VectorTransition(v1), Shared.VectorTransition(v2)) =>
-              let normalizedMax = Vector_Util.sub(v2, v1);
-              Shared.VectorTransition(
-                Vector_Util.scale(
-                  1.0 /. 100.0,
-                  Vector_Util.scale(progress, normalizedMax),
-                ),
-              );
-            | _ => keyframe.value
-            };
+          {
+            ...transition,
+            keyframes:
+              Belt.Map.Int.set(
+                transition.keyframes,
+                transition.playingFrameIndex,
+                {
+                  ...keyframe,
+                  value: newValue,
+                  duration: keyframe.currentTime +. state.delta,
+                },
+              ),
+          };
+        };
+      } else {
+        transition;
+      }
+    ),
+  transitionVector:
+    Belt.Map.String.map(state.transitionVector, transition =>
+      if (transition.isPlaying) {
+        let keyframe =
+          Belt.Map.Int.get(
+            transition.keyframes,
+            transition.playingFrameIndex,
+          );
+
+        switch (keyframe) {
+        | None => transition
+        | Some(keyframe) =>
+          let progress =
+            getProgress(
+              keyframe.currentTime,
+              keyframe.duration,
+              keyframe.timingFunction,
+            );
+
+          let (v1, v2) = keyframe.valueRange;
+          let normalizedMax = Vector_Util.sub(v2, v1);
+          let newValue =
+            Vector_Util.scale(
+              1.0 /. 100.0,
+              Vector_Util.scale(progress, normalizedMax),
+            );
 
           {
             ...transition,

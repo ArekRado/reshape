@@ -1,7 +1,7 @@
 [@bs.module "../util/pixiDraw"]
 external pixiDraw: list(string) => unit = "default";
 
-let update = (state: Shared.state): Shared.state => {
+let update = (~state: Shared.state, ~enableDraw:bool): Shared.state => {
   let drawState: Belt.List.t(string) =
     Belt.List.reduce(
       state.entity,
@@ -31,6 +31,9 @@ let update = (state: Shared.state): Shared.state => {
       },
     );
 
-  pixiDraw(drawState);
+  if(enableDraw === true) {
+    pixiDraw(drawState);
+  }
+
   state;
 };

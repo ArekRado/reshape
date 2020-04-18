@@ -22,10 +22,6 @@ type rigidbody = {
   isHovered: bool,
 };
 
-type transitionValue =
-  | FloatTransition(float)
-  | VectorTransition(Vector_Util.t);
-
 type timingFunction =
   | Linear
   | EaseInQuad
@@ -42,16 +38,16 @@ type timingFunction =
   | EaseInOutQuint
   | CubicBezier(float, float, float, float);
 
-type keyframe = {
+type keyframe('a) = {
   duration: float,
   currentTime: float,
   timingFunction,
-  valueRange: (transitionValue,transitionValue),
-  value: transitionValue,
+  valueRange: ('a,'a),
+  value: 'a,
 };
 
-type transition = {
-  keyframes: Belt.Map.Int.t(keyframe),
+type transition('a) = {
+  keyframes: Belt.Map.Int.t(keyframe('a)),
   isPlaying: bool,
   playingFrameIndex: int,
 };
@@ -63,7 +59,8 @@ type state = {
   transform: Belt.Map.String.t(transform),
   image: Belt.Map.String.t(image),
   rigidbody: Belt.Map.String.t(rigidbody),
-  transition: Belt.Map.String.t(transition),
+  transitionFloat: Belt.Map.String.t(transition(float)),
+  transitionVector: Belt.Map.String.t(transition(Vector_Util.t)),
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   timeNow: float,

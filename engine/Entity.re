@@ -1,6 +1,6 @@
 let generate = (debugName:string) => debugName ++ Uuid_Util.v4();
 
-let create = (entity: string, engine: Shared.state): Shared.state => {
-  ...engine,
-  entity: Belt.List.add(engine.entity, entity),
+let create = (~entity: string, ~state: Shared.state): Shared.state => {
+  ...state,
+  entity: Belt.List.add(state.entity, entity),
 };

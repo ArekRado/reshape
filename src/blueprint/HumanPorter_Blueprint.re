@@ -7,11 +7,9 @@ let create =
     ) => {
   let entity = Engine.Entity.generate("HumanPorter");
 
-  let newEngine =
-    state.engine
-    |> Engine.Entity.create(entity)
-    |> Engine.Component.Transform.create(entity)
-    |> Engine.Component.Image.create(entity, ~src=humanImageUrl) /* {
+  let newEngine = Engine.Entity.create(~entity, ~state=state.engine)
+    -> Engine.Component.Transform.create(~entity=entity, ~state=_, ())
+    -> Engine.Component.Image.create(~entity=entity, ~src=humanImageUrl, ~state=_) /* {
      ...state,
      entity: Belt.List.add(state.entity, entity),
      transform: Engine.Transform.create() Belt.Map.String.set(state.transform, entity, transform),

@@ -6,14 +6,15 @@ let create =
       ~localScale=Vector_Util.zero(),
       ~position=Vector_Util.zero(),
       ~localPosition=Vector_Util.zero(),
-      entity: Belt.Map.String.key,
-      engine: Shared.state,
+      ~entity: Belt.Map.String.key,
+      ~state: Shared.state,
+      ()
     )
     : Shared.state => {
-  ...engine,
+  ...state,
   transform:
     Belt.Map.String.set(
-      engine.transform,
+      state.transform,
       entity,
       {rotation, localRotation, scale, localScale, position, localPosition},
     ),

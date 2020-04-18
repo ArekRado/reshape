@@ -1,20 +1,33 @@
-import * as PIXI from 'pixi.js'
+let isInitialized = false
+let pixiApp = null
+let images = null
+let debugGraphics = null
 
-const pixiApp = new PIXI.Application({
-  width: document.body.clientWidth,
-  height: document.body.clientHeight,
-  backgroundColor: 0x1099bb,
-})
+let initialize = ( ) => {
+  const PIXI = require('pixi.js')
 
-!document || !document.body
-  ? console.warn("Couldn't find document body")
-  : document.body.appendChild(pixiApp.view)
+  pixiApp = new PIXI.Application({
+    width: document.body.clientWidth,
+    height: document.body.clientHeight,
+    backgroundColor: 0x1099bb,
+  })
 
-let images = []
-const debugGraphics = new PIXI.Graphics()
-pixiApp.stage.addChild(debugGraphics)
+  !document || !document.body
+    ? console.warn("Couldn't find document body")
+    : document.body.appendChild(pixiApp.view)
 
-export default (params, devMode = false) => {
+  images = []
+  debugGraphics = new PIXI.Graphics()
+  pixiApp.stage.addChild(debugGraphics)
+
+  isInitialized = true
+}
+
+module.exports = (params, devMode = false) => {
+  console.log('no nie xd')
+  if (!isInitialized) {
+    initialize()
+  }
   debugGraphics.clear()
 
   const state = params.flat(Infinity).slice(0, -1)

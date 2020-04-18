@@ -1,4 +1,4 @@
-let create = (engine: Shared.state, rigidbodyType, size, scale) : Shared.rigidbody => {
+let create = (~state: Shared.state, ~rigidbodyType, ~size) : Shared.rigidbody => {
   rigidbodyType,
   size,
   isClicked: false,
