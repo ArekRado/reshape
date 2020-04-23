@@ -41,8 +41,9 @@ let getProgress =
       timingFunction: Shared.timingFunction,
     )
     : float => {
-  let percentageProgress = currentTime *. 100.0 /. duration;
-
+  let percentageProgress =
+    currentTime === 0.0 ? 0.0 : currentTime *. 100.0 /. duration;
+    
   switch (timingFunction) {
   | Linear => linear(percentageProgress)
   | EaseInQuad => easeInQuad(percentageProgress)
@@ -88,6 +89,23 @@ let update = (~state: Shared.state): Shared.state => {
           let normalizedMax = v2 -. v1;
           let newValue = progress *. normalizedMax /. 100.0;
 
+          Js.log("---------------");
+          // Js.log("v1");
+          // Js.log(v1);
+          // Js.log("v2");
+          // Js.log(v2);
+          // Js.log("normalizedMax");
+          // Js.log(normalizedMax);
+          Js.log("newValue");
+          Js.log(newValue);
+          Js.log("progress");
+          Js.log(progress);
+
+          Js.log("keyframe.currentTime");
+          Js.log(keyframe.currentTime);
+          Js.log("keyframe.duration");
+          Js.log(keyframe.duration);
+
           {
             ...transition,
             keyframes:
@@ -97,7 +115,7 @@ let update = (~state: Shared.state): Shared.state => {
                 {
                   ...keyframe,
                   value: newValue,
-                  duration: keyframe.currentTime +. state.delta,
+                  currentTime: keyframe.currentTime +. state.delta,
                 },
               ),
           };

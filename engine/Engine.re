@@ -47,6 +47,7 @@ let runOneFrame =
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
     ->IO_System.update(~state=_)
     ->Collide_System.update(~state=_)
+    ->Transition_System.update(~state=_)
     ->Draw_System.update(~enableDraw, ~state=_);
 
   newState;
