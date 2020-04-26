@@ -42,7 +42,7 @@ type keyframe('a) = {
   duration: float,
   currentTime: float,
   timingFunction,
-  valueRange: ('a,'a),
+  valueRange: ('a, 'a),
   value: 'a,
 };
 
@@ -54,6 +54,11 @@ type transition('a) = {
 
 type image = {src: string};
 
+type time = {
+  timeNow: float,
+  delta: float,
+};
+
 type state = {
   entity,
   transform: Belt.Map.String.t(transform),
@@ -63,7 +68,6 @@ type state = {
   transitionVector: Belt.Map.String.t(transition(Vector_Util.t)),
   mutable mouseButtons: int,
   mutable mousePosition: vector,
-  timeNow: float,
-  delta: float,
+  time,
   // event: todo
 };

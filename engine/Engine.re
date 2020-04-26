@@ -31,8 +31,10 @@ let initialState: Shared.state = {
   rigidbody: Belt.Map.String.empty,
   transitionFloat: Belt.Map.String.empty,
   transitionVector: Belt.Map.String.empty,
-  timeNow: 0.0,
-  delta: 0.0,
+  time: {
+    timeNow: 0.0,
+    delta: 0.0,
+  },
 
   mouseButtons: 0,
   mousePosition: Vector_Util.zero(),
@@ -41,7 +43,6 @@ let initialState: Shared.state = {
 let runOneFrame =
     (~state: Shared.state, ~enableDraw=true, ~performanceNow=?, ())
     : Shared.state => {
-
   let newState =
     state
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)

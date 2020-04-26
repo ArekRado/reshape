@@ -43,7 +43,7 @@ let getProgress =
     : float => {
   let percentageProgress =
     currentTime === 0.0 ? 0.0 : currentTime *. 100.0 /. duration;
-    
+
   switch (timingFunction) {
   | Linear => linear(percentageProgress)
   | EaseInQuad => easeInQuad(percentageProgress)
@@ -89,23 +89,6 @@ let update = (~state: Shared.state): Shared.state => {
           let normalizedMax = v2 -. v1;
           let newValue = progress *. normalizedMax /. 100.0;
 
-          Js.log("---------------");
-          // Js.log("v1");
-          // Js.log(v1);
-          // Js.log("v2");
-          // Js.log(v2);
-          // Js.log("normalizedMax");
-          // Js.log(normalizedMax);
-          Js.log("newValue");
-          Js.log(newValue);
-          Js.log("progress");
-          Js.log(progress);
-
-          Js.log("keyframe.currentTime");
-          Js.log(keyframe.currentTime);
-          Js.log("keyframe.duration");
-          Js.log(keyframe.duration);
-
           {
             ...transition,
             keyframes:
@@ -114,8 +97,11 @@ let update = (~state: Shared.state): Shared.state => {
                 transition.playingFrameIndex,
                 {
                   ...keyframe,
-                  value: newValue,
-                  currentTime: keyframe.currentTime +. state.delta,
+                  value: v2 > v1 
+                  ? newValue > v2 ? v2 : newValue
+                  : newValue < v2 ? v2 : newValue
+                  ,
+                  currentTime: keyframe.currentTime +. state.time.delta,
                 },
               ),
           };
@@ -150,6 +136,18 @@ let update = (~state: Shared.state): Shared.state => {
               1.0 /. 100.0,
               Vector_Util.scale(progress, normalizedMax),
             );
+/* 
+          Js.log("progress");
+          Js.log(progress);
+
+          Js.log("keyframe.currentTime");
+          Js.log(keyframe.currentTime);
+          Js.log("keyframe.duration");
+          Js.log(keyframe.duration);
+          Js.log("keyframe.timingFunction");
+          Js.log(keyframe.timingFunction);
+          Js.log("state.time.delta");
+          Js.log(state.time.delta); */
 
           {
             ...transition,
@@ -160,7 +158,7 @@ let update = (~state: Shared.state): Shared.state => {
                 {
                   ...keyframe,
                   value: newValue,
-                  duration: keyframe.currentTime +. state.delta,
+                  currentTime: keyframe.currentTime +. state.time.delta,
                 },
               ),
           };

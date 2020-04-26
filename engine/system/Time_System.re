@@ -2,12 +2,17 @@
 external performanceNow: unit => float = "now";
 
 let update = (~state: Shared.state, ~performanceNowOverride=?): Shared.state => {
-  let last = state.timeNow;
   let now: float =
     switch (performanceNowOverride) {
     | Some(performanceNow) => performanceNow
     | None => performanceNow()
     };
 
-  {...state, delta: (now -. last) /. 1000.0, timeNow: now};
+  {
+    ...state,
+    time: {
+      delta: now -. state.time.timeNow,
+      timeNow: now,
+    },
+  };
 };

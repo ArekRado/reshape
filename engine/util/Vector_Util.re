@@ -17,6 +17,8 @@ let divide = ((x1, y1): t, (x2, y2): t): t => (x1 /. x2, y1 /. y2);
 
 let scale = (scalar: float, (x1, y1): t): t => (x1 *. scalar, y1 *. scalar);
 
+let isEqual = ((x1, y1):t, (x2, y2):t) => x1 === x2 && y1 === y2
+
 let isBetween = ((x1, y1): t, (x2, y2): t, (x3, y3): t) =>
   x1 < x3 && x2 > x3 && y1 < y3 && y2 > y3;
 
@@ -43,9 +45,6 @@ let isBetween = ((x1, y1): t, (x2, y2): t, (x3, y3): t) =>
    const ratio = currentVectorMagnitude / vMagnitude
    return [v[0] / ratio, v[1] / ratio]
  }
-
- type Equals = (v1: Vector2D, v2: Vector2D) => boolean
- export const equals: Equals = (v1, v2) => v1[0] === v2[0] && v1[1] === v2[1]
 
  type Dot = (v1: Vector2D, v2: Vector2D) => number
  export const dot: Dot = (v1, v2) => v1[0] * v2[0] + v1[1] * v2[1]
