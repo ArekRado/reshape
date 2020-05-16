@@ -1,7 +1,22 @@
-let create =
+type keyframe = {
+  duration: float,
+  timingFunction: Shared.timingFunction,
+  valueRange: (Vector_Util.t, Vector_Util.t),
+};
+
+let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(keyframe)) => 
+  Belt.Map.Int.map(keyframes, (keyframe):Shared.keyframe(Vector_Util.t) => {
+    duration: keyframe.duration,
+    currentTime: 0.0,
+    timingFunction: keyframe.timingFunction,
+    valueRange: keyframe.valueRange,
+    value: Vector_Util.zero,
+  })
+
+  let create =
     (
       ~isPlaying=?,
-      ~keyframes: Belt.Map.Int.t(Shared.keyframe(Vector_Util.t)),
+      ~keyframes: Belt.Map.Int.t(keyframe),
       ~entity: Belt.Map.String.key,
       ~state: Shared.state,
       (),
@@ -13,10 +28,10 @@ let create =
       state.transitionVector,
       entity,
       {
-        keyframes,
+        keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {
-          | None => true
+          | None => false
           | Some(v) => v
           },
         playingFrameIndex: 0,

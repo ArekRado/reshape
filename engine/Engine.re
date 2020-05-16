@@ -35,9 +35,8 @@ let initialState: Shared.state = {
     timeNow: 0.0,
     delta: 0.0,
   },
-
   mouseButtons: 0,
-  mousePosition: Vector_Util.zero(),
+  mousePosition: Vector_Util.zero,
 };
 
 let runOneFrame =

@@ -62,102 +62,108 @@ let getProgress =
   };
 };
 
+let transitionFloatUpdate = (state: Shared.state) => 
+  Belt.Map.String.map(state.transitionFloat, transition =>
+    if (transition.isPlaying) {
+      let keyframe =
+        Belt.Map.Int.get(
+          transition.keyframes,
+          transition.playingFrameIndex,
+        );
+
+      switch (keyframe) {
+      | None => transition
+      | Some(keyframe) =>
+        let progress =
+          getProgress(
+            keyframe.currentTime,
+            keyframe.duration,
+            keyframe.timingFunction,
+          );
+
+        // x - progress%
+        // (v2 - v1) - 100%
+        let (v1, v2) = keyframe.valueRange;
+        let normalizedMax = v2 -. v1;
+        let newValue = progress *. normalizedMax /. 100.0;
+
+        let isNegative = v2 > v1;
+
+        {
+          ...transition,
+          keyframes:
+            Belt.Map.Int.set(
+              transition.keyframes,
+              transition.playingFrameIndex,
+              {
+                ...keyframe,
+                value: isNegative
+                ? newValue > v2 ? v2 : newValue
+                : newValue < v2 ? v2 : newValue,
+                currentTime: keyframe.currentTime +. state.time.delta,
+              },
+            ),
+        };
+      };
+    } else {
+      transition;
+    }
+  )
+
+let transitionVectorUpdate = (state: Shared.state) => 
+  Belt.Map.String.map(state.transitionVector, transition =>
+    if (transition.isPlaying) {
+      let keyframe =
+        Belt.Map.Int.get(
+          transition.keyframes,
+          transition.playingFrameIndex,
+        );
+
+      switch (keyframe) {
+      | None => transition
+      | Some(keyframe) =>
+        let progress =
+          getProgress(
+            keyframe.currentTime,
+            keyframe.duration,
+            keyframe.timingFunction,
+          );
+
+        let (v1, v2) = keyframe.valueRange;
+        let normalizedMax = Vector_Util.sub(v2, v1);
+        let newValue =
+          Vector_Util.scale(
+            1.0 /. 100.0,
+            Vector_Util.scale(progress, normalizedMax),
+          );
+
+        let isNegative = Vector_Util.isLesser(v1, v2);
+        
+
+        {
+          ...transition,
+          keyframes:
+            Belt.Map.Int.set(
+              transition.keyframes,
+              transition.playingFrameIndex,
+              {
+                ...keyframe,
+                value: isNegative
+                ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
+                : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
+                currentTime: keyframe.currentTime +. state.time.delta,
+              },
+            ),
+        };
+      };
+    } else {
+      transition;
+    }
+  )
+
+
 let update = (~state: Shared.state): Shared.state => {
   ...state,
-  transitionFloat:
-    Belt.Map.String.map(state.transitionFloat, transition =>
-      if (transition.isPlaying) {
-        let keyframe =
-          Belt.Map.Int.get(
-            transition.keyframes,
-            transition.playingFrameIndex,
-          );
-
-        switch (keyframe) {
-        | None => transition
-        | Some(keyframe) =>
-          let progress =
-            getProgress(
-              keyframe.currentTime,
-              keyframe.duration,
-              keyframe.timingFunction,
-            );
-
-          // x - progress%
-          // (v2 - v1) - 100%
-          let (v1, v2) = keyframe.valueRange;
-          let normalizedMax = v2 -. v1;
-          let newValue = progress *. normalizedMax /. 100.0;
-
-          let isNegative = v2 > v1;
-
-          {
-            ...transition,
-            keyframes:
-              Belt.Map.Int.set(
-                transition.keyframes,
-                transition.playingFrameIndex,
-                {
-                  ...keyframe,
-                  value: isNegative
-                  ? newValue > v2 ? v2 : newValue
-                  : newValue < v2 ? v2 : newValue,
-                  currentTime: keyframe.currentTime +. state.time.delta,
-                },
-              ),
-          };
-        };
-      } else {
-        transition;
-      }
-    ),
-  transitionVector:
-    Belt.Map.String.map(state.transitionVector, transition =>
-      if (transition.isPlaying) {
-        let keyframe =
-          Belt.Map.Int.get(
-            transition.keyframes,
-            transition.playingFrameIndex,
-          );
-
-        switch (keyframe) {
-        | None => transition
-        | Some(keyframe) =>
-          let progress =
-            getProgress(
-              keyframe.currentTime,
-              keyframe.duration,
-              keyframe.timingFunction,
-            );
-
-          let (v1, v2) = keyframe.valueRange;
-          let normalizedMax = Vector_Util.sub(v2, v1);
-          let newValue =
-            Vector_Util.scale(
-              1.0 /. 100.0,
-              Vector_Util.scale(progress, normalizedMax),
-            );
-
-          let isNegative = Vector_Util.isLesser(v1, v2);
-
-          {
-            ...transition,
-            keyframes:
-              Belt.Map.Int.set(
-                transition.keyframes,
-                transition.playingFrameIndex,
-                {
-                  ...keyframe,
-                  value: isNegative
-                  ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
-                  : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
-                  currentTime: keyframe.currentTime +. state.time.delta,
-                },
-              ),
-          };
-        };
-      } else {
-        transition;
-      }
-    ),
+  transitionFloat: transitionFloatUpdate(state),
+  transitionVector: transitionVectorUpdate(state),
 };

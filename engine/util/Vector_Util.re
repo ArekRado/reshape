@@ -2,12 +2,12 @@ type t = (float, float);
 
 let create = (x: float, y: float): t => (x, y);
 
-let zero = (): t => (0.0, 0.0);
-let up = (): t => (0.0, 1.0);
-let right = (): t => (1.0, 0.0);
-let down = (): t => (0.0, (-1.0));
-let left = (): t => ((-1.0), 0.0);
-let one = (): t => (1.0, 1.0);
+let zero: t = (0.0, 0.0);
+let up: t = (0.0, 1.0);
+let right: t = (1.0, 0.0);
+let down: t = (0.0, (-1.0));
+let left: t = ((-1.0), 0.0);
+let one: t = (1.0, 1.0);
 
 let add = ((x1, y1): t, (x2, y2): t): t => (x1 +. x2, y1 +. y2);
 let sub = ((x1, y1): t, (x2, y2): t): t => (x1 -. x2, y1 -. y2);
