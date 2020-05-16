@@ -89,6 +89,8 @@ let update = (~state: Shared.state): Shared.state => {
           let normalizedMax = v2 -. v1;
           let newValue = progress *. normalizedMax /. 100.0;
 
+          let isNegative = v2 > v1;
+
           {
             ...transition,
             keyframes:
@@ -97,10 +99,9 @@ let update = (~state: Shared.state): Shared.state => {
                 transition.playingFrameIndex,
                 {
                   ...keyframe,
-                  value: v2 > v1 
+                  value: isNegative
                   ? newValue > v2 ? v2 : newValue
-                  : newValue < v2 ? v2 : newValue
-                  ,
+                  : newValue < v2 ? v2 : newValue,
                   currentTime: keyframe.currentTime +. state.time.delta,
                 },
               ),
@@ -136,18 +137,8 @@ let update = (~state: Shared.state): Shared.state => {
               1.0 /. 100.0,
               Vector_Util.scale(progress, normalizedMax),
             );
-/* 
-          Js.log("progress");
-          Js.log(progress);
 
-          Js.log("keyframe.currentTime");
-          Js.log(keyframe.currentTime);
-          Js.log("keyframe.duration");
-          Js.log(keyframe.duration);
-          Js.log("keyframe.timingFunction");
-          Js.log(keyframe.timingFunction);
-          Js.log("state.time.delta");
-          Js.log(state.time.delta); */
+          let isNegative = Vector_Util.isLesser(v1, v2);
 
           {
             ...transition,
@@ -157,7 +148,9 @@ let update = (~state: Shared.state): Shared.state => {
                 transition.playingFrameIndex,
                 {
                   ...keyframe,
-                  value: newValue,
+                  value: isNegative
+                  ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
+                  : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
                   currentTime: keyframe.currentTime +. state.time.delta,
                 },
               ),

@@ -17,7 +17,11 @@ let divide = ((x1, y1): t, (x2, y2): t): t => (x1 /. x2, y1 /. y2);
 
 let scale = (scalar: float, (x1, y1): t): t => (x1 *. scalar, y1 *. scalar);
 
-let isEqual = ((x1, y1):t, (x2, y2):t) => x1 === x2 && y1 === y2
+let magnitude = ((x,y):t): float => sqrt((x ** 2.0 +. y ** 2.0))
+
+let isEqual = ((x1, y1):t, (x2, y2):t): bool => x1 === x2 && y1 === y2
+let isGreater = (v1:t, v2:t): bool => magnitude(v1) > magnitude(v2);
+let isLesser = (v1:t, v2:t): bool => magnitude(v1) < magnitude(v2);
 
 let isBetween = ((x1, y1): t, (x2, y2): t, (x3, y3): t) =>
   x1 < x3 && x2 > x3 && y1 < y3 && y2 > y3;
