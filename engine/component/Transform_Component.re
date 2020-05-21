@@ -8,6 +8,7 @@ let create =
       ~localPosition=Vector_Util.zero,
       ~entity: Belt.Map.String.key,
       ~state: Shared.state,
+      ~parent="",
       ()
     )
     : Shared.state => {
@@ -16,6 +17,6 @@ let create =
     Belt.Map.String.set(
       state.transform,
       entity,
-      {rotation, localRotation, scale, localScale, position, localPosition},
+      {rotation, localRotation, scale, localScale, position, localPosition, parent},
     ),
 };

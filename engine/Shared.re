@@ -9,6 +9,7 @@ type transform = {
   localScale: vector,
   position: vector,
   localPosition: vector,
+  parent: string,
 };
 
 type rigidbodyType =

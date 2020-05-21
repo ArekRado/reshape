@@ -17,10 +17,9 @@ let rec logic = (state: Type.state) => {
   let newEngine = Engine.runOneFrame(~state=state.engine, ~debug=true, ());
 
   let newState = ({game: state.game, engine: newEngine} : Type.state)
-    |> System.Timer.update
-    |> System.Scene.update
-    |> System.Move.update
-    |> System.Area.update
+    ->System.Scene.update
+    ->System.Move.update
+    ->System.Area.update
 
   requestAnimationFrame(() => logic(newState));
 };
