@@ -4,7 +4,8 @@ module System = {
   module Time = Time_System;
   /* module Scene = Scene_System; */
   module Collide = Collide_System;
-  module Transition = Transition_System;
+  module TransitionFloat = TransitionFloat_Component;
+  module TransitionVector = TransitionVector_Component;
 };
 
 module Component = {
@@ -47,7 +48,8 @@ let runOneFrame =
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
     ->IO_System.update(~state=_)
     ->Collide_System.update(~state=_)
-    ->Transition_System.update(~state=_)
+    ->TransitionFloat_System.update(~state=_)
+    ->TransitionVector_System.update(~state=_)
     ->Draw_System.update(~enableDraw, ~state=_);
 
   newState;

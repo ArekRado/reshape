@@ -7,7 +7,6 @@ type keyframe = {
 let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(keyframe)) => 
   Belt.Map.Int.map(keyframes, (keyframe):Shared.keyframe(Vector_Util.t) => {
     duration: keyframe.duration,
-    currentTime: 0.0,
     timingFunction: keyframe.timingFunction,
     valueRange: keyframe.valueRange,
     value: Vector_Util.zero,
@@ -34,7 +33,7 @@ let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(keyframe)) =>
           | None => false
           | Some(v) => v
           },
-        playingFrameIndex: 0,
+        currentTime: 0.0,
       },
     ),
 };

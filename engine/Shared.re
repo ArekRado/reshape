@@ -40,7 +40,6 @@ type timingFunction =
 
 type keyframe('a) = {
   duration: float,
-  currentTime: float,
   timingFunction,
   valueRange: ('a, 'a),
   value: 'a,
@@ -49,7 +48,7 @@ type keyframe('a) = {
 type transition('a) = {
   keyframes: Belt.Map.Int.t(keyframe('a)),
   isPlaying: bool,
-  playingFrameIndex: int,
+  currentTime: float,
 };
 
 type image = {src: string};
