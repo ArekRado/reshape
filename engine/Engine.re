@@ -38,13 +38,16 @@ let initialState: Shared.state = {
   },
   mouseButtons: 0,
   mousePosition: Vector_Util.zero,
+  isDebugInitialized: false,
 };
 
 let runOneFrame =
-    (~state: Shared.state, ~enableDraw=true, ~performanceNow=?, ())
+    (~state: Shared.state, ~enableDraw=true, ~debug=false, ~performanceNow=?, ())
     : Shared.state => {
+      
   let newState =
     state
+    ->Debug_System.update(~state=_, ~debug)
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
     ->IO_System.update(~state=_)
     ->Collide_System.update(~state=_)

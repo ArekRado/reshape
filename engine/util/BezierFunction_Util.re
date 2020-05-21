@@ -33,3 +33,21 @@ let easeInOutQuint = t =>
     : 1.0 +. 16.0 *. (t -. 1.0) *. t *. t *. t *. t;
 
 // let Bezier =  p = (1-t)^3 *P0 + 3*t*(1-t)^2*P1 + 3*t^2*(1-t)*P2 + t^3*P3
+
+let getValue = (timingFunction: Shared.timingFunction, value) =>
+  switch (timingFunction) {
+  | Linear => linear(value)
+  | EaseInQuad => easeInQuad(value)
+  | EaseOutQuad => easeOutQuad(value)
+  | EaseInOutQuad => easeInOutQuad(value)
+  | EaseInCubic => easeInCubic(value)
+  | EaseOutCubic => easeOutCubic(value)
+  | EaseInOutCubic => easeInOutCubic(value)
+  | EaseInQuart => easeInQuart(value)
+  | EaseOutQuart => easeOutQuart(value)
+  | EaseInOutQuart => easeInOutQuart(value)
+  | EaseInQuint => easeInQuint(value)
+  | EaseOutQuint => easeOutQuint(value)
+  | EaseInOutQuint => easeInOutQuint(value)
+  | CubicBezier(_, _, _, _) => linear(value)
+  };

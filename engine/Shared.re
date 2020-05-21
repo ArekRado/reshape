@@ -68,5 +68,6 @@ type state = {
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,
+  isDebugInitialized: bool,
   // event: todo
 };

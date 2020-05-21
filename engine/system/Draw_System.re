@@ -31,7 +31,7 @@ let update = (~state: Shared.state, ~enableDraw:bool): Shared.state => {
       },
     );
 
-  if(enableDraw === true) {
+  if(enableDraw === true && Belt.List.size(drawState) > 0) {
     pixiDraw(drawState);
   }
 

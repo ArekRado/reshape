@@ -15,7 +15,8 @@
     "in-source": true
   },
   "suffix": ".bs.js",
-  "bs-dependencies": ["bs-webapi"],
+  "reason": { "react-jsx": 3 },
+  "bs-dependencies": ["bs-webapi", "reason-react"],
   "warnings": {
     "error": "+101"
     // "number": "+A-48",

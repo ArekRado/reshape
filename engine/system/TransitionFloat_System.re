@@ -8,22 +8,7 @@ let getProgress =
   let percentageProgress =
     currentTime === 0.0 ? 0.0 : currentTime *. 100.0 /. duration;
 
-  switch (timingFunction) {
-  | Linear => BezierFunction_Util.linear(percentageProgress)
-  | EaseInQuad => BezierFunction_Util.easeInQuad(percentageProgress)
-  | EaseOutQuad => BezierFunction_Util.easeOutQuad(percentageProgress)
-  | EaseInOutQuad => BezierFunction_Util.easeInOutQuad(percentageProgress)
-  | EaseInCubic => BezierFunction_Util.easeInCubic(percentageProgress)
-  | EaseOutCubic => BezierFunction_Util.easeOutCubic(percentageProgress)
-  | EaseInOutCubic => BezierFunction_Util.easeInOutCubic(percentageProgress)
-  | EaseInQuart => BezierFunction_Util.easeInQuart(percentageProgress)
-  | EaseOutQuart => BezierFunction_Util.easeOutQuart(percentageProgress)
-  | EaseInOutQuart => BezierFunction_Util.easeInOutQuart(percentageProgress)
-  | EaseInQuint => BezierFunction_Util.easeInQuint(percentageProgress)
-  | EaseOutQuint => BezierFunction_Util.easeOutQuint(percentageProgress)
-  | EaseInOutQuint => BezierFunction_Util.easeInOutQuint(percentageProgress)
-  | CubicBezier(_, _, _, _) => BezierFunction_Util.linear(percentageProgress)
-  };
+  BezierFunction_Util.getValue(timingFunction, percentageProgress);
 };
 
 type activeKeyframe = {
@@ -78,33 +63,38 @@ let update = (~state: Shared.state): Shared.state => {
   transitionFloat:
     Belt.Map.String.map(state.transitionFloat, transition =>
       if (transition.isPlaying) {
-        let {keyframeCurrentTime, keyframeIndex} =
+        let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
           getActiveKeyframe(transition);
 
-        switch (Belt.Map.Int.get(transition.keyframes, keyframeIndex)) {
-        | None => transition
-        | Some(keyframe) =>
-          let progress =
-            getProgress(
-              keyframeCurrentTime,
-              keyframe.duration,
-              keyframe.timingFunction,
-            );
+        if (timeExceeded === true) {
+          {...transition, currentTime: 0.0, value: 0.0, isPlaying: false};
+        } else {
+          switch (Belt.Map.Int.get(transition.keyframes, keyframeIndex)) {
+          | None => transition
+          | Some(keyframe) =>
+            let progress =
+              getProgress(
+                keyframeCurrentTime,
+                keyframe.duration,
+                keyframe.timingFunction,
+              );
 
-          // x - progress%
-          // (v2 - v1) - 100%
-          let (v1, v2) = keyframe.valueRange;
-          let normalizedMax = v2 -. v1;
-          let newValue = progress *. normalizedMax /. 100.0;
+            // x - progress%
+            // (v2 - v1) - 100%
+            let (v1, v2) = keyframe.valueRange;
+            let normalizedMax = v2 -. v1;
+            let newValue = progress *. normalizedMax /. 100.0;
 
-          let isNegative = v2 > v1;
+            let isNegative = v2 > v1;
 
-          {
-            ...transition,
-            currentTime: transition.currentTime +. state.time.delta,
-            value:
-              isNegative
-                ? newValue > v2 ? v2 : newValue : newValue < v2 ? v2 : newValue,
+            {
+              ...transition,
+              currentTime: transition.currentTime +. state.time.delta,
+              value:
+                isNegative
+                  ? newValue > v2 ? v2 : newValue
+                  : newValue < v2 ? v2 : newValue,
+            };
           };
         };
       } else {

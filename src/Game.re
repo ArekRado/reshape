@@ -14,7 +14,7 @@ let initialState: Type.state = {
 };
 
 let rec logic = (state: Type.state) => {
-  let newEngine = Engine.runOneFrame(~state=state.engine, ());
+  let newEngine = Engine.runOneFrame(~state=state.engine, ~debug=true, ());
 
   let newState = ({game: state.game, engine: newEngine} : Type.state)
     |> System.Timer.update

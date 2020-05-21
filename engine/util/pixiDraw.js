@@ -23,8 +23,7 @@ let initialize = ( ) => {
   isInitialized = true
 }
 
-module.exports = (params, devMode = false) => {
-  console.log('no nie xd')
+export default (params, devMode = false) => {
   if (!isInitialized) {
     initialize()
   }
