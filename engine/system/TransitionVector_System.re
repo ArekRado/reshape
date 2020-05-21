@@ -90,22 +90,13 @@ let update = (~state: Shared.state): Shared.state => {
             );
 
           let isNegative = Vector_Util.isLesser(v1, v2);
-          
 
           {
             ...transition,
             currentTime: transition.currentTime +. state.time.delta,
-            keyframes:
-              Belt.Map.Int.set(
-                transition.keyframes,
-                keyframeIndex,
-                {
-                  ...keyframe,
-                  value: isNegative
-                  ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
-                  : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
-                },
-              ),
+            value: isNegative
+              ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
+              : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
           };
         };
       } else {

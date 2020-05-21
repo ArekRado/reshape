@@ -26,52 +26,62 @@ let getProgress =
   };
 };
 
-type activeKeyframe('a) = {
+type activeKeyframe = {
   keyframeCurrentTime: float,
   keyframeIndex: int,
-  keyframe: option(Shared.keyframe('a)),
-}
+  timeExceeded: bool,
+};
 
 let getActiveKeyframe = (transition: Shared.transition(float)) => {
-  if(Belt.Map.Int.size(transition.keyframes) === 0) {
+  let size = Belt.Map.Int.size(transition.keyframes);
+
+  if (size === 1) {
     {
       keyframeCurrentTime: transition.currentTime,
       keyframeIndex: 0,
-      keyframe: Belt.Map.Int.get(transition.keyframes, 0),
-    }
+      timeExceeded: false,
+    };
   } else {
-    let (sum, activeIndex) = Belt.Map.Int.reduce(
-      transition.keyframes, 
-      (0.0, 0), 
-      ((sum, activeIndex), index, keyframe) => {
-        if(keyframe.duration +. sum < transition.currentTime) {
-          (keyframe.duration +. sum, index);
+    let (sum, activeIndex, _) =
+      Belt.Map.Int.reduce(
+        transition.keyframes,
+        (0.0, 0, false),
+        ((sum, activeIndex, break), index, keyframe) =>
+        if (break === true) {
+          (sum, activeIndex, true);
+        } else if (keyframe.duration +. sum < transition.currentTime) {
+          if (size === index + 1) {
+            (
+              // timeExceeded
+              0.0,
+              (-1),
+              true,
+            );
+          } else {
+            (keyframe.duration +. sum, index, false);
+          };
         } else {
-          (sum, activeIndex);
+          (sum, index, true);
         }
-      }
-    );
+      );
 
     {
-      keyframeCurrentTime: transition.currentTime,
-      keyframeIndex: 0,
-      keyframe: Belt.Map.Int.get(transition.keyframes, 0),
-    }
-  }
-}
+      keyframeCurrentTime: transition.currentTime -. sum,
+      keyframeIndex: activeIndex,
+      timeExceeded: activeIndex === (-1),
+    };
+  };
+};
 
 let update = (~state: Shared.state): Shared.state => {
   ...state,
-  transitionFloat:  
+  transitionFloat:
     Belt.Map.String.map(state.transitionFloat, transition =>
       if (transition.isPlaying) {
-        let {
-          keyframeCurrentTime,
-          keyframeIndex,
-          keyframe
-        } = getActiveKeyframe(transition)
+        let {keyframeCurrentTime, keyframeIndex} =
+          getActiveKeyframe(transition);
 
-        switch (keyframe) {
+        switch (Belt.Map.Int.get(transition.keyframes, keyframeIndex)) {
         | None => transition
         | Some(keyframe) =>
           let progress =
@@ -92,21 +102,13 @@ let update = (~state: Shared.state): Shared.state => {
           {
             ...transition,
             currentTime: transition.currentTime +. state.time.delta,
-            keyframes:
-              Belt.Map.Int.set(
-                transition.keyframes,
-                keyframeIndex,
-                {
-                  ...keyframe,
-                  value: isNegative
-                  ? newValue > v2 ? v2 : newValue
-                  : newValue < v2 ? v2 : newValue,
-                },
-              ),
+            value:
+              isNegative
+                ? newValue > v2 ? v2 : newValue : newValue < v2 ? v2 : newValue,
           };
         };
       } else {
         transition;
       }
-    )
+    ),
 };

@@ -1,9 +1,8 @@
-let _assert = (assertion: bool) => {
+let _assert = (assertion: bool) =>
   if (assertion === false) {
     Js.log("");
     Js.log("Assertion failed");
   };
-}
 
 let it = (description, case) => {
   Js.log("- " ++ description);
@@ -12,5 +11,5 @@ let it = (description, case) => {
 
 let test = (description, case) => {
   /* Js.log("- " ++ description); */
-  case((assertion) => {});
+  case(assertion => {});
 };

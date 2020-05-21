@@ -8,7 +8,7 @@
     "start2": "bsb -make-world -w",
     "build": "webpack --mode production",
     "test": "node ./engine/test.bs.js",
-    "test:watch": "nodemon ./engine/test.bs.js"
+    "test:watch": "nodemon ./engine/test.bs.js --delay 1"
   },
   "repository": {
     "type": "git",

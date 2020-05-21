@@ -42,13 +42,13 @@ type keyframe('a) = {
   duration: float,
   timingFunction,
   valueRange: ('a, 'a),
-  value: 'a,
 };
 
 type transition('a) = {
   keyframes: Belt.Map.Int.t(keyframe('a)),
   isPlaying: bool,
   currentTime: float,
+  value: 'a,
 };
 
 type image = {src: string};
