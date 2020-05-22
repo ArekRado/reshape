@@ -1,5 +1,3 @@
-[@bs.module "../util/pixiDraw"]
-external pixiDraw: list(string) => unit = "default";
 
 let update = (~state: Shared.state, ~debug:bool): Shared.state => {
   if(debug) {
@@ -11,6 +9,7 @@ let update = (~state: Shared.state, ~debug:bool): Shared.state => {
         isDebugInitialized: true,
       };
     } else {
+      SyncState.set(state);
       state;
     }
   } else {

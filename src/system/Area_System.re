@@ -1,4 +1,3 @@
-open Belt;
 [@bs.scope "Math"] [@bs.val] external random: unit => float = "random";
 
 let update =(state: Type.state): Type.state => {

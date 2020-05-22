@@ -4,7 +4,7 @@ let images = null
 let debugGraphics = null
 let PIXI = null
 
-let initialize = ( ) => {
+let initialize = () => {
   PIXI = require('pixi.js')
 
   pixiApp = new PIXI.Application({
@@ -17,7 +17,7 @@ let initialize = ( ) => {
     ? console.warn("Couldn't find document body")
     : document.body.appendChild(pixiApp.view)
 
-  images = []
+  images = new Map()
   debugGraphics = new PIXI.Graphics()
   pixiApp.stage.addChild(debugGraphics)
 
@@ -34,7 +34,7 @@ export default (params, devMode = false) => {
 
   for (let i = 0; i < state.length; i++) {
     const image = JSON.parse(state[i])
-    const pixiImage = images.find(img => img.id === image.entity)
+    const pixiImage = images.get(image.entity)
 
     if (pixiImage) {
       if (pixiImage.texture.baseTexture.imageUrl !== image.src) {
@@ -74,9 +74,9 @@ const drawImage = (pixiImage, image, devMode, debugGraphic) => {
 
 const createImage = (images, pixiApp, image) => {
   const pixiImage = PIXI.Sprite.from(image.src)
-  pixiImage.id = image.id
+  pixiImage.id = image.entity
   pixiApp.stage.addChild(pixiImage)
-  images.push(pixiImage)
+  images.set(pixiImage.id, pixiImage)
 
   return pixiImage
 }
