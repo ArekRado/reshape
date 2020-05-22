@@ -1,5 +1,3 @@
-open Belt;
-
 let cityImageUrl: string = [%raw {|require('../assets/city.png').default|}];
 let circleImageUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 

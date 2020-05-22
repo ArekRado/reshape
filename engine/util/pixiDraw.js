@@ -2,9 +2,10 @@ let isInitialized = false
 let pixiApp = null
 let images = null
 let debugGraphics = null
+let PIXI = null
 
 let initialize = ( ) => {
-  const PIXI = require('pixi.js')
+  PIXI = require('pixi.js')
 
   pixiApp = new PIXI.Application({
     width: document.body.clientWidth,

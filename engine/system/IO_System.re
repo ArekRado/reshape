@@ -27,17 +27,17 @@ let initialize = () => {
   | None => ()
   };
 
-  let disableContextMenu = [%raw
-    {|
-      function() {
-        document.addEventListener("contextmenu", e => {
-          e.preventDefault();
-        });
-      }
-    |}
-  ];
+  // let disableContextMenu = [%raw
+  //   {|
+  //     function() {
+  //       document.addEventListener("contextmenu", e => {
+  //         e.preventDefault();
+  //       });
+  //     }
+  //   |}
+  // ];
 
-  disableContextMenu();
+  // disableContextMenu();
 };
 
 let update = (~state: Shared.state): Shared.state => {

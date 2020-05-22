@@ -1,7 +1,7 @@
 [@react.component]
 let make = (~state: Shared.state) =>
   <div>
-    <h4>{React.string("entity:")}</h4>
+    <h4 className="text-gray-700">{React.string("entity:")}</h4>
     <ul> 
         {
         state.entity
