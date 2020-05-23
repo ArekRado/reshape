@@ -1,4 +1,4 @@
-let humanImageUrl: string = [%raw {|require('../assets/human.png').default|}];
+let humanSpriteUrl: string = [%raw {|require('../assets/human.png').default|}];
 
 let create =
     (
@@ -11,6 +11,6 @@ let create =
     ...state,
     engine: Engine.Entity.create(~entity, ~state=state.engine)
     ->Engine.Component.Transform.create(~entity, ~position, ~state=_, ())
-    ->Engine.Component.Image.create(~entity, ~src=humanImageUrl, ~state=_, ())
+    ->Engine.Component.Sprite.create(~entity, ~src=humanSpriteUrl, ~state=_, ())
   };
 };

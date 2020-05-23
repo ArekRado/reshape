@@ -6,10 +6,10 @@ let syncedState:t = {
   data: {
     entity: [],
     transform: Belt.Map.String.empty,
-    image: Belt.Map.String.empty,
+    sprite: Belt.Map.String.empty,
     rigidbody: Belt.Map.String.empty,
-    transitionFloat: Belt.Map.String.empty,
-    transitionVector: Belt.Map.String.empty,
+    animationFloat: Belt.Map.String.empty,
+    animationVector: Belt.Map.String.empty,
     time: {
       timeNow: 0.0,
       delta: 0.0,

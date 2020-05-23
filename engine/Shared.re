@@ -45,14 +45,14 @@ type keyframe('a) = {
   valueRange: ('a, 'a),
 };
 
-type transition('a) = {
+type animation('a) = {
   keyframes: Belt.Map.Int.t(keyframe('a)),
   isPlaying: bool,
   currentTime: float,
   value: 'a,
 };
 
-type image = {src: string};
+type sprite = {src: string};
 
 type time = {
   timeNow: float,
@@ -62,10 +62,10 @@ type time = {
 type state = {
   entity,
   transform: Belt.Map.String.t(transform),
-  image: Belt.Map.String.t(image),
+  sprite: Belt.Map.String.t(sprite),
   rigidbody: Belt.Map.String.t(rigidbody),
-  transitionFloat: Belt.Map.String.t(transition(float)),
-  transitionVector: Belt.Map.String.t(transition(Vector_Util.t)),
+  animationFloat: Belt.Map.String.t(animation(float)),
+  animationVector: Belt.Map.String.t(animation(Vector_Util.t)),
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,

@@ -17,24 +17,24 @@ type activeKeyframe = {
   timeExceeded: bool,
 };
 
-let getActiveKeyframe = (transition: Shared.transition(float)) => {
-  let size = Belt.Map.Int.size(transition.keyframes);
+let getActiveKeyframe = (animation: Shared.animation(Vector_Util.t)) => {
+  let size = Belt.Map.Int.size(animation.keyframes);
 
   if (size === 1) {
     {
-      keyframeCurrentTime: transition.currentTime,
+      keyframeCurrentTime: animation.currentTime,
       keyframeIndex: 0,
       timeExceeded: false,
     };
   } else {
     let (sum, activeIndex, _) =
       Belt.Map.Int.reduce(
-        transition.keyframes,
+        animation.keyframes,
         (0.0, 0, false),
         ((sum, activeIndex, break), index, keyframe) =>
         if (break === true) {
           (sum, activeIndex, true);
-        } else if (keyframe.duration +. sum < transition.currentTime) {
+        } else if (keyframe.duration +. sum < animation.currentTime) {
           if (size === index + 1) {
             (
               // timeExceeded
@@ -51,7 +51,7 @@ let getActiveKeyframe = (transition: Shared.transition(float)) => {
       );
 
     {
-      keyframeCurrentTime: transition.currentTime -. sum,
+      keyframeCurrentTime: animation.currentTime -. sum,
       keyframeIndex: activeIndex,
       timeExceeded: activeIndex === (-1),
     };
@@ -60,17 +60,22 @@ let getActiveKeyframe = (transition: Shared.transition(float)) => {
 
 let update = (~state: Shared.state): Shared.state => {
   ...state,
-  transitionFloat:
-    Belt.Map.String.map(state.transitionFloat, transition =>
-      if (transition.isPlaying) {
+  animationVector:
+    Belt.Map.String.map(state.animationVector, animation =>
+      if (animation.isPlaying) {
         let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
-          getActiveKeyframe(transition);
+          getActiveKeyframe(animation);
 
         if (timeExceeded === true) {
-          {...transition, currentTime: 0.0, value: 0.0, isPlaying: false};
+          {
+            ...animation,
+            currentTime: 0.0,
+            value: Vector_Util.zero,
+            isPlaying: false,
+          };
         } else {
-          switch (Belt.Map.Int.get(transition.keyframes, keyframeIndex)) {
-          | None => transition
+          switch (Belt.Map.Int.get(animation.keyframes, keyframeIndex)) {
+          | None => animation
           | Some(keyframe) =>
             let progress =
               getProgress(
@@ -79,26 +84,28 @@ let update = (~state: Shared.state): Shared.state => {
                 keyframe.timingFunction,
               );
 
-            // x - progress%
-            // (v2 - v1) - 100%
             let (v1, v2) = keyframe.valueRange;
-            let normalizedMax = v2 -. v1;
-            let newValue = progress *. normalizedMax /. 100.0;
+            let normalizedMax = Vector_Util.sub(v2, v1);
+            let newValue =
+              Vector_Util.scale(
+                1.0 /. 100.0,
+                Vector_Util.scale(progress, normalizedMax),
+              );
 
-            let isNegative = v2 > v1;
+            let isNegative = Vector_Util.isLesser(v1, v2);
 
             {
-              ...transition,
-              currentTime: transition.currentTime +. state.time.delta,
+              ...animation,
+              currentTime: animation.currentTime +. state.time.delta,
               value:
                 isNegative
-                  ? newValue > v2 ? v2 : newValue
-                  : newValue < v2 ? v2 : newValue,
+                  ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue
+                  : Vector_Util.isLesser(newValue, v2) ? v2 : newValue,
             };
           };
         };
       } else {
-        transition;
+        animation;
       }
     ),
 };

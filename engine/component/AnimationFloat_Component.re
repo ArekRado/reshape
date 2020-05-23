@@ -15,9 +15,9 @@ let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(Shared.keyframe(float))) =>
     )
     : Shared.state => {
   ...state,
-  transitionFloat:
+  animationFloat:
     Belt.Map.String.set(
-      state.transitionFloat,
+      state.animationFloat,
       entity,
       {
         keyframes: mapParamToKeyframes(keyframes),

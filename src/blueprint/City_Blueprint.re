@@ -1,5 +1,5 @@
-let cityImageUrl: string = [%raw {|require('../assets/city.png').default|}];
-let circleImageUrl: string = [%raw {|require('../assets/circle.png').default|}] 
+let citySpriteUrl: string = [%raw {|require('../assets/city.png').default|}];
+let circleSpriteUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 
 let create =
     (state: Type.state, ~position: Type.vector) => {
@@ -12,9 +12,9 @@ let create =
       ~entity=cityEntity,
       ~state=_,
     )
-    ->Engine.Component.Image.create(
+    ->Engine.Component.Sprite.create(
         ~entity=cityEntity,
-        ~src=cityImageUrl,
+        ~src=citySpriteUrl,
         ~state=_, 
         ()
     )
@@ -29,9 +29,9 @@ let create =
       ~entity=circleEntity,
       ~state=_,
     )
-    ->Engine.Component.Image.create(
+    ->Engine.Component.Sprite.create(
       ~entity=circleEntity, 
-      ~src=circleImageUrl, 
+      ~src=circleSpriteUrl, 
       ~state=_, 
       ()
     )

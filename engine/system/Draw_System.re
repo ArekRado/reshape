@@ -6,20 +6,20 @@ let update = (~state: Shared.state, ~enableDraw:bool): Shared.state => {
     Belt.List.reduce(
       state.entity,
       [],
-      (images, entity) => {
-        let image = Belt.Map.String.get(state.image, entity);
+      (sprites, entity) => {
+        let sprite = Belt.Map.String.get(state.sprite, entity);
         let transform = Belt.Map.String.get(state.transform, entity);
 
-        switch (image, transform) {
-        | (None, None) => images
-        | (Some(_), None) => images
-        | (None, Some(_)) => images
+        switch (sprite, transform) {
+        | (None, None) => sprites
+        | (Some(_), None) => sprites
+        | (None, Some(_)) => sprites
         | (Some(img), Some(transform)) =>
           let (x, y) = transform.position;
           let src = img.src;
 
           Belt.List.add(
-            images,
+            sprites,
             {j|{
                 "entity":"$(entity)",
                 "src":"$(src)",

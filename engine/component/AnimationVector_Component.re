@@ -21,9 +21,9 @@ let create =
     )
     : Shared.state => {
   ...state,
-  transitionVector:
+  animationVector:
     Belt.Map.String.set(
-      state.transitionVector,
+      state.animationVector,
       entity,
       {
         keyframes: mapParamToKeyframes(keyframes),

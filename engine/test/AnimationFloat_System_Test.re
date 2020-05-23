@@ -1,24 +1,24 @@
 let runTests = () => {
-  Test_Util.describe("TransitionFloat_System", it => {
+  Test_Util.describe("AnimationFloat_System", it => {
     let tick = (performanceNow, state) =>
       Engine.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
     let entity = Engine.Entity.generate("test");
 
-    let defaultTransition: Shared.transition(float) = {
+    let defaultAnimation: Shared.animation(float) = {
       keyframes: Belt.Map.Int.empty,
       isPlaying: false,
       currentTime: 0.0,
       value: (-9999.0),
     };
 
-    let getTransitionValue = (state: Shared.state, entity: string) =>
-      switch (Belt.Map.String.get(state.transitionFloat, entity)) {
-      | Some(transition) => transition
-      | None => defaultTransition
+    let getAnimation = (state: Shared.state, entity: string) =>
+      switch (Belt.Map.String.get(state.animationFloat, entity)) {
+      | Some(animation) => animation
+      | None => defaultAnimation
       };
 
-    it("Linear transition should change value in proper way", _assert => {
+    it("Linear animation should change value in proper way", _assert => {
       let keyframe: Shared.keyframe(float) = {
         duration: 10.0,
         timingFunction: Linear,
@@ -26,7 +26,7 @@ let runTests = () => {
       };
       Engine.initialState
       ->Engine.Entity.create(~entity, ~state=_)
-      ->Engine.Component.TransitionFloat.create(
+      ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
           ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
           ~entity,
@@ -36,49 +36,49 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.1);
+            _assert(getAnimation(newState, entity).value === 0.1);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.2);
+            _assert(getAnimation(newState, entity).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.2);
+            _assert(getAnimation(newState, entity).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getTransitionValue(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, entity).value === 1.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getTransitionValue(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, entity).value === 1.0);
           }
         );
       ();
@@ -92,7 +92,7 @@ let runTests = () => {
       };
       Engine.initialState
       ->Engine.Entity.create(~entity, ~state=_)
-      ->Engine.Component.TransitionFloat.create(
+      ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
           ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
           ~entity,
@@ -102,21 +102,21 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(20.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(40.0, state);
-            _assert(getTransitionValue(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, entity).value === 1.0);
           }
         );
       ();
@@ -130,7 +130,7 @@ let runTests = () => {
       };
       Engine.initialState
       ->Engine.Entity.create(~entity, ~state=_)
-      ->Engine.Component.TransitionFloat.create(
+      ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
           ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
           ~entity,
@@ -140,35 +140,35 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getTransitionValue(newState, entity).value === (-0.1));
+            _assert(getAnimation(newState, entity).value === (-0.1));
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getTransitionValue(newState, entity).value === (-2.0));
+            _assert(getAnimation(newState, entity).value === (-2.0));
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getTransitionValue(newState, entity).value === (-2.0));
+            _assert(getAnimation(newState, entity).value === (-2.0));
           }
         );
       ();
@@ -210,7 +210,7 @@ let runTests = () => {
           );
       Engine.initialState
       ->Engine.Entity.create(~entity, ~state=_)
-      ->Engine.Component.TransitionFloat.create(
+      ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
           ~keyframes,
           ~entity,
@@ -220,54 +220,54 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(5.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.5, state);
-            _assert(getTransitionValue(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, entity).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, entity).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, entity).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(300.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.87);
+            _assert(getAnimation(newState, entity).value === 0.87);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getTransitionValue(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, entity).value === 0.0);
             _assert(
-              getTransitionValue(newState, entity).isPlaying === false,
+              getAnimation(newState, entity).isPlaying === false,
             );
             _assert(
-              getTransitionValue(newState, entity).currentTime === 0.0,
+              getAnimation(newState, entity).currentTime === 0.0,
             );
             newState;
           }
@@ -276,7 +276,7 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let transition: Shared.transition(float) = {
+      let animation: Shared.animation(float) = {
         isPlaying: true,
         currentTime: 0.0,
         value: 0.0,
@@ -291,15 +291,15 @@ let runTests = () => {
           ),
       };
 
-      let {keyframeCurrentTime, keyframeIndex}: TransitionFloat_System.activeKeyframe =
-        TransitionFloat_System.getActiveKeyframe(transition);
+      let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
+        AnimationFloat_System.getActiveKeyframe(animation);
 
       _assert(keyframeCurrentTime === 0.0);
       _assert(keyframeIndex === 0);
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let transition: Shared.transition(float) = {
+      let animation: Shared.animation(float) = {
         isPlaying: true,
         currentTime: 5.0,
         value: 0.0,
@@ -314,15 +314,15 @@ let runTests = () => {
           ),
       };
 
-      let {keyframeCurrentTime, keyframeIndex}: TransitionFloat_System.activeKeyframe =
-        TransitionFloat_System.getActiveKeyframe(transition);
+      let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
+        AnimationFloat_System.getActiveKeyframe(animation);
 
       _assert(keyframeCurrentTime === 5.0);
       _assert(keyframeIndex === 0);
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let transition: Shared.transition(float) = {
+      let animation: Shared.animation(float) = {
         isPlaying: true,
         currentTime: 10.5,
         value: 0.0,
@@ -345,15 +345,15 @@ let runTests = () => {
             ),
       };
 
-      let {keyframeCurrentTime, keyframeIndex}: TransitionFloat_System.activeKeyframe =
-        TransitionFloat_System.getActiveKeyframe(transition);
+      let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
+        AnimationFloat_System.getActiveKeyframe(animation);
 
       _assert(keyframeCurrentTime === 0.5);
       _assert(keyframeIndex === 1);
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let transition: Shared.transition(float) = {
+      let animation: Shared.animation(float) = {
         isPlaying: true,
         currentTime: 2000.0,
         value: 0.0,
@@ -393,8 +393,8 @@ let runTests = () => {
             ),
       };
 
-      let {keyframeCurrentTime, keyframeIndex, timeExceeded}: TransitionFloat_System.activeKeyframe =
-        TransitionFloat_System.getActiveKeyframe(transition);
+      let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
+        AnimationFloat_System.getActiveKeyframe(animation);
 
       _assert(keyframeCurrentTime === 2000.0);
       _assert(timeExceeded === true);
