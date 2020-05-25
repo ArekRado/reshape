@@ -8,7 +8,7 @@ let create =
       ~localPosition=Vector_Util.zero,
       ~entity: Belt.Map.String.key,
       ~state: Shared.state,
-      ~parent="",
+      ~parent=None,
       ()
     )
     : Shared.state => {

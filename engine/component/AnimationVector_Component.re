@@ -1,6 +1,6 @@
 let mapParamToKeyframes =
-    (keyframes: Belt.Map.Int.t(Shared.keyframe(Vector_Util.t))) =>
-  Belt.Map.Int.map(keyframes, (keyframe) =>
+    (keyframes: Belt.List.t(Shared.keyframe(Vector_Util.t))) =>
+  Belt.List.map(keyframes, (keyframe) =>
     (
       {
         duration: keyframe.duration,
@@ -13,9 +13,10 @@ let mapParamToKeyframes =
 
 let create =
     (
+      ~id: Belt.Map.String.key,
       ~isPlaying=?,
-      ~keyframes: Belt.Map.Int.t(Shared.keyframe(Vector_Util.t)),
-      ~entity: Belt.Map.String.key,
+      ~keyframes: Belt.List.t(Shared.keyframe(Vector_Util.t)),
+      ~entity: string,
       ~state: Shared.state,
       (),
     )
@@ -24,8 +25,9 @@ let create =
   animationVector:
     Belt.Map.String.set(
       state.animationVector,
-      entity,
+      id,
       {
+        entity,
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

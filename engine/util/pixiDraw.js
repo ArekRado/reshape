@@ -24,7 +24,7 @@ let initialize = () => {
   isInitialized = true
 }
 
-export default (params, devMode = false) => {
+exports.default = (params, devMode = false) => {
   if (!isInitialized) {
     initialize()
   }

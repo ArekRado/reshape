@@ -18,7 +18,7 @@ type activeKeyframe = {
 };
 
 let getActiveKeyframe = (animation: Shared.animation(Vector_Util.t)) => {
-  let size = Belt.Map.Int.size(animation.keyframes);
+  let size = Belt.List.size(animation.keyframes);
 
   if (size === 1) {
     {
@@ -28,10 +28,10 @@ let getActiveKeyframe = (animation: Shared.animation(Vector_Util.t)) => {
     };
   } else {
     let (sum, activeIndex, _) =
-      Belt.Map.Int.reduce(
+      Belt.List.reduceWithIndex(
         animation.keyframes,
         (0.0, 0, false),
-        ((sum, activeIndex, break), index, keyframe) =>
+        ((sum, activeIndex, break), keyframe, index) =>
         if (break === true) {
           (sum, activeIndex, true);
         } else if (keyframe.duration +. sum < animation.currentTime) {
@@ -74,7 +74,7 @@ let update = (~state: Shared.state): Shared.state => {
             isPlaying: false,
           };
         } else {
-          switch (Belt.Map.Int.get(animation.keyframes, keyframeIndex)) {
+          switch (Belt.List.get(animation.keyframes, keyframeIndex)) {
           | None => animation
           | Some(keyframe) =>
             let progress =

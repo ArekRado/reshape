@@ -6,6 +6,7 @@ module System = {
   module Collide = Collide_System;
   module AnimationFloat = AnimationFloat_Component;
   module AnimationVector = AnimationVector_Component;
+  module Transform = Transform_Component;
 };
 
 module Component = {
@@ -50,6 +51,7 @@ let runOneFrame =
     ->Debug_System.update(~state=_, ~debug)
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
     ->IO_System.update(~state=_)
+    ->Transform_System.update(~state=_)
     ->Collide_System.update(~state=_)
     ->AnimationFloat_System.update(~state=_)
     ->AnimationVector_System.update(~state=_)

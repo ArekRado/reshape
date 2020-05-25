@@ -1,5 +1,5 @@
-let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(Shared.keyframe(float))) => 
-  Belt.Map.Int.map(keyframes, (keyframe):Shared.keyframe(float) => {
+let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) => 
+  Belt.List.map(keyframes, (keyframe):Shared.keyframe(float) => {
     duration: keyframe.duration,
     timingFunction: keyframe.timingFunction,
     valueRange: keyframe.valueRange,
@@ -7,9 +7,10 @@ let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(Shared.keyframe(float))) =>
 
   let create =
     (
+      ~id: Belt.Map.String.key,
       ~isPlaying=?,
-      ~keyframes: Belt.Map.Int.t(Shared.keyframe(float)),
-      ~entity: Belt.Map.String.key,
+      ~keyframes: Belt.List.t(Shared.keyframe(float)),
+      ~entity: string,
       ~state: Shared.state,
       (),
     )
@@ -18,8 +19,9 @@ let mapParamToKeyframes = (keyframes: Belt.Map.Int.t(Shared.keyframe(float))) =>
   animationFloat:
     Belt.Map.String.set(
       state.animationFloat,
-      entity,
+      id,
       {
+        entity,
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

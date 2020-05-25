@@ -3,8 +3,10 @@ let circleSpriteUrl: string = [%raw {|require('../assets/circle.png').default|}]
 
 let create =
     (state: Type.state, ~position: Type.vector) => {
-  let cityEntity = Engine.Entity.generate("City");
-  let circleEntity = Engine.Entity.generate("CityCircle")
+  let cityEntity = Engine.Entity.generate("city");
+  let circleEntity = Engine.Entity.generate("cityCircle")
+
+  let buildTimer = Engine.Entity.generate("buildTimer")
 
   let newEngine = state.engine
     // city
@@ -37,7 +39,18 @@ let create =
     )
     ->Engine.Component.Transform.create(
       ~entity=circleEntity, 
-      ~parent=cityEntity,
+      ~parent=Some(cityEntity),
+      ~state=_,
+      ()
+    )
+    // buildTimer
+    ->Engine.Component.AnimationFloat.create(
+      ~entity=cityEntity,
+      ~id=buildTimer,
+      ~isPlaying=true,
+      ~keyframes=[
+        {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+      ],
       ~state=_,
       ()
     );

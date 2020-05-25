@@ -3,17 +3,18 @@ let runTests = () => {
     let tick = (performanceNow, state) =>
       Engine.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
-    let entity = Engine.Entity.generate("test");
+    let id = Engine.Entity.generate("test");
 
     let defaultAnimation: Shared.animation(float) = {
-      keyframes: Belt.Map.Int.empty,
+      entity: "",
+      keyframes: [],
       isPlaying: false,
       currentTime: 0.0,
       value: (-9999.0),
     };
 
-    let getAnimation = (state: Shared.state, entity: string) =>
-      switch (Belt.Map.String.get(state.animationFloat, entity)) {
+    let getAnimation = (state: Shared.state, id: string) =>
+      switch (Belt.Map.String.get(state.animationFloat, id)) {
       | Some(animation) => animation
       | None => defaultAnimation
       };
@@ -25,60 +26,61 @@ let runTests = () => {
         valueRange: (0.0, 1.0),
       };
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
-          ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
-          ~entity,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getAnimation(newState, entity).value === 0.1);
+            _assert(getAnimation(newState, id).value === 0.1);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getAnimation(newState, entity).value === 0.2);
+            _assert(getAnimation(newState, id).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getAnimation(newState, entity).value === 0.2);
+            _assert(getAnimation(newState, id).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getAnimation(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, id).value === 1.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getAnimation(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, id).value === 1.0);
           }
         );
       ();
@@ -91,32 +93,33 @@ let runTests = () => {
         valueRange: (0.0, 1.0),
       };
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
-          ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
-          ~entity,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(20.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(40.0, state);
-            _assert(getAnimation(newState, entity).value === 1.0);
+            _assert(getAnimation(newState, id).value === 1.0);
           }
         );
       ();
@@ -129,147 +132,122 @@ let runTests = () => {
         valueRange: ((-1.0), (-2.0)),
       };
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity="", ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
-          ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
-          ~entity,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getAnimation(newState, entity).value === (-0.1));
+            _assert(getAnimation(newState, id).value === (-0.1));
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getAnimation(newState, entity).value === (-2.0));
+            _assert(getAnimation(newState, id).value === (-2.0));
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getAnimation(newState, entity).value === (-2.0));
+            _assert(getAnimation(newState, id).value === (-2.0));
           }
         );
       ();
     });
 
     it("Should works with multiple frames", _assert => {
-      let keyframes =
-        Belt.Map.Int.set(
-          Belt.Map.Int.empty,
-          0,
-          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-        )
-        ->Belt.Map.Int.set(
-            _,
-            1,
-            {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          )
-        ->Belt.Map.Int.set(
-            _,
-            2,
-            {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          )
-        ->Belt.Map.Int.set(
-            _,
-            3,
-            {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          );
+      let keyframes = [
+        {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float)
+      ]
+
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
           ~keyframes,
-          ~entity,
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(5.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.5, state);
-            _assert(getAnimation(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, id).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getAnimation(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, id).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getAnimation(newState, entity).value === 0.5);
+            _assert(getAnimation(newState, id).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(300.0, state);
-            _assert(getAnimation(newState, entity).value === 0.87);
+            _assert(getAnimation(newState, id).value === 0.87);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getAnimation(newState, entity).value === 0.0);
+            _assert(getAnimation(newState, id).value === 0.0);
             _assert(
-              getAnimation(newState, entity).isPlaying === false,
+              getAnimation(newState, id).isPlaying === false,
             );
             _assert(
-              getAnimation(newState, entity).currentTime === 0.0,
+              getAnimation(newState, id).currentTime === 0.0,
             );
-            newState;
           }
         );
       ();
@@ -277,18 +255,13 @@ let runTests = () => {
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
+        entity: "",
         isPlaying: true,
         currentTime: 0.0,
         value: 0.0,
-        keyframes:
-          Belt.Map.Int.set(
-            Belt.Map.Int.empty,
-            0,
-            {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          ),
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:  Shared.keyframe(float)
+        ],
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -300,18 +273,13 @@ let runTests = () => {
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
+        entity: "",
         isPlaying: true,
         currentTime: 5.0,
         value: 0.0,
-        keyframes:
-          Belt.Map.Int.set(
-            Belt.Map.Int.empty,
-            0,
-            {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          ),
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        ],
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -323,26 +291,14 @@ let runTests = () => {
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
+        entity: "",
         isPlaying: true,
         currentTime: 10.5,
         value: 0.0,
-        keyframes:
-          Belt.Map.Int.set(
-            Belt.Map.Int.empty,
-            0,
-            {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          )
-          ->Belt.Map.Int.set(
-              _,
-              1,
-              {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-            ),
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float)
+        ]
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -354,43 +310,16 @@ let runTests = () => {
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
+        entity: "",
         isPlaying: true,
         currentTime: 2000.0,
         value: 0.0,
-        keyframes:
-          Belt.Map.Int.set(
-            Belt.Map.Int.empty,
-            0,
-            {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-          )
-          ->Belt.Map.Int.set(
-              _,
-              1,
-              {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-            )
-          ->Belt.Map.Int.set(
-              _,
-              2,
-              {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:
-                                                                    Shared.keyframe(
-                                                                    float,
-                                                                    ),
-            )
-          ->Belt.Map.Int.set(
-              _,
-              3,
-              {
-                duration: 100.0,
-                timingFunction: Linear,
-                valueRange: (0.0, 1.0),
-              }: Shared.keyframe(float),
-            ),
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        ]
       };
 
       let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =

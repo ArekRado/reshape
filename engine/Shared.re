@@ -9,7 +9,7 @@ type transform = {
   localScale: vector,
   position: vector,
   localPosition: vector,
-  parent: string,
+  parent: option(string),
 };
 
 type rigidbodyType =
@@ -46,7 +46,8 @@ type keyframe('a) = {
 };
 
 type animation('a) = {
-  keyframes: Belt.Map.Int.t(keyframe('a)),
+  entity: string,
+  keyframes: Belt.List.t(keyframe('a)),
   isPlaying: bool,
   currentTime: float,
   value: 'a,

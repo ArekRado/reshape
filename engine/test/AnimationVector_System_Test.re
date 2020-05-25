@@ -3,17 +3,18 @@ let runTests = () => {
     let tick = (performanceNow, state) =>
       Engine.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
-    let entity = Engine.Entity.generate("test");
+    let id = Engine.Entity.generate("test");
 
     let defaultAnimation: Shared.animation(Vector_Util.t) = {
-      keyframes: Belt.Map.Int.empty,
+      entity: "",
+      keyframes: [],
       isPlaying: false,
       currentTime: 0.0,
       value: Vector_Util.zero,
     };
 
     let getddAnimation = (state: Shared.state, entity: string) =>
-      switch (Belt.Map.String.get(state.animationVector, entity)) {
+      switch (Belt.Map.String.get(state.animationVector, id)) {
       | Some(animation) => animation
       | None => defaultAnimation
       };
@@ -29,11 +30,12 @@ let runTests = () => {
       };
 
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationVector.create(
           ~isPlaying=true,
-          ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
-          ~entity,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
@@ -42,7 +44,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.zero,
               ),
             );
@@ -54,7 +56,7 @@ let runTests = () => {
             let newState = tick(1.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.zero,
               ),
             );
@@ -66,7 +68,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.create(0.1, 0.1),
               ),
             );
@@ -78,7 +80,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.create(0.2, 0.2),
               ),
             );
@@ -90,7 +92,7 @@ let runTests = () => {
             let newState = tick(10.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.create(0.2, 0.2),
               ),
             );
@@ -102,7 +104,7 @@ let runTests = () => {
             let newState = tick(10.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.create(1.0, 1.0),
               ),
             );
@@ -114,7 +116,7 @@ let runTests = () => {
             let newState = tick(12.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 Vector_Util.create(1.0, 1.0),
               ),
             );
@@ -134,11 +136,12 @@ let runTests = () => {
       };
 
       Engine.initialState
-      ->Engine.Entity.create(~entity, ~state=_)
+      ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationVector.create(
           ~isPlaying=true,
-          ~keyframes=Belt.Map.Int.set(Belt.Map.Int.empty, 0, keyframe),
-          ~entity,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
           ~state=_,
           (),
         )
@@ -147,7 +150,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 (0.0, 0.0),
               ),
             );
@@ -159,7 +162,7 @@ let runTests = () => {
             let newState = tick(1.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 (0.0, 0.0),
               ),
             );
@@ -171,7 +174,7 @@ let runTests = () => {
             let newState = tick(22.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 ((-0.1), (-0.1)),
               ),
             );
@@ -183,7 +186,7 @@ let runTests = () => {
             let newState = tick(22.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 ((-2.0), (-2.0)),
               ),
             );
@@ -195,7 +198,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getddAnimation(newState, entity).value,
+                getddAnimation(newState, id).value,
                 ((-2.0), (-2.0)),
               ),
             );
