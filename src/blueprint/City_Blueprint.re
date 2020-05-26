@@ -2,7 +2,7 @@ let citySpriteUrl: string = [%raw {|require('../assets/city.png').default|}];
 let circleSpriteUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 
 let create =
-    (state: Type.state, ~position: Type.vector) => {
+    (state: Type.state, ~localPosition: Type.vector) => {
   let cityEntity = Engine.Entity.generate("city");
   let circleEntity = Engine.Entity.generate("cityCircle")
 
@@ -22,7 +22,7 @@ let create =
     )
     ->Engine.Component.Transform.create(
       ~entity=cityEntity,
-      ~position=position,
+      ~localPosition=localPosition,
       ~state=_, 
       ()
     )

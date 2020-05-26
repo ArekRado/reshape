@@ -4,7 +4,6 @@ let create =
       ~localRotation=0.0,
       ~scale=Vector_Util.zero,
       ~localScale=Vector_Util.zero,
-      ~position=Vector_Util.zero,
       ~localPosition=Vector_Util.zero,
       ~entity: Belt.Map.String.key,
       ~state: Shared.state,
@@ -17,6 +16,6 @@ let create =
     Belt.Map.String.set(
       state.transform,
       entity,
-      {rotation, localRotation, scale, localScale, position, localPosition, parent},
+      {rotation, localRotation, scale, localScale, position: Vector_Util.zero, localPosition, parent},
     ),
 };

@@ -8,7 +8,8 @@
     "start2": "NODE_ENV=development bsb -make-world -w",
     "build": "webpack --mode production",
     "test": "NODE_ENV=test node ./engine/test.bs.js",
-    "test:watch": "NODE_ENV=test nodemon ./engine/test.bs.js --delay 1"
+    "test:watch1": "NODE_ENV=test bsb -make-world -w",
+    "test:watch2": "NODE_ENV=test nodemon ./engine/test.bs.js --delay 1"
   },
   "repository": {
     "type": "git",
