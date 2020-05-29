@@ -4,43 +4,29 @@ module System = {
   module Time = Time_System;
   /* module Scene = Scene_System; */
   module Collide = Collide_System;
-  module AnimationFloat = AnimationFloat_Component;
-  module AnimationVector = AnimationVector_Component;
-  module Transform = Transform_Component;
+  module AnimationFloat = AnimationFloat_System;
+  module AnimationVector = AnimationVector_System;
+  module Transform = Transform_System;
 };
 
 module Component = {
   module Sprite = Sprite_Component;
   module Transform = Transform_Component;
-  module Rigidbody = Rigidbody_Component;
   module AnimationFloat = AnimationFloat_Component;
   module AnimationVector = AnimationVector_Component;
+  module CollideBox = CollideBox_Component;
+  module CollideCircle = CollideCircle_Component;
 };
 
 module Util = {
   module Uuid = Uuid_Util;
   module Vector = Vector_Util;
+  module Test = Test_Util;
 };
 
 module Entity = Entity;
 
 module Shared = Shared;
-
-let initialState: Shared.state = {
-  entity: [],
-  transform: Belt.Map.String.empty,
-  sprite: Belt.Map.String.empty,
-  rigidbody: Belt.Map.String.empty,
-  animationFloat: Belt.Map.String.empty,
-  animationVector: Belt.Map.String.empty,
-  time: {
-    timeNow: 0.0,
-    delta: 0.0,
-  },
-  mouseButtons: 0,
-  mousePosition: Vector_Util.zero,
-  isDebugInitialized: false,
-};
 
 let runOneFrame =
     (~state: Shared.state, ~enableDraw=true, ~debug=false, ~performanceNow=?, ())

@@ -10,7 +10,7 @@ let initialState: Type.state = {
       scene: TestMap,
       isSceneInicialized: false,
     },
-    engine: Engine.initialState,
+    engine: Shared.initialState,
 };
 
 let rec logic = (state: Type.state) => {

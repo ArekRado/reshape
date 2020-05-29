@@ -3,7 +3,7 @@ let runTests = () => {
     it("Should change time - start from 0 case", _assert => {
       let state1 =
         Engine.runOneFrame(
-          ~state=Engine.initialState,
+          ~state=Shared.initialState,
           ~enableDraw=false,
           ~performanceNow=0.0,
           (),
@@ -38,7 +38,7 @@ let runTests = () => {
     it("Should change time - start from non 0 case", _assert => {
       let state1 =
         Engine.runOneFrame(
-          ~state=Engine.initialState,
+          ~state=Shared.initialState,
           ~enableDraw=false,
           ~performanceNow=10.0,
           (),

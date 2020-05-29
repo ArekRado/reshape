@@ -1,4 +1,7 @@
-let rec getParentPosition = (transformMap: Belt.Map.String.t(Shared.transform), parentEntity): Vector_Util.t => {
+let rec getParentPosition = (
+  transformMap: Belt.Map.String.t(Shared.transform), 
+  parentEntity
+): Vector_Util.t => {
   let parent = Belt.Map.String.get(transformMap, parentEntity);
 
   switch (parent) {

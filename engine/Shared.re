@@ -2,6 +2,24 @@ type entity = Belt.List.t(string);
 
 type vector = (float, float);
 
+type collideType = 
+  | Box(string)
+  | Circle(string);
+
+type collideBox = {
+  entity: string,
+  size: vector,
+  position: vector,
+  collisions: Belt.List.t(collideType),
+};
+
+type collideCircle = {
+  entity: string,
+  radius: float,
+  position: vector,
+  collisions: Belt.List.t(collideType),
+};
+
 type transform = {
   rotation: float,
   localRotation: float,
@@ -12,16 +30,12 @@ type transform = {
   parent: option(string),
 };
 
-type rigidbodyType =
-  | Circle
-  | Square;
-
-type rigidbody = {
-  rigidbodyType,
-  size: vector,
-  isClicked: bool,
-  isHovered: bool,
-};
+// type rigidbody = {
+//   rigidbodyType,
+//   size: vector,
+//   isClicked: bool,
+//   isHovered: bool,
+// };
 
 type timingFunction =
   | Linear
@@ -64,12 +78,33 @@ type state = {
   entity,
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
-  rigidbody: Belt.Map.String.t(rigidbody),
+  // rigidbody: Belt.Map.String.t(rigidbody),
   animationFloat: Belt.Map.String.t(animation(float)),
   animationVector: Belt.Map.String.t(animation(Vector_Util.t)),
+
+  collideBox: Belt.Map.String.t(collideBox),
+  collideCircle: Belt.Map.String.t(collideCircle),
+
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,
   isDebugInitialized: bool,
   // event: todo
+};
+
+let initialState: state = {
+  entity: [],
+  transform: Belt.Map.String.empty,
+  sprite: Belt.Map.String.empty,
+  animationFloat: Belt.Map.String.empty,
+  animationVector: Belt.Map.String.empty,
+  collideBox: Belt.Map.String.empty,
+  collideCircle: Belt.Map.String.empty,
+  time: {
+    timeNow: 0.0,
+    delta: 0.0,
+  },
+  mouseButtons: 0,
+  mousePosition: Vector_Util.zero,
+  isDebugInitialized: false,
 };

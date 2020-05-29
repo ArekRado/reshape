@@ -25,7 +25,7 @@ let runTests = () => {
         timingFunction: Linear,
         valueRange: (0.0, 1.0),
       };
-      Engine.initialState
+      Shared.initialState
       ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
@@ -92,7 +92,7 @@ let runTests = () => {
         timingFunction: Linear,
         valueRange: (0.0, 1.0),
       };
-      Engine.initialState
+      Shared.initialState
       ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
@@ -131,7 +131,7 @@ let runTests = () => {
         timingFunction: Linear,
         valueRange: ((-1.0), (-2.0)),
       };
-      Engine.initialState
+      Shared.initialState
       ->Engine.Entity.create(~entity="", ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
@@ -186,7 +186,7 @@ let runTests = () => {
         {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float)
       ]
 
-      Engine.initialState
+      Shared.initialState
       ->Engine.Entity.create(~entity=id, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,

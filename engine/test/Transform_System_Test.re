@@ -26,7 +26,7 @@ let runTests = () => {
       let entity3 = Engine.Entity.generate("e3");
       let entity4 = Engine.Entity.generate("e4");
 
-      Engine.initialState
+      Shared.initialState
       ->Engine.Entity.create(~entity=entity1, ~state=_)
       ->Engine.Entity.create(~entity=entity2, ~state=_)
       ->Engine.Entity.create(~entity=entity3, ~state=_)
