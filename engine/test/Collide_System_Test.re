@@ -3,6 +3,14 @@ let runTests = () => {
     let tick = (performanceNow, state) =>
       Engine.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
+    let getEntity = (collideBox) =>  {
+      switch collideBox {
+      | Some(Shared.Box(entity)) => entity;
+      | Some(Shared.Circle(entity)) => entity;
+      | None => "None"
+      };
+    }
+
     let defaultCollideBox: Shared.collideBox = {
       entity: "",
       size: Vector_Util.zero,
@@ -16,6 +24,29 @@ let runTests = () => {
       | None => defaultCollideBox
       };
 
+    it("detectAABBcollision", _assert => {
+      Collide_System.detectAABBcollision(
+        (0.0, 0.0), 
+        (1.0, 1.0), 
+        (0.5, 0.5),
+        (1.0, 1.0)
+      )->_assert;
+
+      Collide_System.detectAABBcollision(
+        (0.0, 0.0), 
+        (1.0, 1.0), 
+        (1.0, 1.0),
+        (1.0, 1.0)
+      )->(result => _assert(result === false));
+
+      Collide_System.detectAABBcollision(
+        (0.0, 0.0), 
+        (1.0, 1.0), 
+        (-10.0, -10.0),
+        (20.0, 20.0)
+      )->_assert;
+    })
+    
     it("detect collisions box-box", _assert => {
       let entity1 = Engine.Entity.generate("e1");
       let entity2 = Engine.Entity.generate("e2");
@@ -43,7 +74,7 @@ let runTests = () => {
       )
       ->Engine.Component.Transform.create(
         ~entity=entity3,
-        ~localPosition=(3.0, 3.0),
+        ~localPosition=(3.5, 3.5),
         ~state=_, 
         ()
       )
@@ -74,11 +105,17 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getCollideBox(newState, id1).position->Vector_Util.isEqual((1.0, 1.0)));
-            _assert(getCollideBox(newState, id2).position->Vector_Util.isEqual((2.0, 2.0)));
-            _assert(getCollideBox(newState, id3).position->Vector_Util.isEqual((-8.0, -8.0)));
             
-            newState;
+            _assert(getCollideBox(newState, id1).collisions->Belt.List.get(0)->getEntity === id2);
+            _assert(getCollideBox(newState, id1).collisions->Belt.List.get(1)->getEntity === "None");
+
+            _assert(getCollideBox(newState, id2).collisions->Belt.List.get(0)->getEntity === id3);
+            _assert(getCollideBox(newState, id2).collisions->Belt.List.get(1)->getEntity === id1);
+
+            _assert(getCollideBox(newState, id3).collisions->Belt.List.get(0)->getEntity === id2);
+            _assert(getCollideBox(newState, id3).collisions->Belt.List.get(1)->getEntity === "None");
+            
+            // newState;
           }
         )
     });
