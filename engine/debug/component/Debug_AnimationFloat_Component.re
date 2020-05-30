@@ -1,3 +1,11 @@
+let wrapModeToString = (wrapMode: Shared.wrapMode) => 
+  switch wrapMode {
+  | Shared.Once => "Once"
+  | Shared.Loop => "Loop"
+  | Shared.PingPong => "PingPong"
+  | Shared.ClampForever => "ClampForever"
+  };
+
 [@react.component]
 let make = (~items: Belt.Map.String.t(Shared.animation(float))) => 
   items
@@ -16,6 +24,10 @@ let make = (~items: Belt.Map.String.t(Shared.animation(float))) =>
           <div className="col-span-8">{React.string(Belt.Float.toString(animation.currentTime))}</div>
           <div className="col-span-4">{React.string("value")}</div>
           <div className="col-span-8">{React.string(Belt.Float.toString(animation.value))}</div>
+          <div className="col-span-4">{React.string("isFinished")}</div>
+          <div className="col-span-8">{React.string(animation.isFinished ? "true" : "false")}</div>
+          <div className="col-span-4">{React.string("wrapMode")}</div>
+          <div className="col-span-8">{React.string(wrapModeToString(animation.wrapMode))}</div>
         </div>
 
         <div className="my-1">

@@ -11,6 +11,8 @@ let runTests = () => {
       isPlaying: false,
       currentTime: 0.0,
       value: (-9999.0),
+      isFinished: false,
+      wrapMode: Once,
     };
 
     let getAnimation = (state: Shared.state, id: string) =>
@@ -262,6 +264,8 @@ let runTests = () => {
         keyframes: [
           {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}:  Shared.keyframe(float)
         ],
+        isFinished: false,
+        wrapMode: Once,
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -280,6 +284,8 @@ let runTests = () => {
         keyframes: [
           {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
         ],
+        isFinished: false,
+        wrapMode: Once,
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -298,7 +304,9 @@ let runTests = () => {
         keyframes: [
           {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
           {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float)
-        ]
+        ],
+        isFinished: false,
+        wrapMode: Once,
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
@@ -319,7 +327,9 @@ let runTests = () => {
           {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
           {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
           {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
-        ]
+        ],
+        isFinished: false,
+        wrapMode: Once,
       };
 
       let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
@@ -329,5 +339,29 @@ let runTests = () => {
       _assert(timeExceeded === true);
       _assert(keyframeIndex === (-1));
     });
+
+    // it("getActiveFrame - should works with Loop animation", _assert => {
+    //   let animation: Shared.animation(float) = {
+    //     entity: "",
+    //     isPlaying: true,
+    //     currentTime: 2000.0,
+    //     value: 0.0,
+    //     keyframes: [
+    //       {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+    //       {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+    //       {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+    //       {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+    //     ],
+    //     isFinished: false,
+    //     wrapMode: Once,
+    //   };
+
+    //   let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
+    //     AnimationFloat_System.getActiveKeyframe(animation);
+
+    //   _assert(keyframeCurrentTime === 2000.0);
+    //   _assert(timeExceeded === true);
+    //   _assert(keyframeIndex === (-1));
+    // });
   });
 };

@@ -18,6 +18,7 @@ let create =
       ~keyframes: Belt.List.t(Shared.keyframe(Vector_Util.t)),
       ~entity: string,
       ~state: Shared.state,
+      ~wrapMode=?,
       (),
     )
     : Shared.state => {
@@ -34,8 +35,13 @@ let create =
           | None => false
           | Some(v) => v
           },
+        wrapMode: switch (wrapMode) {
+          | None => Once
+          | Some(v) => v
+          },
         currentTime: 0.0,
         value: Vector_Util.zero,
+        isFinished: false,
       },
     ),
 };

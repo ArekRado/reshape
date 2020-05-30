@@ -30,13 +30,6 @@ type transform = {
   parent: option(string),
 };
 
-// type rigidbody = {
-//   rigidbodyType,
-//   size: vector,
-//   isClicked: bool,
-//   isHovered: bool,
-// };
-
 type timingFunction =
   | Linear
   | EaseInQuad
@@ -53,6 +46,16 @@ type timingFunction =
   | EaseInOutQuint
   | CubicBezier(float, float, float, float);
 
+type wrapMode = 
+  //When time reaches the end of the animation clip, the clip will automatically stop playing and time will be reset to beginning of the clip.
+  | Once	
+  // When time reaches the end of the animation clip, time will continue at the beginning.
+  | Loop	
+  // When time reaches the end of the animation clip, time will ping pong back between beginning and end.
+  | PingPong	
+  // Plays back the animation. When it reaches the end, it will keep playing the last frame and never stop playing.
+  | ClampForever	
+
 type keyframe('a) = {
   duration: float,
   timingFunction,
@@ -63,8 +66,10 @@ type animation('a) = {
   entity: string,
   keyframes: Belt.List.t(keyframe('a)),
   isPlaying: bool,
+  isFinished: bool,
   currentTime: float,
   value: 'a,
+  wrapMode,
 };
 
 type sprite = {src: string};

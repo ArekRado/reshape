@@ -12,6 +12,7 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) =>
       ~keyframes: Belt.List.t(Shared.keyframe(float)),
       ~entity: string,
       ~state: Shared.state,
+      ~wrapMode=?,
       (),
     )
     : Shared.state => {
@@ -28,8 +29,13 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) =>
           | None => false
           | Some(v) => v
           },
+        wrapMode: switch (wrapMode) {
+          | None => Once
+          | Some(v) => v
+          },
         currentTime: 0.0,
         value: 0.0,
+        isFinished: false,
       },
     ),
 };

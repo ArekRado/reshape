@@ -17,6 +17,12 @@ type activeKeyframe = {
   timeExceeded: bool,
 };
 
+type acc = {
+  sum: float,
+  activeIndex: int,
+  breakLoop: bool,
+}
+
 let getActiveKeyframe = (animation: Shared.animation(float)) => {
   let size = Belt.List.size(animation.keyframes);
 
@@ -27,26 +33,38 @@ let getActiveKeyframe = (animation: Shared.animation(float)) => {
       timeExceeded: false,
     };
   } else {
-    let (sum, activeIndex, _) =
+    let {sum, activeIndex } =
       Belt.List.reduceWithIndex(
         animation.keyframes,
-        (0.0, 0, false),
-        ((sum, activeIndex, break), keyframe, index) =>
-        if (break === true) {
-          (sum, activeIndex, true);
-        } else if (keyframe.duration +. sum < animation.currentTime) {
+        {
+          sum: 0.0,
+          activeIndex: 0,
+          breakLoop: false,
+        },
+        (acc, keyframe, index) =>
+        if (acc.breakLoop === true) {
+          acc;
+        } else if (keyframe.duration +. acc.sum < animation.currentTime) {
           if (size === index + 1) {
-            (
-              // timeExceeded
-              0.0,
-              (-1),
-              true,
-            );
+            // timeExceeded
+            {
+              sum: 0.0,
+              activeIndex: -1,
+              breakLoop: true
+            }
           } else {
-            (keyframe.duration +. sum, index, false);
+            {
+              sum: keyframe.duration +. acc.sum,
+              activeIndex: index,
+              breakLoop: false,
+            }
           };
         } else {
-          (sum, index, true);
+          {
+            ...acc,
+            activeIndex: index,
+            breakLoop: true,
+          }
         }
       );
 

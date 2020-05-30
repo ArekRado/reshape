@@ -11,6 +11,8 @@ let runTests = () => {
       isPlaying: false,
       currentTime: 0.0,
       value: Vector_Util.zero,
+      isFinished: false,
+      wrapMode: Once,
     };
 
     let getAnimation = (state: Shared.state, entity: string) =>
