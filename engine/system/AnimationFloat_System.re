@@ -23,7 +23,7 @@ type acc = {
   breakLoop: bool,
 }
 
-let getActiveKeyframe = (animation: Shared.animation(float)) => {
+let rec getActiveKeyframe = (animation: Shared.animation(float), secondLoop: bool) => {
   let size = Belt.List.size(animation.keyframes);
 
   if (size === 1) {
@@ -48,7 +48,7 @@ let getActiveKeyframe = (animation: Shared.animation(float)) => {
           if (size === index + 1) {
             // timeExceeded
             {
-              sum: 0.0,
+              sum: keyframe.duration +. acc.sum,
               activeIndex: -1,
               breakLoop: true
             }
@@ -68,11 +68,19 @@ let getActiveKeyframe = (animation: Shared.animation(float)) => {
         }
       );
 
-    {
-      keyframeCurrentTime: animation.currentTime -. sum,
-      keyframeIndex: activeIndex,
-      timeExceeded: activeIndex === (-1),
-    };
+    if(activeIndex === -1 && animation.wrapMode === Loop) {
+      getActiveKeyframe({
+        ...animation,
+        // mod_float prevents from unnecessary loops, instantly moves to last loop
+        currentTime: mod_float(animation.currentTime, sum),
+      }, true)
+    } else {
+      {
+        keyframeCurrentTime: animation.currentTime -. sum,
+        keyframeIndex: activeIndex,
+        timeExceeded: secondLoop || activeIndex === (-1),
+      };
+    }
   };
 };
 
@@ -81,11 +89,17 @@ let update = (~state: Shared.state): Shared.state => {
   animationFloat:
     Belt.Map.String.map(state.animationFloat, animation =>
       if (animation.isPlaying) {
-        let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
-          getActiveKeyframe(animation);
+        let { keyframeCurrentTime, keyframeIndex, timeExceeded } =
+          getActiveKeyframe(animation, false);
 
-        if (timeExceeded === true) {
-          {...animation, currentTime: 0.0, value: 0.0, isPlaying: false};
+        if (timeExceeded === true && animation.wrapMode === Once) {
+          {
+            ...animation,
+            currentTime: 0.0,
+            value: 0.0,
+            isPlaying: false,
+            isFinished: true,
+          };
         } else {
           switch (Belt.List.get(animation.keyframes, keyframeIndex)) {
           | None => animation
@@ -108,6 +122,7 @@ let update = (~state: Shared.state): Shared.state => {
             {
               ...animation,
               currentTime: animation.currentTime +. state.time.delta,
+              isFinished: timeExceeded,
               value:
                 isNegative
                   ? newValue > v2 ? v2 : newValue

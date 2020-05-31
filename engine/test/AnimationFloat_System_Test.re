@@ -255,6 +255,44 @@ let runTests = () => {
       ();
     });
 
+    it("Should works with looped animations", _assert => {
+      let keyframes = [
+        {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float)
+      ]
+
+      Shared.initialState
+      ->Engine.Entity.create(~entity=id, ~state=_)
+      ->Engine.Component.AnimationFloat.create(
+          ~isPlaying=true,
+          ~keyframes,
+          ~entity="",
+          ~id,
+          ~state=_,
+          ~wrapMode=Loop,
+          (),
+        )
+      -> tick(2000.0, _)
+      ->(
+          state => {
+            let newState = tick(0.0, state);
+            
+            _assert(getAnimation(newState, id).value === 0.66);
+            _assert(getAnimation(newState, id).isFinished === true);
+            _assert(
+              getAnimation(newState, id).isPlaying === true,
+            );
+            _assert(
+              getAnimation(newState, id).currentTime === 0.0,
+            );
+
+          }
+        );
+      ();
+    });
+
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
@@ -269,7 +307,7 @@ let runTests = () => {
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
-        AnimationFloat_System.getActiveKeyframe(animation);
+        AnimationFloat_System.getActiveKeyframe(animation, false);
 
       _assert(keyframeCurrentTime === 0.0);
       _assert(keyframeIndex === 0);
@@ -289,7 +327,7 @@ let runTests = () => {
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
-        AnimationFloat_System.getActiveKeyframe(animation);
+        AnimationFloat_System.getActiveKeyframe(animation, false);
 
       _assert(keyframeCurrentTime === 5.0);
       _assert(keyframeIndex === 0);
@@ -310,7 +348,7 @@ let runTests = () => {
       };
 
       let {keyframeCurrentTime, keyframeIndex}: AnimationFloat_System.activeKeyframe =
-        AnimationFloat_System.getActiveKeyframe(animation);
+        AnimationFloat_System.getActiveKeyframe(animation, false);
 
       _assert(keyframeCurrentTime === 0.5);
       _assert(keyframeIndex === 1);
@@ -333,35 +371,35 @@ let runTests = () => {
       };
 
       let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
-        AnimationFloat_System.getActiveKeyframe(animation);
+        AnimationFloat_System.getActiveKeyframe(animation, false);
 
-      _assert(keyframeCurrentTime === 2000.0);
+      _assert(keyframeCurrentTime === 1887.0);
       _assert(timeExceeded === true);
       _assert(keyframeIndex === (-1));
     });
 
-    // it("getActiveFrame - should works with Loop animation", _assert => {
-    //   let animation: Shared.animation(float) = {
-    //     entity: "",
-    //     isPlaying: true,
-    //     currentTime: 2000.0,
-    //     value: 0.0,
-    //     keyframes: [
-    //       {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
-    //       {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
-    //       {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
-    //       {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
-    //     ],
-    //     isFinished: false,
-    //     wrapMode: Once,
-    //   };
+    it("getActiveFrame - should works with Loop animation", _assert => {
+      let animation: Shared.animation(float) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 2000.0,
+        value: 0.0,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 1.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 2.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+          {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        ],
+        isFinished: false,
+        wrapMode: Loop,
+      };
 
-    //   let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
-    //     AnimationFloat_System.getActiveKeyframe(animation);
+      let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationFloat_System.activeKeyframe =
+        AnimationFloat_System.getActiveKeyframe(animation, false);
 
-    //   _assert(keyframeCurrentTime === 2000.0);
-    //   _assert(timeExceeded === true);
-    //   _assert(keyframeIndex === (-1));
-    // });
+      _assert(keyframeCurrentTime === 66.0);
+      _assert(timeExceeded === true);
+      _assert(keyframeIndex === 3);
+    });
   });
 };
