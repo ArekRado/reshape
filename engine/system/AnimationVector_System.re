@@ -17,7 +17,13 @@ type activeKeyframe = {
   timeExceeded: bool,
 };
 
-let getActiveKeyframe = (animation: Shared.animation(Vector_Util.t)) => {
+type acc = {
+  sum: float,
+  activeIndex: int,
+  breakLoop: bool,
+}
+
+let rec getActiveKeyframe = (animation: Shared.animation(Vector_Util.t), secondLoop: bool) => {
   let size = Belt.List.size(animation.keyframes);
 
   if (size === 1) {
@@ -27,34 +33,54 @@ let getActiveKeyframe = (animation: Shared.animation(Vector_Util.t)) => {
       timeExceeded: false,
     };
   } else {
-    let (sum, activeIndex, _) =
+    let {sum, activeIndex } =
       Belt.List.reduceWithIndex(
         animation.keyframes,
-        (0.0, 0, false),
-        ((sum, activeIndex, break), keyframe, index) =>
-        if (break === true) {
-          (sum, activeIndex, true);
-        } else if (keyframe.duration +. sum < animation.currentTime) {
+        {
+          sum: 0.0,
+          activeIndex: 0,
+          breakLoop: false,
+        },
+        (acc, keyframe, index) =>
+        if (acc.breakLoop === true) {
+          acc;
+        } else if (keyframe.duration +. acc.sum < animation.currentTime) {
           if (size === index + 1) {
-            (
-              // timeExceeded
-              0.0,
-              (-1),
-              true,
-            );
+            // timeExceeded
+            {
+              sum: keyframe.duration +. acc.sum,
+              activeIndex: -1,
+              breakLoop: true
+            }
           } else {
-            (keyframe.duration +. sum, index, false);
+            {
+              sum: keyframe.duration +. acc.sum,
+              activeIndex: index,
+              breakLoop: false,
+            }
           };
         } else {
-          (sum, index, true);
+          {
+            ...acc,
+            activeIndex: index,
+            breakLoop: true,
+          }
         }
       );
 
-    {
-      keyframeCurrentTime: animation.currentTime -. sum,
-      keyframeIndex: activeIndex,
-      timeExceeded: activeIndex === (-1),
-    };
+    if(activeIndex === -1 && animation.wrapMode === Loop) {
+      getActiveKeyframe({
+        ...animation,
+        // mod_float prevents from unnecessary loops, instantly moves to last loop
+        currentTime: mod_float(animation.currentTime, sum),
+      }, true)
+    } else {
+      {
+        keyframeCurrentTime: animation.currentTime -. sum,
+        keyframeIndex: activeIndex,
+        timeExceeded: secondLoop || activeIndex === (-1),
+      };
+    }
   };
 };
 
@@ -64,14 +90,15 @@ let update = (~state: Shared.state): Shared.state => {
     Belt.Map.String.map(state.animationVector, animation =>
       if (animation.isPlaying) {
         let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
-          getActiveKeyframe(animation);
+          getActiveKeyframe(animation, false);
 
-        if (timeExceeded === true) {
+        if (timeExceeded === true && animation.wrapMode === Once) {
           {
             ...animation,
             currentTime: 0.0,
             value: Vector_Util.zero,
             isPlaying: false,
+            isFinished: true,
           };
         } else {
           switch (Belt.List.get(animation.keyframes, keyframeIndex)) {
@@ -97,6 +124,7 @@ let update = (~state: Shared.state): Shared.state => {
             {
               ...animation,
               currentTime: animation.currentTime +. state.time.delta,
+              isFinished: timeExceeded,
               value:
                 isNegative
                   ? Vector_Util.isGreater(newValue, v2) ? v2 : newValue

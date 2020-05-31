@@ -10,7 +10,7 @@ let runTests = () => {
       keyframes: [],
       isPlaying: false,
       currentTime: 0.0,
-      value: Vector_Util.zero,
+      value: Vector_Util.create(-999.99, -999.99),
       isFinished: false,
       wrapMode: Once,
     };
@@ -127,6 +127,60 @@ let runTests = () => {
       ();
     });
 
+    it("Should not update frame values when time is over", _assert => {
+      let keyframe: Shared.keyframe(Vector_Util.t) = {
+        duration: 10.0,
+        timingFunction: Linear,
+        valueRange: ((0.0, 0.0), (1.0, 1.0)),
+      };
+      Shared.initialState
+      ->Engine.Entity.create(~entity=id, ~state=_)
+      ->Engine.Component.AnimationVector.create(
+          ~isPlaying=true,
+          ~keyframes=[keyframe],
+          ~entity="",
+          ~id,
+          ~state=_,
+          (),
+        )
+      ->(
+          state => {
+            let newState = tick(0.0, state);
+            _assert(
+              Vector_Util.isEqual(
+                getAnimation(newState, id).value, 
+                Vector_Util.create(0.0, 0.0)
+              )
+            );
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(20.0, state);
+            _assert(
+              Vector_Util.isEqual(
+                getAnimation(newState, id).value, 
+                Vector_Util.create(0.0, 0.0)
+              )
+            );
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(40.0, state);
+            _assert(
+              Vector_Util.isEqual(
+                getAnimation(newState, id).value, 
+                Vector_Util.create(1.0, 1.0)
+              )
+            );
+          }
+        );
+      ();
+    });
+
     it("Should works with negative values", _assert => {
       let keyframe: Shared.keyframe(Vector_Util.t) = {
         duration: 10.0,
@@ -209,8 +263,250 @@ let runTests = () => {
       ();
     });
 
-    // it("getActiveFrame - should return active frame", _assert =>
-    //   {}
-    // );
+    it("Should works with multiple frames", _assert => {
+      let keyframes = [
+        {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 1.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 2.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 100.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t)
+      ]
+
+      Shared.initialState
+      ->Engine.Entity.create(~entity=id, ~state=_)
+      ->Engine.Component.AnimationVector.create(
+          ~isPlaying=true,
+          ~keyframes,
+          ~entity="",
+          ~id,
+          ~state=_,
+          (),
+        )
+      ->(
+          state => {
+            let newState = tick(0.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.0, 0.0)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(5.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.0, 0.0)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(10.5, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.5, 0.5)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(12.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.5, 0.5)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(100.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.5, 0.5)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(300.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.87, 0.87)
+            ));
+            newState;
+          }
+        )
+      ->(
+          state => {
+            let newState = tick(100.0, state);
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value, 
+              Vector_Util.create(0.0, 0.0)
+            ));
+            _assert(
+              getAnimation(newState, id).isPlaying === false,
+            );
+            _assert(
+              getAnimation(newState, id).currentTime === 0.0,
+            );
+          }
+        );
+      ();
+    });
+
+    it("Should works with looped animations", _assert => {
+      let keyframes = [
+        {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 1.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 2.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        {duration: 100.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t)
+      ]
+
+      Shared.initialState
+      ->Engine.Entity.create(~entity=id, ~state=_)
+      ->Engine.Component.AnimationVector.create(
+          ~isPlaying=true,
+          ~keyframes,
+          ~entity="",
+          ~id,
+          ~state=_,
+          ~wrapMode=Loop,
+          (),
+        )
+      -> tick(2000.0, _)
+      ->(
+          state => {
+            let newState = tick(0.0, state);
+            
+            _assert(Vector_Util.isEqual(
+              getAnimation(newState, id).value,
+              Vector_Util.create(0.66, 0.66)
+            ));
+            _assert(getAnimation(newState, id).isFinished === true);
+            _assert(
+              getAnimation(newState, id).isPlaying === true,
+            );
+            _assert(
+              getAnimation(newState, id).currentTime === 0.0,
+            );
+
+          }
+        );
+      ();
+    });
+
+    it("getActiveFrame - should return active frame", _assert => {
+      let animation: Shared.animation(Vector_Util.t) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 0.0,
+        value: Vector_Util.zero,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}:  Shared.keyframe(Vector_Util.t)
+        ],
+        isFinished: false,
+        wrapMode: Once,
+      };
+
+      let {keyframeCurrentTime, keyframeIndex}: AnimationVector_System.activeKeyframe =
+        AnimationVector_System.getActiveKeyframe(animation, false);
+
+      _assert(keyframeCurrentTime === 0.0);
+      _assert(keyframeIndex === 0);
+    });
+
+    it("getActiveFrame - should return active frame", _assert => {
+      let animation: Shared.animation(Vector_Util.t) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 5.0,
+        value: Vector_Util.zero,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        ],
+        isFinished: false,
+        wrapMode: Once,
+      };
+
+      let {keyframeCurrentTime, keyframeIndex}: AnimationVector_System.activeKeyframe =
+        AnimationVector_System.getActiveKeyframe(animation, false);
+
+      _assert(keyframeCurrentTime === 5.0);
+      _assert(keyframeIndex === 0);
+    });
+
+    it("getActiveFrame - should return active frame", _assert => {
+      let animation: Shared.animation(Vector_Util.t) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 10.5,
+        value: Vector_Util.zero,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 1.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t)
+        ],
+        isFinished: false,
+        wrapMode: Once,
+      };
+
+      let {keyframeCurrentTime, keyframeIndex}: AnimationVector_System.activeKeyframe =
+        AnimationVector_System.getActiveKeyframe(animation, false);
+
+      _assert(keyframeCurrentTime === 0.5);
+      _assert(keyframeIndex === 1);
+    });
+
+    it("getActiveFrame - should return active frame", _assert => {
+      let animation: Shared.animation(Vector_Util.t) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 2000.0,
+        value: Vector_Util.zero,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 1.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 2.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 100.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        ],
+        isFinished: false,
+        wrapMode: Once,
+      };
+
+      let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationVector_System.activeKeyframe =
+        AnimationVector_System.getActiveKeyframe(animation, false);
+
+      _assert(keyframeCurrentTime === 1887.0);
+      _assert(timeExceeded === true);
+      _assert(keyframeIndex === (-1));
+    });
+
+    it("getActiveFrame - should works with Loop animation", _assert => {
+      let animation: Shared.animation(Vector_Util.t) = {
+        entity: "",
+        isPlaying: true,
+        currentTime: 2000.0,
+        value: Vector_Util.zero,
+        keyframes: [
+          {duration: 10.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 1.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 2.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+          {duration: 100.0, timingFunction: Linear, valueRange: ((0.0, 0.0), (1.0, 1.0))}: Shared.keyframe(Vector_Util.t),
+        ],
+        isFinished: false,
+        wrapMode: Loop,
+      };
+
+      let {keyframeCurrentTime, keyframeIndex, timeExceeded}: AnimationVector_System.activeKeyframe =
+        AnimationVector_System.getActiveKeyframe(animation, false);
+
+      _assert(keyframeCurrentTime === 66.0);
+      _assert(timeExceeded === true);
+      _assert(keyframeIndex === 3);
+    });
   });
 };

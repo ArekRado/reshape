@@ -1,5 +1,5 @@
 let runTests = () => {
-  Test_Util.describe("TransitionFloat_System", it => {
+  Test_Util.describe("Time_System", it => {
     it("Should change time - start from 0 case", _assert => {
       let state1 =
         Engine.runOneFrame(
