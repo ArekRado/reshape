@@ -6,7 +6,8 @@ let humanImage:string = [%raw {|require('./assets/human.png').default|}];
 
 let initialState: Type.state = {
     game: {
-      area: Belt.Map.String.empty,
+      // area: Belt.Map.String.empty,
+      city: Belt.Map.String.empty,
       scene: TestMap,
       isSceneInicialized: false,
     },
@@ -19,7 +20,8 @@ let rec logic = (state: Type.state) => {
   let newState = ({game: state.game, engine: newEngine} : Type.state)
     ->System.Scene.update
     ->System.Move.update
-    ->System.Area.update
+    // ->System.Area.update
+    ->System.City.update
 
   requestAnimationFrame(() => logic(newState));
 };

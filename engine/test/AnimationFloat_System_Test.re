@@ -288,6 +288,14 @@ let runTests = () => {
               getAnimation(newState, id).currentTime === 0.0,
             );
 
+            newState;
+          })
+        ->(
+          // Second tick should reset isFinished flag
+          state => {
+            let newState = tick(0.0, state);
+            
+            _assert(getAnimation(newState, id).isFinished === false);
           }
         );
       ();

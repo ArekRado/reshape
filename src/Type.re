@@ -1,26 +1,3 @@
-type vector = (float, float);
-
-type entity = Belt.List.t(string);
-
-type transform = {
-  translation: vector,
-  rotation: float,
-  scale: vector,
-  position: vector,
-  localPosition: vector,
-};
-
-type io = {
-  mutable mouseButtons: int,
-  mutable mousePosition: vector,
-};
-
-type timer = {
-  value: float,
-  maxValue: float,
-  isDone: bool,
-};
-
 type areaType =
   | Empty
   | City
@@ -28,26 +5,22 @@ type areaType =
   | Baracks
   | Farm;
 
-type area = {areaType};
-
-type rigidbodyType =
-  | Circle
-  | Square;
-
-type rigidbody = {
-  rigidbodyType,
-  size: vector,
-  isClicked: bool,
-  isHovered: bool,
+type area = {
+  areaType,
+  size: float
 };
 
-type image = {src: string};
+type city = {
+  areaType,
+  size: float
+};
 
 type scenes =
   | TestMap;
 
 type gameState = {
-    area: Belt.Map.String.t(area),
+    // area: Belt.Map.String.t(area),
+    city: Belt.Map.String.t(city),
     scene: scenes,
     isSceneInicialized: bool,
 }  

@@ -2,11 +2,19 @@ let citySpriteUrl: string = [%raw {|require('../assets/city.png').default|}];
 let circleSpriteUrl: string = [%raw {|require('../assets/circle.png').default|}] 
 
 let create =
-    (state: Type.state, ~localPosition: Type.vector) => {
+    (state: Type.state, ~localPosition: Engine.Util.Vector.t): Type.state => {
   let cityEntity = Engine.Entity.generate("city");
   let circleEntity = Engine.Entity.generate("cityCircle")
 
   let buildTimer = Engine.Entity.generate("buildTimer")
+
+  let newGameState = state.game
+    ->Component.City.create(
+      ~entity=cityEntity,
+      ~areaType=City,
+      ~state=_, 
+      ()
+    );
 
   let newEngine = state.engine
     // city
@@ -32,7 +40,7 @@ let create =
       ~state=_,
     )
     ->Engine.Component.Sprite.create(
-      ~entity=circleEntity, 
+      ~entity=circleEntity,
       ~src=circleSpriteUrl, 
       ~state=_, 
       ()
@@ -49,14 +57,17 @@ let create =
       ~id=buildTimer,
       ~isPlaying=true,
       ~keyframes=[
-        {duration: 10.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 500.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
       ],
+      ~wrapMode=Loop,
       ~state=_,
       ()
     );
+    // ->Engine.Component.AnimationFloat.create(
+    // )
       
   {
-    ...state,
+    game: newGameState,
     engine: newEngine,
   }
 };
