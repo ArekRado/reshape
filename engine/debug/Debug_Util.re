@@ -1,5 +1,3 @@
-let humanFriendlyEntity = entity => Js.String2.split(entity, "###")[0];
-
 type entityComponents = {
   transform: option(Shared.transform),
   sprite: option(Shared.sprite),

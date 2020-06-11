@@ -23,6 +23,7 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) =>
       id,
       {
         entity,
+        name: Uuid_Util.humanFriendlyEntity(id),
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

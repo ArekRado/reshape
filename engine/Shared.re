@@ -64,6 +64,7 @@ type keyframe('a) = {
 
 type animation('a) = {
   entity: string,
+  name: string,
   keyframes: Belt.List.t(keyframe('a)),
   isPlaying: bool,
   isFinished: bool,

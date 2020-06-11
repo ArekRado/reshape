@@ -11,7 +11,7 @@ type area = {
 };
 
 type city = {
-  areaType,
+  // areaType,
   size: float
 };
 

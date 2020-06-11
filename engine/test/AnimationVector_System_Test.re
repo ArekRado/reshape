@@ -7,6 +7,7 @@ let runTests = () => {
 
     let defaultAnimation: Shared.animation(Vector_Util.t) = {
       entity: "",
+      name: "",
       keyframes: [],
       isPlaying: false,
       currentTime: 0.0,
@@ -411,6 +412,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(Vector_Util.t) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 0.0,
         value: Vector_Util.zero,
@@ -431,6 +433,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(Vector_Util.t) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 5.0,
         value: Vector_Util.zero,
@@ -451,6 +454,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(Vector_Util.t) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 10.5,
         value: Vector_Util.zero,
@@ -472,6 +476,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(Vector_Util.t) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 2000.0,
         value: Vector_Util.zero,
@@ -496,6 +501,7 @@ let runTests = () => {
     it("getActiveFrame - should works with Loop animation", _assert => {
       let animation: Shared.animation(Vector_Util.t) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 2000.0,
         value: Vector_Util.zero,

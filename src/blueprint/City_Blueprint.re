@@ -11,7 +11,6 @@ let create =
   let newGameState = state.game
     ->Component.City.create(
       ~entity=cityEntity,
-      ~areaType=City,
       ~state=_, 
       ()
     );
@@ -57,7 +56,7 @@ let create =
       ~id=buildTimer,
       ~isPlaying=true,
       ~keyframes=[
-        {duration: 500.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        {duration: 2500.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
       ],
       ~wrapMode=Loop,
       ~state=_,

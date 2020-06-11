@@ -29,6 +29,7 @@ let create =
       id,
       {
         entity,
+        name: Uuid_Util.humanFriendlyEntity(id),
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

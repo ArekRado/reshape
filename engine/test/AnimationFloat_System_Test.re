@@ -7,6 +7,7 @@ let runTests = () => {
 
     let defaultAnimation: Shared.animation(float) = {
       entity: "",
+      name: "",
       keyframes: [],
       isPlaying: false,
       currentTime: 0.0,
@@ -293,9 +294,12 @@ let runTests = () => {
         ->(
           // Second tick should reset isFinished flag
           state => {
-            let newState = tick(0.0, state);
+            let newState = tick(10.0, state);
             
             _assert(getAnimation(newState, id).isFinished === false);
+            _assert(getAnimation(newState, id).currentTime === 0.0);
+
+            newState;
           }
         );
       ();
@@ -304,6 +308,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 0.0,
         value: 0.0,
@@ -324,6 +329,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 5.0,
         value: 0.0,
@@ -344,6 +350,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 10.5,
         value: 0.0,
@@ -365,6 +372,7 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 2000.0,
         value: 0.0,
@@ -389,6 +397,7 @@ let runTests = () => {
     it("getActiveFrame - should works with Loop animation", _assert => {
       let animation: Shared.animation(float) = {
         entity: "",
+        name: "",
         isPlaying: true,
         currentTime: 2000.0,
         value: 0.0,

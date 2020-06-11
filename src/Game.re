@@ -1,8 +1,5 @@
-type context;
-
-let humanImage:string = [%raw {|require('./assets/human.png').default|}];
-
 [@bs.val] external requestAnimationFrame : (unit => unit) => unit = "requestAnimationFrame";
+[@bs.val] external setTimeout : (unit => unit, int) => float = "setTimeout";
 
 let initialState: Type.state = {
     game: {
@@ -23,7 +20,11 @@ let rec logic = (state: Type.state) => {
     // ->System.Area.update
     ->System.City.update
 
-  requestAnimationFrame(() => logic(newState));
+  let test = setTimeout(() => {
+    requestAnimationFrame(() => logic(newState));
+  }, 10);
+
+  ()
 };
 
 Engine.System.IO.initialize();
