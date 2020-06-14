@@ -57,7 +57,7 @@ let make = (~items: Belt.Map.String.t(Shared.animation(float))) =>
             <div className="text-white mb-3 col-span-12">
               {React.string("Animation (float)")}
             </div>
-            <div className="col-span-4">{React.string("id")}</div>
+            <div className="col-span-4">{React.string("name")}</div>
             <div className="col-span-8">{React.string(Uuid_Util.humanFriendlyEntity(id))}</div>
             <div className="col-span-4">{React.string("isPlaying")}</div>
             <div className="col-span-8">{React.string(animation.isPlaying ? "true" : "false")}</div>

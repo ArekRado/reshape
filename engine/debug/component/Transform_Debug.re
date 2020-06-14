@@ -7,17 +7,24 @@ let make = (~transform: option(Shared.transform)) =>
         {React.string("Transform")}
       </div>
       <div className="col-span-4">{React.string("position")}</div>
-      <div className="col-span-8"><Debug_Vector vector={transform.position}/></div>
+      <div className="col-span-8"><Vector_Debug vector={transform.position}/></div>
       <div className="col-span-4">{React.string("localPosition")}</div>
-      <div className="col-span-8"><Debug_Vector vector={transform.localPosition}/></div>
+      <div className="col-span-8"><Vector_Debug vector={transform.localPosition}/></div>
       <div className="col-span-4">{React.string("rotation")}</div>
       <div className="col-span-8">{React.string(Belt.Float.toString(transform.rotation))}</div>
       <div className="col-span-4">{React.string("localRotation")}</div>
       <div className="col-span-8">{React.string(Belt.Float.toString(transform.localRotation))}</div>
       <div className="col-span-4">{React.string("scale")}</div>
-      <div className="col-span-8"><Debug_Vector vector={transform.scale}/></div>
+      <div className="col-span-8"><Vector_Debug vector={transform.scale}/></div>
       <div className="col-span-4">{React.string("localScale")}</div>
-      <div className="col-span-8"><Debug_Vector vector={transform.localScale}/></div>
+      <div className="col-span-8"><Vector_Debug vector={transform.localScale}/></div>
+      <div className="col-span-4">{React.string("parent")}</div>
+      <div className="col-span-8">
+        {switch (transform.parent) {
+        | Some(parent) => React.string(Uuid_Util.humanFriendlyEntity(parent))
+        | None => React.string("None")
+        };}
+      </div>
     </div>
   | None => React.null
   };

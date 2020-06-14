@@ -13,7 +13,7 @@ let mapParamToKeyframes =
 
 let create =
     (
-      ~id: Belt.Map.String.key,
+      ~name: string,
       ~isPlaying=?,
       ~keyframes: Belt.List.t(Shared.keyframe(Vector_Util.t)),
       ~entity: string,
@@ -26,10 +26,10 @@ let create =
   animationVector:
     Belt.Map.String.set(
       state.animationVector,
-      id,
+      name,
       {
         entity,
-        name: Uuid_Util.humanFriendlyEntity(id),
+        name,
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

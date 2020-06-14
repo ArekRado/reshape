@@ -5,6 +5,7 @@ let initialState: Type.state = {
     game: {
       // area: Belt.Map.String.empty,
       city: Belt.Map.String.empty,
+      humanPorter: Belt.Map.String.empty,
       scene: TestMap,
       isSceneInicialized: false,
     },
@@ -20,12 +21,14 @@ let rec logic = (state: Type.state) => {
     // ->System.Area.update
     ->System.City.update
 
-  let test = setTimeout(() => {
-    requestAnimationFrame(() => logic(newState));
-  }, 10);
+  ignore(
+    setTimeout(() => {
+      requestAnimationFrame(() => logic(newState));
+    }, 500)
+  );
 
   ()
 };
 
-Engine.System.IO.initialize();
+Engine.initialize();
 logic(initialState);

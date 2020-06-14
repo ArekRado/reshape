@@ -5,5 +5,14 @@ if(nodeEnv !== "test") {
 }
 
 let initialize = (initialState: Shared.state) => {
-  ReactDOMRe.renderToElementWithId(<EntityList_Debug initialState={initialState} />, "debug");
+  switch (Webapi.Dom.Document.querySelector("body", Webapi.Dom.document)) {
+    | Some(body) => {
+      let container = Webapi.Dom.Document.createElement("div", Webapi.Dom.document);
+      Webapi.Dom.Element.setAttribute("id", "engine-debug", container);
+      Webapi.Dom.Element.appendChild(container, body);
+    }
+    | None => ()
+  };
+
+  ReactDOMRe.renderToElementWithId(<App_Debug initialState={initialState} />, "engine-debug");
 }

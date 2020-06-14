@@ -26,7 +26,7 @@ type acc = {
 let rec getActiveKeyframe = (animation: Shared.animation(Vector_Util.t), secondLoop: bool) => {
   let size = Belt.List.size(animation.keyframes);
 
-  if (size === 1) {
+  if (size === 1 && animation.wrapMode === Once) {
     {
       keyframeCurrentTime: animation.currentTime,
       keyframeIndex: 0,
@@ -123,7 +123,9 @@ let update = (~state: Shared.state): Shared.state => {
 
             {
               ...animation,
-              currentTime: animation.currentTime +. state.time.delta,
+              currentTime: timeExceeded 
+                ? keyframeCurrentTime +. state.time.delta
+                : animation.currentTime +. state.time.delta,
               isFinished: timeExceeded,
               value:
                 isNegative

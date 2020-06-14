@@ -4,25 +4,34 @@
 
 @tailwind utilities;
 
-#debug {
-  font-size: 10px;
+body {
+  display: flex;
 }
 
-#debug .overflow-auto {
+#engine-debug {
+  font-size: 10px;
+  min-width: 400px;
+}
+
+#engine-debug .overflow-auto {
   scrollbar-width: thin;
 }
-#debug .overflow-scroll {
+#engine-debug .overflow-scroll {
   scrollbar-width: thin;
 }
-#debug .overflow-x-auto {
+#engine-debug .overflow-x-auto {
   scrollbar-width: thin;
 }
-#debug .overflow-y-auto {
+#engine-debug .overflow-y-auto {
   scrollbar-width: thin;
 }
-#debug .overflow-x-scroll {
+#engine-debug .overflow-x-scroll {
   scrollbar-width: thin;
 }
-#debug .overflow-y-scroll {
+#engine-debug .overflow-y-scroll {
   scrollbar-width: thin;
+}
+
+#engine-game {
+  flex: 1;
 }

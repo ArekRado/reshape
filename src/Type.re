@@ -15,12 +15,17 @@ type city = {
   size: float
 };
 
+type humanPorter = {
+  target: Engine.Util.Vector.t
+};
+
 type scenes =
   | TestMap;
 
 type gameState = {
     // area: Belt.Map.String.t(area),
     city: Belt.Map.String.t(city),
+    humanPorter: Belt.Map.String.t(humanPorter),
     scene: scenes,
     isSceneInicialized: bool,
 }  

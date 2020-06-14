@@ -1,13 +1,13 @@
 let create = (
   ~state: Shared.state,
-  ~id,
+  ~name,
   ~entity,
   ~radius,
   ~position=Vector_Util.zero,
   ()
 ) : Shared.state => {
   ...state,
-  collideCircle: Belt.Map.String.set(state.collideCircle, id, {
+  collideCircle: Belt.Map.String.set(state.collideCircle, name, {
     radius,
     position,
     entity,

@@ -45,3 +45,16 @@ let runOneFrame =
 
   newState;
 };
+
+let initialize = () => {
+    switch (Webapi.Dom.Document.querySelector("body", Webapi.Dom.document)) {
+    | Some(body) => {
+      let container = Webapi.Dom.Document.createElement("div", Webapi.Dom.document);
+      Webapi.Dom.Element.setAttribute("id", "engine-game", container);
+      Webapi.Dom.Element.appendChild(container, body);
+    }
+    | None => ()
+  };
+
+  IO_System.initialize();
+}

@@ -4,18 +4,31 @@ let images = null
 let debugGraphics = null
 let PIXI = null
 
+let getGameContainerDimensions = () => {
+  const element = document.querySelector('#engine-game')
+
+  return [element.clientWidth, element.clientHeight]
+}
+
 let initialize = () => {
   PIXI = require('pixi.js')
 
+  const [x, y] = getGameContainerDimensions()
+
   pixiApp = new PIXI.Application({
-    width: document.body.clientWidth,
-    height: document.body.clientHeight,
+    width: x,
+    height: y,
     backgroundColor: 0x1099bb,
   })
 
-  !document || !document.body
-    ? console.warn("Couldn't find document body")
-    : document.body.appendChild(pixiApp.view)
+  pixiApp.renderer.autoResize = true
+
+  if (!document || !document.body) {
+    console.warn("Couldn't find document body")
+  } else {
+    const element = document.querySelector('#engine-game')
+    element.appendChild(pixiApp.view)
+  }
 
   images = new Map()
   debugGraphics = new PIXI.Graphics()

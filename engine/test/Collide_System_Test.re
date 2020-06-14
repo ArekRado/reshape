@@ -80,7 +80,7 @@ let runTests = () => {
       )
       ->Engine.Component.CollideBox.create(
         ~entity=entity1,
-        ~id=id1,
+        ~name=id1,
         ~size=(1.5, 1.5),
         ~position=(0.0, 0.0),
         ~state=_, 
@@ -88,7 +88,7 @@ let runTests = () => {
       )
       ->Engine.Component.CollideBox.create(
         ~entity=entity2,
-        ~id=id2,
+        ~name=id2,
         ~size=(1.0, 1.0),
         ~position=(0.0, 0.0),
         ~state=_, 
@@ -96,7 +96,7 @@ let runTests = () => {
       )
       ->Engine.Component.CollideBox.create(
         ~entity=entity3,
-        ~id=id3,
+        ~name=id3,
         ~size=(1.0, 1.0),
         ~position=(-2.0, -2.0),
         ~state=_, 

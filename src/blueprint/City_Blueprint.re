@@ -53,7 +53,7 @@ let create =
     // buildTimer
     ->Engine.Component.AnimationFloat.create(
       ~entity=cityEntity,
-      ~id=buildTimer,
+      ~name=buildTimer,
       ~isPlaying=true,
       ~keyframes=[
         {duration: 2500.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
@@ -62,8 +62,6 @@ let create =
       ~state=_,
       ()
     );
-    // ->Engine.Component.AnimationFloat.create(
-    // )
       
   {
     game: newGameState,

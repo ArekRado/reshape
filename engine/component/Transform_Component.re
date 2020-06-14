@@ -16,6 +16,13 @@ let create =
     Belt.Map.String.set(
       state.transform,
       entity,
-      {rotation, localRotation, scale, localScale, position: Vector_Util.zero, localPosition, parent},
+      {
+        rotation, 
+        localRotation, 
+        scale, 
+        localScale, 
+        position: Vector_Util.zero, 
+        localPosition, parent
+      },
     ),
 };

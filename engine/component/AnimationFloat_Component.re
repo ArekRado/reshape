@@ -7,7 +7,7 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) =>
 
   let create =
     (
-      ~id: Belt.Map.String.key,
+      ~name: string,
       ~isPlaying=?,
       ~keyframes: Belt.List.t(Shared.keyframe(float)),
       ~entity: string,
@@ -20,10 +20,10 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Shared.keyframe(float))) =>
   animationFloat:
     Belt.Map.String.set(
       state.animationFloat,
-      id,
+      name,
       {
         entity,
-        name: Uuid_Util.humanFriendlyEntity(id),
+        name,
         keyframes: mapParamToKeyframes(keyframes),
         isPlaying:
           switch (isPlaying) {

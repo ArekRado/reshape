@@ -2,7 +2,7 @@ let humanSpriteUrl: string = [%raw {|require('../assets/human.png').default|}];
 
 let create =
     (
-      state: Type.state,
+      ~state: Type.state,
       ~localPosition: Engine.Util.Vector.t,
     ) => {
   let entity = Engine.Entity.generate("HumanPorter");
