@@ -1,120 +1,170 @@
-// module Parse = {
-//   let jsonFalse = (json) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONFalse => false
-//       | _ => failwith("Expected an false")
-//     };
+let validator = (correctTest, map, json) => map(correctTest(json))
 
-//   let jsonTrue = (json) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONTrue => true
-//       | _ => failwith("Expected an true")
-//     };
-
-//   // ???
-//   // let jsonNull = (json) =>
-//   //   switch (Js.Json.classify(json)) {
-//   //     | Js.Json.JSONNull(value) => value
-//   //     | _ => failwith("Expected an null")
-//   //   };
-
-//   let jsonString = (json) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONString(value) => value
-//       | _ => failwith("Expected an string")
-//     };
-
-//   let jsonNumber = (json) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONNumber(value) => value
-//       | _ => failwith("Expected an number")
-//     };
-
-//   type jsonObjectClasifyProperty = {
-//     classifyProperty: (Js.Json.t) => bool, 
-//     property: string,
-//   };
-  
-//   let jsonObject = (json, classifyProperties) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONObject(object_) => {
-//         let clasifyObject = ({classifyProperty, property}) => 
-//           switch(Js.Dict.get(object_, property)) {
-//             | Some(property) => classifyProperty(property)
-//             | None => failwith("Invalid object property")
-//           };
-
-//         switch(Belt.List.some(classifyProperties, clasifyObject)) {
-//           | false => object_
-//           | true => failwith("Invalid object property")
-//         };
-//       }
-//       | _ => failwith("Expected an object")
-//     };
-
-//   let jsonArray = (classifyItem, json) =>
-//     switch (Js.Json.classify(json)) {
-//       | Js.Json.JSONArray(array) => 
-//         switch(Js.Array.some(item => classifyItem(item), array)) {
-//           | false => array
-//           | true => failwith("Item in array is invalid")
-//         }
-//       | _ => failwith("Expected an array")
-//     };
-// }
-
-
-let validator = (correctTest, map=?, defaultValue, someValue) => {
- let (isCorrect, value) = correctTest(someValue, defaultValue);
-
-  (
-    isCorrect,
-    switch(map) {
-      | Some(map) => map(isCorrect, value)
-      | None => value
-    }
-  )
-}
-
-let maybeString = validator(
-  (json, defaultValue) =>
-    switch (Js.Json.classify(json)) {
-      | Js.Json.JSONString(value) => (true, value)
-      | _ => (false, defaultValue)
-    },
-  (_, value) => value,
+let maybeString = validator((json) =>
+  switch (Js.Json.classify(json)) {
+    | Js.Json.JSONString(value) => Some(value)
+    | _ => None
+  },
 );
 
-let maybeInt = validator();
+let maybeFloat = validator((json) =>
+  switch (Js.Json.classify(json)) {
+    | Js.Json.JSONNumber(value) => Some(value)
+    | _ => None
+  },
+);
 
+let maybeBool = validator((json) =>
+  switch (Js.Json.classify(json)) {
+    | Js.Json.JSONTrue => Some(true)
+    | Js.Json.JSONFalse => Some(false)
+    | _ => None
+  },
+);
 
-let parse = (data) => {
-  let test = maybeString(data, "nope");
+let maybeArray = (map, json) =>
+  switch (Js.Json.classify(json)) {
+    | Js.Json.JSONArray(value) => map(value)
+    | _ => failwith("Expected an array")
+  };
 
-  Js.log(test);
+let maybeProperty = (property, obj) =>
+  switch (Js.Dict.get(obj, property)) {
+  | Some(value) => value
+  | _ => failwith("Property: " ++ property ++ " doesn't exist")
 }
 
-let parsee = (data) => {
-  let json =
-    try (Js.Json.parseExn(data)) {
-    | _ => failwith("Error parsing JSON string")
-    };
-
+let maybeObject = (map, json) => 
   switch (Js.Json.classify(json)) {
-  | Js.Json.JSONObject(value) =>
-    /* In this branch, compiler infer value : Js.Json.t Js.Dict.t */
-    switch (Js.Dict.get(value, "entity")) {
-    | Some(entity) =>
-      switch (Js.Json.classify(entity)) {
-      | Js.Json.JSONArray(entity) =>
-        /* In this branch compiler infer entity : Js.Json.t array */
-        entity
-      | _ => failwith("Expected an array")
-      }
-    | None => failwith("Expected an `ids` property")
-    }
+  | Js.Json.JSONObject(value) => map(value)
   | _ => failwith("Expected an object")
   };
+
+
+// UTILS
+
+let stringWithDefault = default => maybeString((maybeValue) => 
+  switch (maybeValue) {
+  | Some(value) => value
+  | None => default
+  }
+);
+
+let floatWithDefault = default => maybeFloat((maybeValue) => 
+  switch (maybeValue) {
+  | Some(value) => value
+  | None => default
+  }
+);
+
+let boolWithDefault = default => maybeBool((maybeValue) => 
+  switch (maybeValue) {
+  | Some(value) => value
+  | None => default
+  }
+);
+
+// let vectorWithDefault = default => maybeVector((maybeValue) => 
+//   switch (maybeValue) {
+//   | Some(value) => value
+//   | None => default
+//   }
+// );
+
+let getArrayWithDefault = (default, array, index) => 
+  switch (Belt.Array.get(array, index)) {
+  | Some(value) => value
+  | None => default
+  };
+
+let maybeVector = maybeArray(array => {
+    let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
+    
+    (
+      getArrayWithDefault(0.0, floatArray, 0),
+      getArrayWithDefault(0.0, floatArray, 1)
+    );
+  })
+
+type test = {
+  entity: Belt.List.t(string),
+  mutable mouseButtons: float,
+  mutable mousePosition: Shared.vector,
+  time: Shared.time,
+  isDebugInitialized: bool,
 };
 
-let stringify = (state:Shared.state) => {}
+let parseState =
+  maybeObject(
+    (obj): test => {
+      entity: [],
+      mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
+      mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
+      
+      
+      //  maybeArray(
+      //   array => {
+      //     let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
+          
+      //     (
+      //       getArrayWithDefault(0.0, floatArray, 0),
+      //       getArrayWithDefault(0.0, floatArray, 1)
+      //     );
+      //   },
+      //   maybeProperty("mousePosition", obj)
+      // ),
+
+
+        // maybeArray(maybeValue =>
+        //   switch (maybeValue) {
+        //   | Some(value) => (
+        //     getArrayWithDefault((0.0, 0.0), value, 0),
+        //     getArrayWithDefault((0.0, 0.0), value, 1)
+        //   )
+        //   | None => (0.0, 0.0)
+        //   }
+        // ),
+      time: maybeObject((timeObj): Shared.time => {
+          timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
+          delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
+      }, maybeProperty("time", obj)),
+      isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
+  });
+
+let parse = (data) => {
+  // let test1 = maybeString((_, value) => value, data);
+  // let test2 = maybeFloat((_, value) => value, data);
+  // let test = Js.Json.decodeString(data)
+
+  let parsedData: test = try (parseState(data)) {
+  | _ => failwith("Error parsing JSON string")
+  };
+
+  Js.log(parsedData);
+  // Js.log(test2);
+};
+
+// let parsee = (data) => {
+//   let json =
+//     try (Js.Json.parseExn(data)) {
+//     | _ => failwith("Error parsing JSON string")
+//     };
+
+//   switch (Js.Json.classify(json)) {
+//   | Js.Json.JSONObject(value) =>
+//     /* In this branch, compiler infer value : Js.Json.t Js.Dict.t */
+//     switch (Js.Dict.get(value, "entity")) {
+//     | Some(entity) =>
+//       switch (Js.Json.classify(entity)) {
+//       | Js.Json.JSONArray(entity) =>
+//         /* In this branch compiler infer entity : Js.Json.t array */
+//         entity
+//       | _ => failwith("Expected an array")
+//       }
+//     | None => failwith("Expected an `ids` property")
+//     }
+//   | _ => failwith("Expected an object")
+//   };
+// };
+
+// let stringify = (state:Shared.state) => {}

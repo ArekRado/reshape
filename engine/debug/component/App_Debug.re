@@ -1,5 +1,3 @@
-Save_Debug.parse("{}");
-
 [@react.component]
 let make = (~initialState: Shared.state) => {
   let (state, setState) = React.useState(_ => initialState);

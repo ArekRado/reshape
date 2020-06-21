@@ -1,0 +1,10 @@
+{
+  "entity": [],
+  "mouseButtons": 1,
+  "mousePosition": [1, 2],
+  "time": {
+    "timeNow": 0,
+    "delta": 0
+  },
+  "isDebugInitialized": true
+}
