@@ -1,12 +1,11 @@
-let _assert = (assertion: bool) =>
+let _assert = (description,assertion: bool) =>
   if (assertion === false) {
-    Js.log("");
-    Js.log("--> Assertion failed <--");
+    failwith("Assertion failed " ++ description);
   };
 
 let it = (description, case) => {
   Js.log("  - " ++ description);
-  case(_assert);
+  case(_assert(description));
 };
 
 let describe = (description, case) => {

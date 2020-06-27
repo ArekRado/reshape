@@ -1,5 +1,5 @@
 {
-  "name": "pixel-strategy",
+  "name": "reshape",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArekRado/pixel-strategy.git"
+    "url": "git+https://github.com/ArekRado/reshape.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ArekRado/pixel-strategy/issues"
+    "url": "https://github.com/ArekRado/reshape/issues"
   },
-  "homepage": "https://github.com/ArekRado/pixel-strategy#readme",
+  "homepage": "https://github.com/ArekRado/reshape#readme",
   "dependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
