@@ -5,11 +5,11 @@
     {
       "dir": "src",
       "subdirs": true
-    },
-    {
-      "dir": "engine",
-      "subdirs": true
     }
+    // {
+    //   "dir": "engine",
+    //   "subdirs": true
+    // }
   ],
   "package-specs": {
     "module": "commonjs",

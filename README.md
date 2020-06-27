@@ -1,60 +1,147 @@
-# ReasonML
+# Reshape
 
-## Summary
-
-*Develop ReasonML applications.*
-
-| Metadata | Value |
-|----------|-------|
-| *Contributors* | Diullei Gomes ([@diullei](https://github.com/diullei)) |
-| *Definition type* | Dockerfile |
-| *Languages, platforms* | ReasonML |
-
-This image contains the development environment to work with [ReasonML](https://reasonml.github.io/) applications. It also includes [fish shell](https://fishshell.com/) to improve the CLI experience.
-
-## Using this definition with an existing folder
-
-To get started, follow these steps:
-
-1. If this is your first time using a development container, please follow the [getting started steps](https://aka.ms/vscode-remote/containers/getting-started) to set up your machine.
-
-2. To use VS Code's copy of this definition:
-   1. Start VS Code and open your project folder.
-   2. Press <kbd>F1</kbd> select and **Remote-Containers: Add Development Container Configuration Files...** from the command palette.
-   3. Select the ReasonML definition.
-
-3. To use latest-and-greatest copy of this definition from the repository:
-   1. Clone this repository.
-   2. Copy the contents of `containers/reasonml/.devcontainer` to the root of your project folder.
-   3. Start VS Code and open your project folder.
-
-4. After following step 2 or 3, the contents of the `.devcontainer` folder in your project can be adapted to meet your needs.
-
-5. Finally, press <kbd>F1</kbd> and run **Remote-Containers: Reopen Folder in Container** to start using the definition.
-
-## Testing the definition
-
-This definition includes some test code that will help you verify it is working as expected on your system. Follow these steps:
-
-1. If this is your first time using a development container, please follow the [getting started steps](https://aka.ms/vscode-remote/containers/getting-started) to set up your machine.
-2. Clone this repository.
-3. Start VS Code, press <kbd>F1</kbd>, and select **Remote-Containers: Open Folder in Container...**
-4. Select the `containers/reasonml` folder.
-5. After the folder has opened in the container, use the following commands:
-
-```bash
-   cd test-project
-   yarn install
-   yarn build
-   node src/Demo.bs.js
+```
+npm i
 ```
 
-6. You should see: "Hey, Dev!" as the application output.
+```js
+// run bsb
+npm run start1
+// run webpack-dev-server
+npm run start2
+```
 
-> NOTE: You can type `fish` to the cli to use the [fish shell](https://fishshell.com/).
+```js
+// run bsb with test env
+npm run test:watch1
+// run nodemon
+npm run test:watch2
+```
 
-## License
+If this is your first time using a development container, please follow the [getting started steps](https://aka.ms/vscode-remote/containers/getting-started) to set up your machine.
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+# ECS
 
-Licensed under the MIT License. See [LICENSE](https://github.com/Microsoft/vscode-dev-containers/blob/master/LICENSE).
+[What is entity component system?](https://en.wikipedia.org/wiki/Entity_component_system)
+
+# Entity
+
+It's just a uniq string - think about it as uniq ID from SQL database.
+
+```reason
+let newEntity = Engine.Entity.generate("human-friendly-name"); // "human-friendly-name###9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+
+let letStateWithNewEntity = Engine.Entity.create(newEntity, Engine.initialState);
+```
+
+# Component
+
+Component describes game state without logic. It's something like a table record from SQL database.
+
+```reason
+Engine.Component.Sprite;
+Engine.Component.Transform;
+Engine.Component.AnimationFloat;
+Engine.Component.AnimationVector;
+Engine.Component.CollideBox;
+Engine.Component.CollideCircle;
+```
+
+Example how to use components in your code:
+
+```reason
+let gunSpriteUrl: string = [%raw {|require('../assets/gun.png').default|}];
+
+// blueprint helps you avoid excessive code - It's common pattern used in gamedev
+module Gun_Blueprint {
+  let create = (state: Engine.Type.state): Engine.Type.state => {
+    // create new entity
+    let gunEntity = Engine.Entity.generate("gun");
+
+    state.engine
+      // push new entity to state
+      ->Engine.Entity.create(
+        ~entity=cityEntity,
+        ~state=_,
+      )
+      // create and push gun sprite and connect it with entity
+      ->Engine.Component.Sprite.create(
+          ~entity=cityEntity,
+          ~src=gunSpriteUrl,
+          ~state=_,
+          ()
+      )
+      // do same with transform
+      ->Engine.Component.Transform.create(
+        ~entity=cityEntity,
+        ~localPosition=localPosition,
+        ~state=_,
+        ()
+      )
+      // and animation :)
+      ->Engine.Component.AnimationFloat.create(
+        ~entity=gunEntity,
+        ~name="shot", // Entity can be connected with multiple animations, name helps you with identify each animation
+        ~isPlaying=true,
+        ~keyframes=[
+          {duration: 2500.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Shared.keyframe(float),
+        ],
+        ~wrapMode=Loop,
+        ~state=_,
+        ()
+      );
+  };
+};
+```
+
+# System
+
+Pure logic without state. Every system receives whole state then modifies it and returns new state. Reshape contains several internal systems use `Engine.runOneFrame` funtion to run them.
+
+# Easy start
+
+```reason
+[@bs.val] external requestAnimationFrame : (unit => unit) => unit = "requestAnimationFrame";
+[@bs.val] external setTimeout : (unit => unit, int) => float = "setTimeout";
+
+type gameState = {
+  yourState: string,
+}
+
+// This is example how to connect both states
+// Reshape uses only state.engine, your systems should use only state.game
+type state = {
+  game: gameState,
+  engine: Engine.Type.state,
+}
+
+let initialState: state = {
+  game: {
+    yourState: "",
+  },
+  engine: Engine.initialState,
+};
+
+let rec logic = (state: state) => {
+  let newEngine = Engine.runOneFrame(
+    ~state=state.engine, // Engine.Type.state
+    ~debug=true, // Will enable debug UI
+    // ~enableDraw=false, // Usefull to avoid canvas rendering during a unit tests
+    // ~performanceNow=1000.0 // Usefull to mock unit tests
+    ()
+  );
+
+  let newState = ({game: state.game, engine: newEngine} : state)
+    ->Game.System.System1.update
+    ->Game.System.System2.update
+    ->Game.System.System3.update
+    ->Game.System.System4.update
+
+  requestAnimationFrame(() => logic(newState));
+};
+
+// do side effects - initialize will mount new DOM elements and attach event listeners
+Engine.initialize();
+// your game loop
+logic(initialState);
+```

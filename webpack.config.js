@@ -2,7 +2,7 @@ const path = require('path')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './src/game.bs.js',
+  entry: './src/index.bs.js',
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
@@ -31,10 +31,10 @@ module.exports = {
       {
         test: /\.css|otf$/,
         use: [
-          "style-loader",
-          { loader: "css-loader", options: { importLoaders: 1 } },
-          "postcss-loader"
-        ]
+          'style-loader',
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          'postcss-loader',
+        ],
       },
     ],
   },
