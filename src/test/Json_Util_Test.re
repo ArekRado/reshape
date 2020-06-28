@@ -1,108 +1,156 @@
-// let simpleCorrect: string = [%raw {|require('./mock/simpleCorrect.json')|}];
+let simpleCorrect: string = [%raw {|require('./mock/simpleCorrect.json')|}];
 
-// type type1 = {
-//   isDebugInitialized: bool,
-// }
+type type1 = {
+  isDebugInitialized: bool,
+}
 
-// type type2 = {
-//   entity: Belt.List.t(string),
-//   mutable mouseButtons: float,
-//   mutable mousePosition: Type.vector,
-//   time: Type.time,
-//   isDebugInitialized: bool,
-// };
+type type2 = {
+  entity: Belt.List.t(string),
+  mutable mouseButtons: float,
+  mutable mousePosition: Type.vector,
+  time: Type.time,
+  isDebugInitialized: bool,
+};
 
-// let runTests = () => {
-//   Test_Util.describe("Json_Util", it => {
-//     // it("should throw error when data is invalid", _assert => {
-//     //   open Json_Util.Parse;
+let runTests = () => {
+  Test_Util.describe("Json_Util", it => {
+    it("should parse simple data", _assert => {
+      open Json_Util.Parse;
 
-//     //   let data = Js.Json.string("{}");
+      let parseState =
+        maybeObject((v) => 
+          switch (v) {
+          | Some(obj) => {
+            let time = maybeObject(
+              (timeObj): option(Type.time) =>
+                switch (timeObj) {
+                | Some(timeObj) =>
+                  Some({
+                    timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
+                    delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
+                  });
+                | None => raise(Not_found);
+              }, 
+              maybeProperty("time", obj)
+            );
 
-//     //   let parseState =
-//     //     maybeObject((obj): type1 => {
-//     //       isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
-//     //   });
+            Some({
+              entity: [],
+              mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
+              mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
+              time: switch (time) {
+                | Some(v) => v;
+                | None => raise(Not_found);
+              },
+              isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
+            });
+          }
+          | None => None;
+          }
+        );
 
-//     //   let parsedData: type1 = switch(parseState(data)) {
-//     //   | Some(v) => {
-//     //       _assert(true);
-//     //       v;
-//     //     }
-//     //   | None => {
-//     //     _assert(false);
-//     //     {
-//     //       isDebugInitialized: false,
-//     //     };
-//     //   }
-//     //   };
-//     // });
+      let data = Js.Json.string(simpleCorrect);
+      // Js.log(simpleCorrect);
 
-//     it("should parse simple data", _assert => {
-//       open Json_Util.Parse;
+      switch(parseState(data)) {
+      | Some(_) => _assert(true);
+      | None => _assert(false);
+      };
+    });
 
-//       let parseState =
-//         maybeObject((v) => 
-//           switch (v) {
-//           | Some(obj) => {
-//             let time = maybeObject(
-//               (timeObj): option(Type.time) =>
-//                 switch (timeObj) {
-//                 | Some(timeObj) =>
-//                   Some({
-//                     timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
-//                     delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
-//                   });
-//                 | None => raise(Not_found);
-//               }, 
-//               maybeProperty("time", obj)
-//             );
+    it("should parse dic which has been stringified", _assert => {
+      open Json_Util.Parse;
 
-//             Some({
-//               entity: [],
-//               mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
-//               mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
-//               time: switch (time) {
-//                 | Some(v) => v;
-//                 | None => raise(Not_found);
-//               },
-//               isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
-//             });
-//           }
-//           | None => None;
-//           }
-//         );
+      let dict = Js.Dict.empty();
+      let timeDict = Js.Dict.empty();
 
-//       let data = Js.Json.string(simpleCorrect);
+      Js.Dict.set(timeDict, "timeNow", Js.Json.number(0.0));
+      Js.Dict.set(timeDict, "delta", Js.Json.number(0.0));
 
-//       switch(parseState(data)) {
-//       | Some(_) => _assert(true);
-//       | None => _assert(false);
-//       };
-//     });
-//   });
-// };
+      Js.Dict.set(dict, "entity", Js.Json.array([| |]));
+      Js.Dict.set(dict, "mouseButtons", Js.Json.number(1.0));
+      Js.Dict.set(dict, "mousePosition", Js.Json.numberArray([|1.0, 2.0|]));
+      Js.Dict.set(dict, "time",  Js.Json.object_(timeDict));
+      Js.Dict.set(dict, "isDebugInitialized", Js.Json.boolean(false));
+
+      let parseState =
+        maybeObject((v) => 
+          switch (v) {
+          | Some(obj) => {
+            let time = maybeObject(
+              (timeObj): option(Type.time) =>
+                switch (timeObj) {
+                | Some(timeObj) =>
+                  Some({
+                    timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
+                    delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
+                  });
+                | None => raise(Not_found);
+              }, 
+              maybeProperty("time", obj)
+            );
+
+            Some({
+              entity: [],
+              mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
+              mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
+              time: switch (time) {
+                | Some(v) => v;
+                | None => raise(Not_found);
+              },
+              isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
+            });
+          }
+          | None => {
+            None
+          };
+          }
+        );
+
+      let dataString = dict
+      ->Js.Json.object_
+      ->Js.Json.stringifyWithSpace(2)
+
+      let json =
+        try (Js.Json.parseExn(dataString)) {
+        | _ => failwith("Error parsing JSON string")
+      };
+
+      switch(parseState(json)) {
+      | Some(_) => _assert(true);
+      | None => _assert(false);
+      };
+    });
+
+    it("should stringify state", _assert => {
+      let state = Json_Util.stringifyState(Type.initialState);
+
+      Js.log(state);
+    });
+
+  });
+};
 
 
-//               //  maybeArray(
-//               //   array => {
-//               //     let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
+              //  maybeArray(
+              //   array => {
+              //     let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
                   
-//               //     (
-//               //       getArrayWithDefault(0.0, floatArray, 0),
-//               //       getArrayWithDefault(0.0, floatArray, 1)
-//               //     );
-//               //   },
-//               //   maybeProperty("mousePosition", obj)
-//               // ),
+              //     (
+              //       getArrayWithDefault(0.0, floatArray, 0),
+              //       getArrayWithDefault(0.0, floatArray, 1)
+              //     );
+              //   },
+              //   maybeProperty("mousePosition", obj)
+              // ),
 
 
-//                 // maybeArray(maybeValue =>
-//                 //   switch (maybeValue) {
-//                 //   | Some(value) => (
-//                 //     getArrayWithDefault((0.0, 0.0), value, 0),
-//                 //     getArrayWithDefault((0.0, 0.0), value, 1)
-//                 //   )
-//                 //   | None => (0.0, 0.0)
-//                 //   }
-//                 // ),
+                // maybeArray(maybeValue =>
+                //   switch (maybeValue) {
+                //   | Some(value) => (
+                //     getArrayWithDefault((0.0, 0.0), value, 0),
+                //     getArrayWithDefault((0.0, 0.0), value, 1)
+                //   )
+                //   | None => (0.0, 0.0)
+                //   }
+                // ),
