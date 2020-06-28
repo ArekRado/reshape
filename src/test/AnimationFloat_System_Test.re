@@ -278,15 +278,15 @@ let runTests = () => {
       -> tick(2000.0, _)
       ->(
           state => {
-            let newState = tick(0.0, state);
-            
+            let newState = tick(2000.0, state);
+
             _assert(getAnimation(newState, name).value === 0.66);
             _assert(getAnimation(newState, name).isFinished === true);
             _assert(
               getAnimation(newState, name).isPlaying === true,
             );
             _assert(
-              getAnimation(newState, name).currentTime === 0.0,
+              getAnimation(newState, name).currentTime === 66.0,
             );
 
             newState;
@@ -294,10 +294,10 @@ let runTests = () => {
         ->(
           // Second tick should reset isFinished flag
           state => {
-            let newState = tick(10.0, state);
-            
+            let newState = tick(2010.0, state);
+
             _assert(getAnimation(newState, name).isFinished === false);
-            _assert(getAnimation(newState, name).currentTime === 0.0);
+            _assert(getAnimation(newState, name).currentTime === 76.0);
 
             newState;
           }
