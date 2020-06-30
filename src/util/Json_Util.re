@@ -87,7 +87,28 @@ module Parse = {
   });
 };
 
-let stringifyVector = (x, y) => Js.Json.numberArray([| x, y |])
+let stringifyVector = ((x, y)) => Js.Json.numberArray([| x, y |]);
+
+let stringifyTimingFunction = (timingFunction: Type.timingFunction) => {
+  let x = switch(timingFunction) {
+  | Linear => "Linear"
+  | EaseInQuad => "EaseInQuad"
+  | EaseOutQuad => "EaseOutQuad"
+  | EaseInOutQuad => "EaseInOutQuad"
+  | EaseInCubic => "EaseInCubic"
+  | EaseOutCubic => "EaseOutCubic"
+  | EaseInOutCubic => "EaseInOutCubic"
+  | EaseInQuart => "EaseInQuart"
+  | EaseOutQuart => "EaseOutQuart"
+  | EaseInOutQuart => "EaseInOutQuart"
+  | EaseInQuint => "EaseInQuint"
+  | EaseOutQuint => "EaseOutQuint"
+  | EaseInOutQuint => "EaseInOutQuint"
+  | CubicBezier(_, _, _, _) => "CubicBezier" // todo
+  };
+
+  Js.Json.string(x);
+}
 
 let stringifyEntity = entity =>
   Belt.List.map(entity, Js.Json.string)
@@ -97,39 +118,94 @@ let stringifyEntity = entity =>
 let stringifyTransform = transform => {
   let dict = Js.Dict.empty();
 
-  Belt.Map.String.mapWithKey(transform, (entity, x) => {
-    let {
-      scale: (scaleX, scaleY),
-      localScale: (localScaleX, localScaleY),
-      position: (positionX, positionY),
-      localPosition: (localPositionX, localPositionY),
-    }: Type.transform = x;
-    let transformDic = Js.Dict.empty();
+  ignore(
+    Belt.Map.String.mapWithKey(transform, (entity, (x: Type.transform)) => {
+      let transformDict = Js.Dict.empty();
 
-    Js.Dict.set(dict, "rotation", Js.Json.number(x.rotation));
-    Js.Dict.set(dict, "localRotation", Js.Json.number(x.localRotation));
-    Js.Dict.set(dict, "scale", stringifyVector(scaleX, scaleY));
-    Js.Dict.set(dict, "localScale", stringifyVector(localScaleX, localScaleY));
-    Js.Dict.set(dict, "position", stringifyVector(positionX, positionY));
-    Js.Dict.set(dict, "localPosition", stringifyVector(localPositionX, localPositionY));
+      Js.Dict.set(transformDict, "rotation", Js.Json.number(x.rotation));
+      Js.Dict.set(transformDict, "localRotation", Js.Json.number(x.localRotation));
+      Js.Dict.set(transformDict, "scale", stringifyVector(x.scale));
+      Js.Dict.set(transformDict, "localScale", stringifyVector(x.localScale));
+      Js.Dict.set(transformDict, "position", stringifyVector(x.position));
+      Js.Dict.set(transformDict, "localPosition", stringifyVector(x.localPosition));
 
-    switch(x.parent) {
-      | Some(parent) => Js.Dict.set(dict, "parent", Js.Json.string(parent));
-      | None =>  Js.Dict.set(dict, "parent", Js.Json.null);
-    }
+      switch(x.parent) {
+        | Some(parent) => Js.Dict.set(transformDict, "parent", Js.Json.string(parent));
+        | None =>  Js.Dict.set(transformDict, "parent", Js.Json.null);
+      }
 
-    Js.Dict.set(dict, entity, Js.Json.object_(transformDic));
-  })
+      Js.Dict.set(dict, entity, Js.Json.object_(transformDict));
+    })
+  );
 
   Js.Json.object_(dict)
-}
+};
 
-
-let stringifyTime = (time) => {
+let stringifyAnimationFloat = animationFloat => {
   let dict = Js.Dict.empty();
 
-  Js.Dict.set(dict, "timeNow", Js.Json.number(0.0));
-  Js.Dict.set(dict, "delta", Js.Json.number(0.0));
+  ignore(
+    Belt.Map.String.mapWithKey(animationFloat, (entity, x: Type.animation(float)) => {
+      let animationDict = Js.Dict.empty();
+
+      Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
+      Js.Dict.set(animationDict, "name", Js.Json.string(x.name));
+      Js.Dict.set(animationDict, "isPlaying", Js.Json.boolean(x.isPlaying));
+      Js.Dict.set(animationDict, "isFinished", Js.Json.boolean(x.isFinished));
+      Js.Dict.set(animationDict, "currentTime", Js.Json.number(x.currentTime));
+      Js.Dict.set(animationDict, "value", Js.Json.number(x.value));
+      Js.Dict.set(
+        animationDict, 
+        "wrapMode", 
+        Js.Json.string(switch(x.wrapMode) {
+        | Once => "Once"
+        | Loop => "Loop"
+        | PingPong => "PingPong"
+        | ClampForever => "ClampForever"
+        })
+      );
+
+      Js.Dict.set(animationDict, "keyframes", Js.Json.objectArray(
+        Belt.List.map(x.keyframes, keyframe => {
+          let keyframeDict = Js.Dict.empty();
+
+          Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
+          Js.Dict.set(keyframeDict, "timingFunction", stringifyTimingFunction(keyframe.timingFunction));
+          Js.Dict.set(keyframeDict, "valueRange", stringifyVector(keyframe.valueRange));
+
+          keyframeDict;
+        })
+        ->Array.of_list
+      ));
+
+      Js.Dict.set(dict, entity, Js.Json.object_(animationDict));
+    })
+  );
+
+  Js.Json.object_(dict)
+};
+
+let stringifySprite = (sprite) => {
+  let dict = Js.Dict.empty();
+
+  ignore(
+    Belt.Map.String.mapWithKey(sprite, (entity, x: Type.sprite) => {
+      let spriteDict = Js.Dict.empty();
+
+      Js.Dict.set(dict, "src", Js.Json.string(x.src));
+
+      Js.Dict.set(dict, entity, Js.Json.object_(spriteDict));
+    })
+  );
+
+  Js.Json.object_(dict)
+};
+
+let stringifyTime = (time: Type.time) => {
+  let dict = Js.Dict.empty();
+
+  Js.Dict.set(dict, "timeNow", Js.Json.number(time.timeNow));
+  Js.Dict.set(dict, "delta", Js.Json.number(time.delta));
 
   Js.Json.object_(dict);
 };
@@ -139,8 +215,8 @@ let stringifyState = (state: Type.state): string => {
 
   Js.Dict.set(dict, "entity", stringifyEntity(state.entity));
   Js.Dict.set(dict, "transform", stringifyTransform(state.transform));
-  // transform: Belt.Map.String.empty,
-  // sprite: Belt.Map.String.empty,
+  Js.Dict.set(dict, "sprite", stringifySprite(state.sprite));
+  Js.Dict.set(dict, "animationFloat", stringifyAnimationFloat(state.animationFloat));
   // animationFloat: Belt.Map.String.empty,
   // animationVector: Belt.Map.String.empty,
   // collideBox: Belt.Map.String.empty,
