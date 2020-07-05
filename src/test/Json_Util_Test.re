@@ -101,9 +101,7 @@ let runTests = () => {
               isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
             });
           }
-          | None => {
-            None
-          };
+          | None => None
           }
         );
 
@@ -123,34 +121,18 @@ let runTests = () => {
     });
 
     it("should stringify state", _assert => {
-      let state = Json_Util.stringifyState(Type.initialState);
+      let stateString = Json_Util.Stringify.state(Type.initialState)
 
-      Js.log(state);
+      let json =
+        try (Js.Json.parseExn(stateString)) {
+        | _ => failwith("Error parsing JSON string")
+      };
+
+      let stateString2 = json
+        ->Json_Util.Parse.state
+        ->Json_Util.Stringify.state
+
+      _assert(stateString2 === stateString);
     });
-
   });
 };
-
-
-              //  maybeArray(
-              //   array => {
-              //     let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
-                  
-              //     (
-              //       getArrayWithDefault(0.0, floatArray, 0),
-              //       getArrayWithDefault(0.0, floatArray, 1)
-              //     );
-              //   },
-              //   maybeProperty("mousePosition", obj)
-              // ),
-
-
-                // maybeArray(maybeValue =>
-                //   switch (maybeValue) {
-                //   | Some(value) => (
-                //     getArrayWithDefault((0.0, 0.0), value, 0),
-                //     getArrayWithDefault((0.0, 0.0), value, 1)
-                //   )
-                //   | None => (0.0, 0.0)
-                //   }
-                // ),

@@ -1,27 +1,24 @@
 module Parse = {
-  let validator = (correctTest, map, json) => map(correctTest(json))
+  // let validator = (correctTest, map, json) => map(correctTest(json))
 
-  let maybeString = validator((json) =>
+  let maybeString = (map, json) =>
     switch (Js.Json.classify(json)) {
-      | Js.Json.JSONString(value) => Some(value)
-      | _ => None
-    },
-  );
+      | Js.Json.JSONString(value) => map(Some(value))
+      | _ => map(None)
+    };
 
-  let maybeFloat = validator((json) =>
+  let maybeFloat = (map, json) =>
     switch (Js.Json.classify(json)) {
-      | Js.Json.JSONNumber(value) => Some(value)
-      | _ => None
-    },
-  );
+      | Js.Json.JSONNumber(value) => map(Some(value))
+      | _ => map(None)
+    };
 
-  let maybeBool = validator((json) =>
+  let maybeBool = (map, json) =>
     switch (Js.Json.classify(json)) {
-      | Js.Json.JSONTrue => Some(true)
-      | Js.Json.JSONFalse => Some(false)
-      | _ => None
-    },
-  );
+      | Js.Json.JSONTrue => map(Some(true))
+      | Js.Json.JSONFalse => map(Some(false))
+      | _ => map(None)
+    };
 
   let maybeArray = (map, json) =>
     switch (Js.Json.classify(json)) {
@@ -38,7 +35,7 @@ module Parse = {
   let maybeObject = (map, json) => 
     switch (Js.Json.classify(json)) {
     | Js.Json.JSONObject(value) => map(Some(value))
-    | _ => None
+    | _ => map(None)
     };
 
   // UTILS
@@ -85,150 +82,383 @@ module Parse = {
       getArrayWithDefault(0.0, floatArray, 1)
     );
   });
-};
 
-let stringifyVector = ((x, y)) => Js.Json.numberArray([| x, y |]);
+  let dictToMapString = (map, dict) =>
+    dict
+      |> maybeObject(dict => 
+        switch(dict) {
+        | Some(dict) =>
+          dict
+          -> Js.Dict.entries
+          -> Belt.Map.String.fromArray
+          -> Belt.Map.String.reduce(
+            Belt.Map.String.empty,
+            (acc, key, value) => {
+              let maybeItem = maybeObject(value => 
+                switch (value) {
+                | Some(value) => Some(map(value));
+                | None => None;
+              }, value);
 
-let stringifyTimingFunction = (timingFunction: Type.timingFunction) => {
-  let x = switch(timingFunction) {
-  | Linear => "Linear"
-  | EaseInQuad => "EaseInQuad"
-  | EaseOutQuad => "EaseOutQuad"
-  | EaseInOutQuad => "EaseInOutQuad"
-  | EaseInCubic => "EaseInCubic"
-  | EaseOutCubic => "EaseOutCubic"
-  | EaseInOutCubic => "EaseInOutCubic"
-  | EaseInQuart => "EaseInQuart"
-  | EaseOutQuart => "EaseOutQuart"
-  | EaseInOutQuart => "EaseInOutQuart"
-  | EaseInQuint => "EaseInQuint"
-  | EaseOutQuint => "EaseOutQuint"
-  | EaseInOutQuint => "EaseInOutQuint"
-  | CubicBezier(_, _, _, _) => "CubicBezier" // todo
-  };
-
-  Js.Json.string(x);
-}
-
-let stringifyEntity = entity =>
-  Belt.List.map(entity, Js.Json.string)
-  ->Array.of_list
-  ->Js.Json.array
-
-let stringifyTransform = transform => {
-  let dict = Js.Dict.empty();
-
-  ignore(
-    Belt.Map.String.mapWithKey(transform, (entity, (x: Type.transform)) => {
-      let transformDict = Js.Dict.empty();
-
-      Js.Dict.set(transformDict, "rotation", Js.Json.number(x.rotation));
-      Js.Dict.set(transformDict, "localRotation", Js.Json.number(x.localRotation));
-      Js.Dict.set(transformDict, "scale", stringifyVector(x.scale));
-      Js.Dict.set(transformDict, "localScale", stringifyVector(x.localScale));
-      Js.Dict.set(transformDict, "position", stringifyVector(x.position));
-      Js.Dict.set(transformDict, "localPosition", stringifyVector(x.localPosition));
-
-      switch(x.parent) {
-        | Some(parent) => Js.Dict.set(transformDict, "parent", Js.Json.string(parent));
-        | None =>  Js.Dict.set(transformDict, "parent", Js.Json.null);
-      }
-
-      Js.Dict.set(dict, entity, Js.Json.object_(transformDict));
-    })
-  );
-
-  Js.Json.object_(dict)
-};
-
-let stringifyAnimationFloat = animationFloat => {
-  let dict = Js.Dict.empty();
-
-  ignore(
-    Belt.Map.String.mapWithKey(animationFloat, (entity, x: Type.animation(float)) => {
-      let animationDict = Js.Dict.empty();
-
-      Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
-      Js.Dict.set(animationDict, "name", Js.Json.string(x.name));
-      Js.Dict.set(animationDict, "isPlaying", Js.Json.boolean(x.isPlaying));
-      Js.Dict.set(animationDict, "isFinished", Js.Json.boolean(x.isFinished));
-      Js.Dict.set(animationDict, "currentTime", Js.Json.number(x.currentTime));
-      Js.Dict.set(animationDict, "value", Js.Json.number(x.value));
-      Js.Dict.set(
-        animationDict, 
-        "wrapMode", 
-        Js.Json.string(switch(x.wrapMode) {
-        | Once => "Once"
-        | Loop => "Loop"
-        | PingPong => "PingPong"
-        | ClampForever => "ClampForever"
-        })
+              switch(maybeItem) {
+              | Some(item) => Belt.Map.String.set(acc, key, item);
+              | None => acc;
+              }
+            }
+          )
+        | None => Belt.Map.String.empty
+        }
       );
 
-      Js.Dict.set(animationDict, "keyframes", Js.Json.objectArray(
-        Belt.List.map(x.keyframes, keyframe => {
-          let keyframeDict = Js.Dict.empty();
+  let state =
+    maybeObject((stateObj): Type.state => 
+      switch (stateObj) {
+      | Some(stateObj) => 
+        let x: Type.state = {
+          entity: stateObj
+            |> maybeProperty("entity")
+            |> maybeArray(array => 
+              array
+                ->Belt.List.fromArray
+                ->Belt.List.map(stringWithDefault("", _))
+            ),
+          mouseButtons: stateObj
+            |> maybeProperty("mouseButtons")
+            |> floatWithDefault(0.0)
+            |> Belt.Float.toInt,
+          mousePosition: stateObj
+            |> maybeProperty("mousePosition")
+            |> maybeVector,
+          time: stateObj 
+            |> maybeProperty("time")
+            |> maybeObject(timeObj: Type.time =>
+              switch (timeObj) {
+              | Some(timeObj) => {
+                  timeNow: timeObj
+                    |> maybeProperty("timeNow") 
+                    |> floatWithDefault(0.0),
+                  delta: timeObj
+                    |> maybeProperty("delta") 
+                    |> floatWithDefault(0.0),
+                }
+              | None => Type.initialState.time;
+            }),
+          isDebugInitialized: stateObj
+            |> maybeProperty("isDebugInitialized")
+            |> boolWithDefault(false),
+          transform: stateObj
+            |> maybeProperty("transform")
+            |> maybeObject(transformObj => 
+              switch(transformObj) {
+              | Some(transformObj) =>
+                transformObj
+                -> Js.Dict.entries
+                -> Belt.Map.String.fromArray
+                -> Belt.Map.String.reduce(
+                  Belt.Map.String.empty,
+                  (acc, key, value) => {
+                    let maybeTransform = maybeObject(value => 
+                      switch (value) {
+                      | Some(value) => 
+                      let x: Type.transform = {
+                        rotation: value
+                          |> maybeProperty("rotation")
+                          |> floatWithDefault(0.0),
+                        localRotation: value
+                          |> maybeProperty("localRotation")
+                          |> floatWithDefault(0.0),
+                        scale: value
+                          |> maybeProperty("scale")
+                          |> maybeVector,
+                        localScale: value
+                          |> maybeProperty("localScale")
+                          |> maybeVector,
+                        position: value
+                          |> maybeProperty("position")
+                          |> maybeVector,
+                        localPosition: value
+                          |> maybeProperty("localPosition")
+                          |> maybeVector,
+                        parent: value
+                          |> maybeProperty("parent")
+                          |> maybeString(parent =>
+                            switch(parent) {
+                              | Some(parent) => Some(parent)
+                              | None => None
+                            }
+                          ),
+                      };
+                      
+                      Some(x);
+                      | None => None
+                    }, value);
 
-          Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
-          Js.Dict.set(keyframeDict, "timingFunction", stringifyTimingFunction(keyframe.timingFunction));
-          Js.Dict.set(keyframeDict, "valueRange", stringifyVector(keyframe.valueRange));
+                    switch(maybeTransform) {
+                    | Some(transform) => Belt.Map.String.set(acc, key, transform);
+                    | None => acc;
+                    }
+                  }
+                )
+              | None => Belt.Map.String.empty
+              }
+            ),
+          sprite: stateObj
+            |> maybeProperty("sprite")
+            |> dictToMapString((sprite): Type.sprite => {
+              src: sprite
+                |> maybeProperty("parent")
+                |> stringWithDefault(""),
+            }),
+                 
 
-          keyframeDict;
-        })
-        ->Array.of_list
-      ));
+          animationFloat: Type.initialState.animationFloat,    
+          animationVector: Type.initialState.animationVector, 
+          collideBox: Type.initialState.collideBox, 
+          collideCircle: Type.initialState.collideCircle,
+      }
 
-      Js.Dict.set(dict, entity, Js.Json.object_(animationDict));
+      x;
+      | None => Type.initialState
     })
-  );
+  };
 
-  Js.Json.object_(dict)
-};
+module Stringify = {
+  let vector = ((x, y)) => Js.Json.numberArray([| x, y |]);
 
-let stringifySprite = (sprite) => {
-  let dict = Js.Dict.empty();
-
-  ignore(
-    Belt.Map.String.mapWithKey(sprite, (entity, x: Type.sprite) => {
-      let spriteDict = Js.Dict.empty();
-
-      Js.Dict.set(dict, "src", Js.Json.string(x.src));
-
-      Js.Dict.set(dict, entity, Js.Json.object_(spriteDict));
+  let collisions = (collisions: Belt.List.t(Type.collideType)) => 
+    Belt.List.map(collisions, collision => switch(collision) {
+      | Box(entity) => Js.Json.stringArray([| "Box", entity |])
+      | Circle(entity) => Js.Json.stringArray([| "Circle", entity |])
     })
-  );
+    ->Array.of_list
+    ->Js.Json.array;
 
-  Js.Json.object_(dict)
+  let timingFunction = (timingFunction: Type.timingFunction) => {
+    let x = switch(timingFunction) {
+    | Linear => "Linear"
+    | EaseInQuad => "EaseInQuad"
+    | EaseOutQuad => "EaseOutQuad"
+    | EaseInOutQuad => "EaseInOutQuad"
+    | EaseInCubic => "EaseInCubic"
+    | EaseOutCubic => "EaseOutCubic"
+    | EaseInOutCubic => "EaseInOutCubic"
+    | EaseInQuart => "EaseInQuart"
+    | EaseOutQuart => "EaseOutQuart"
+    | EaseInOutQuart => "EaseInOutQuart"
+    | EaseInQuint => "EaseInQuint"
+    | EaseOutQuint => "EaseOutQuint"
+    | EaseInOutQuint => "EaseInOutQuint"
+    | CubicBezier(_, _, _, _) => "CubicBezier" // todo
+    };
+
+    Js.Json.string(x);
+  }
+
+  let entity = entity =>
+    entity
+      ->Belt.List.toArray
+      ->Js.Json.stringArray
+
+  let transform = transform => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(transform, (entity, (x: Type.transform)) => {
+        let transformDict = Js.Dict.empty();
+
+        Js.Dict.set(transformDict, "rotation", Js.Json.number(x.rotation));
+        Js.Dict.set(transformDict, "localRotation", Js.Json.number(x.localRotation));
+        Js.Dict.set(transformDict, "scale", vector(x.scale));
+        Js.Dict.set(transformDict, "localScale", vector(x.localScale));
+        Js.Dict.set(transformDict, "position", vector(x.position));
+        Js.Dict.set(transformDict, "localPosition", vector(x.localPosition));
+
+        switch(x.parent) {
+          | Some(parent) => Js.Dict.set(transformDict, "parent", Js.Json.string(parent));
+          | None =>  Js.Dict.set(transformDict, "parent", Js.Json.null);
+        }
+
+        Js.Dict.set(dict, entity, Js.Json.object_(transformDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let animationFloat = animationFloat => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(animationFloat, (entity, x: Type.animation(float)) => {
+        let animationDict = Js.Dict.empty();
+
+        Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(animationDict, "name", Js.Json.string(x.name));
+        Js.Dict.set(animationDict, "isPlaying", Js.Json.boolean(x.isPlaying));
+        Js.Dict.set(animationDict, "isFinished", Js.Json.boolean(x.isFinished));
+        Js.Dict.set(animationDict, "currentTime", Js.Json.number(x.currentTime));
+        Js.Dict.set(animationDict, "value", Js.Json.number(x.value));
+        Js.Dict.set(
+          animationDict, 
+          "wrapMode", 
+          Js.Json.string(switch(x.wrapMode) {
+          | Once => "Once"
+          | Loop => "Loop"
+          | PingPong => "PingPong"
+          | ClampForever => "ClampForever"
+          })
+        );
+
+        Js.Dict.set(animationDict, "keyframes", Js.Json.objectArray(
+          Belt.List.map(x.keyframes, keyframe => {
+            let keyframeDict = Js.Dict.empty();
+
+            Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
+            Js.Dict.set(keyframeDict, "timingFunction", timingFunction(keyframe.timingFunction));
+            Js.Dict.set(keyframeDict, "valueRange", vector(keyframe.valueRange));
+
+            keyframeDict;
+          })
+          ->Array.of_list
+        ));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(animationDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let animationVector = animationVector => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(animationVector, (entity, x: Type.animation(Type.vector)) => {
+        let animationDict = Js.Dict.empty();
+
+        Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(animationDict, "name", Js.Json.string(x.name));
+        Js.Dict.set(animationDict, "isPlaying", Js.Json.boolean(x.isPlaying));
+        Js.Dict.set(animationDict, "isFinished", Js.Json.boolean(x.isFinished));
+        Js.Dict.set(animationDict, "currentTime", Js.Json.number(x.currentTime));
+        Js.Dict.set(animationDict, "value", vector(x.value));
+        Js.Dict.set(
+          animationDict, 
+          "wrapMode", 
+          Js.Json.string(switch(x.wrapMode) {
+          | Once => "Once"
+          | Loop => "Loop"
+          | PingPong => "PingPong"
+          | ClampForever => "ClampForever"
+          })
+        );
+
+        Js.Dict.set(animationDict, "keyframes", Js.Json.objectArray(
+          Belt.List.map(x.keyframes, keyframe => {
+            let (v1, v2) = keyframe.valueRange;
+            let keyframeDict = Js.Dict.empty();
+
+            Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
+            Js.Dict.set(keyframeDict, "timingFunction", timingFunction(keyframe.timingFunction));
+            Js.Dict.set(
+              keyframeDict, 
+              "valueRange", 
+              Js.Json.array([| vector(v1), vector(v2) |])
+            );
+
+            keyframeDict;
+          })
+          ->Array.of_list
+        ));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(animationDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let sprite = (sprite) => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(sprite, (entity, x: Type.sprite) => {
+        let spriteDict = Js.Dict.empty();
+
+        Js.Dict.set(dict, "src", Js.Json.string(x.src));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(spriteDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let collideBox = (collideBox) => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(collideBox, (entity, x: Type.collideBox) => {
+        let collideDict = Js.Dict.empty();
+
+        Js.Dict.set(collideDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(collideDict, "size", vector(x.size));
+        Js.Dict.set(collideDict, "position", vector(x.position));
+        Js.Dict.set(collideDict, "collisions", collisions(x.collisions));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(collideDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let collideCircle = (collideCircle) => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(collideCircle, (entity, x: Type.collideCircle) => {
+        let collideDict = Js.Dict.empty();
+
+        Js.Dict.set(collideDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(collideDict, "radius", Js.Json.number(x.radius));
+        Js.Dict.set(collideDict, "position", vector(x.position));
+        Js.Dict.set(collideDict, "collisions", collisions(x.collisions));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(collideDict));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
+  let time = (time: Type.time) => {
+    let dict = Js.Dict.empty();
+
+    Js.Dict.set(dict, "timeNow", Js.Json.number(time.timeNow));
+    Js.Dict.set(dict, "delta", Js.Json.number(time.delta));
+
+    Js.Json.object_(dict);
+  };
+
+  let state = (state: Type.state): string => {
+    let dict = Js.Dict.empty();
+
+    Js.Dict.set(dict, "entity", entity(state.entity));
+    Js.Dict.set(dict, "transform", transform(state.transform));
+    Js.Dict.set(dict, "sprite", sprite(state.sprite));
+    Js.Dict.set(dict, "animationFloat", animationFloat(state.animationFloat));
+    Js.Dict.set(dict, "animationVector", animationVector(state.animationVector));
+    Js.Dict.set(dict, "collideBox", collideBox(state.collideBox));
+    Js.Dict.set(dict, "collideCircle", collideCircle(state.collideCircle));
+    Js.Dict.set(dict, "time", time(state.time));
+
+    Js.Dict.set(dict, "mouseButtons", Js.Json.number(Belt.Int.toFloat(state.mouseButtons)));
+    Js.Dict.set(dict, "mousePosition", vector(state.mousePosition));
+    Js.Dict.set(dict, "isDebugInitialized", Js.Json.boolean(state.isDebugInitialized));
+
+    dict
+      ->Js.Json.object_
+      ->Js.Json.stringifyWithSpace(2)  
+  }
 };
-
-let stringifyTime = (time: Type.time) => {
-  let dict = Js.Dict.empty();
-
-  Js.Dict.set(dict, "timeNow", Js.Json.number(time.timeNow));
-  Js.Dict.set(dict, "delta", Js.Json.number(time.delta));
-
-  Js.Json.object_(dict);
-};
-
-let stringifyState = (state: Type.state): string => {
-  let dict = Js.Dict.empty();
-
-  Js.Dict.set(dict, "entity", stringifyEntity(state.entity));
-  Js.Dict.set(dict, "transform", stringifyTransform(state.transform));
-  Js.Dict.set(dict, "sprite", stringifySprite(state.sprite));
-  Js.Dict.set(dict, "animationFloat", stringifyAnimationFloat(state.animationFloat));
-  // animationFloat: Belt.Map.String.empty,
-  // animationVector: Belt.Map.String.empty,
-  // collideBox: Belt.Map.String.empty,
-  // collideCircle: Belt.Map.String.empty,
-  Js.Dict.set(dict, "time", stringifyTime(state.time));
-
-  // mouseButtons: 0,
-  // mousePosition: Vector_Util.zero,
-  // isDebugInitialized: false,
-
-  dict
-  ->Js.Json.object_
-  ->Js.Json.stringifyWithSpace(2)  
-}
-
