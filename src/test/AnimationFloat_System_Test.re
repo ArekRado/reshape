@@ -264,7 +264,7 @@ let runTests = () => {
         {duration: 100.0, timingFunction: Linear, valueRange: (0.0, 1.0)}: Type.keyframe(float)
       ]
 
-      Type.initialState
+      let _ = Type.initialState
       ->Engine.Entity.create(~entity=name, ~state=_)
       ->Engine.Component.AnimationFloat.create(
           ~isPlaying=true,
@@ -302,6 +302,7 @@ let runTests = () => {
             newState;
           }
         );
+
       ();
     });
 

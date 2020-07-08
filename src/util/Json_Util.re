@@ -75,13 +75,38 @@ module Parse = {
     };
 
   let maybeVector = maybeArray(array => {
-    let floatArray = Belt.Array.map(array, item => floatWithDefault(0.0, item));
+    let floatArray = Belt.Array.map(array, floatWithDefault(0.0));
     
     (
       getArrayWithDefault(0.0, floatArray, 0),
       getArrayWithDefault(0.0, floatArray, 1)
     );
   });
+
+  let collisions = maybeArray(array =>
+    array
+      ->Belt.List.fromArray
+      ->Belt.List.map(value =>
+        maybeArray(collision => {
+
+          let collisionType = switch (Belt.Array.get(collision, 0)) {
+          | Some(value) => stringWithDefault("Circle", value)
+          | None => "Circle"
+          };
+
+          let collisionValue = switch (Belt.Array.get(collision, 1)) {
+          | Some(value) => stringWithDefault("", value)
+          | None => ""
+          };
+
+          switch(collisionType) {
+          | "Box" => Type.Box(collisionValue)
+          | "Circle" => Type.Circle(collisionValue)
+          | _ => Type.Circle(collisionValue)
+          };
+        }, value)
+      )
+    );
 
   let dictToMapString = (map, dict) =>
     dict
@@ -148,60 +173,34 @@ module Parse = {
             |> boolWithDefault(false),
           transform: stateObj
             |> maybeProperty("transform")
-            |> maybeObject(transformObj => 
-              switch(transformObj) {
-              | Some(transformObj) =>
-                transformObj
-                -> Js.Dict.entries
-                -> Belt.Map.String.fromArray
-                -> Belt.Map.String.reduce(
-                  Belt.Map.String.empty,
-                  (acc, key, value) => {
-                    let maybeTransform = maybeObject(value => 
-                      switch (value) {
-                      | Some(value) => 
-                      let x: Type.transform = {
-                        rotation: value
-                          |> maybeProperty("rotation")
-                          |> floatWithDefault(0.0),
-                        localRotation: value
-                          |> maybeProperty("localRotation")
-                          |> floatWithDefault(0.0),
-                        scale: value
-                          |> maybeProperty("scale")
-                          |> maybeVector,
-                        localScale: value
-                          |> maybeProperty("localScale")
-                          |> maybeVector,
-                        position: value
-                          |> maybeProperty("position")
-                          |> maybeVector,
-                        localPosition: value
-                          |> maybeProperty("localPosition")
-                          |> maybeVector,
-                        parent: value
-                          |> maybeProperty("parent")
-                          |> maybeString(parent =>
-                            switch(parent) {
-                              | Some(parent) => Some(parent)
-                              | None => None
-                            }
-                          ),
-                      };
-                      
-                      Some(x);
-                      | None => None
-                    }, value);
-
-                    switch(maybeTransform) {
-                    | Some(transform) => Belt.Map.String.set(acc, key, transform);
-                    | None => acc;
-                    }
+            |> dictToMapString((transform): Type.transform => {
+              rotation: transform
+                |> maybeProperty("rotation")
+                |> floatWithDefault(0.0),
+              localRotation: transform
+                |> maybeProperty("localRotation")
+                |> floatWithDefault(0.0),
+              scale: transform
+                |> maybeProperty("scale")
+                |> maybeVector,
+              localScale: transform
+                |> maybeProperty("localScale")
+                |> maybeVector,
+              position: transform
+                |> maybeProperty("position")
+                |> maybeVector,
+              localPosition: transform
+                |> maybeProperty("localPosition")
+                |> maybeVector,
+              parent: transform
+                |> maybeProperty("parent")
+                |> maybeString(parent =>
+                  switch(parent) {
+                    | Some(parent) => Some(parent)
+                    | None => None
                   }
-                )
-              | None => Belt.Map.String.empty
-              }
-            ),
+                ),
+            }),
           sprite: stateObj
             |> maybeProperty("sprite")
             |> dictToMapString((sprite): Type.sprite => {
@@ -210,12 +209,41 @@ module Parse = {
                 |> stringWithDefault(""),
             }),
                  
-
           animationFloat: Type.initialState.animationFloat,    
           animationVector: Type.initialState.animationVector, 
-          collideBox: Type.initialState.collideBox, 
-          collideCircle: Type.initialState.collideCircle,
-      }
+          collideBox: stateObj
+            |> maybeProperty("collideBox")
+            |> dictToMapString((collideBox): Type.collideBox => {
+              entity: collideBox
+                |> maybeProperty("entity")
+                |> stringWithDefault(""),
+              size: collideBox
+                |> maybeProperty("size")
+                |> maybeVector,
+              position: collideBox
+                |> maybeProperty("position")
+                |> maybeVector,
+              collisions: collideBox
+                |> maybeProperty("collisions")
+                |> collisions
+            }),
+          collideCircle: stateObj
+            |> maybeProperty("collideBox")
+            |> dictToMapString((collideCircle): Type.collideCircle => {
+              entity: collideCircle
+                |> maybeProperty("entity")
+                |> stringWithDefault(""),
+              radius: collideCircle
+                |> maybeProperty("radius")
+                |> floatWithDefault(0.0),
+              position: collideCircle
+                |> maybeProperty("position")
+                |> maybeVector,
+              collisions: collideCircle
+                |> maybeProperty("collisions")
+                |> collisions
+            }),
+      };
 
       x;
       | None => Type.initialState
