@@ -4,8 +4,8 @@ let make = (~initialState: Type.state) => {
 
   let (state, dispatch) =
     React.useReducer(
-      (state, action) =>
-        switch (action) {
+      (state, action) => {
+        let newState = switch (action) {
         | Type_Debug.SetState(state) => state;
         | Type_Debug.CreateEntity(entity) => Entity.create(~entity, ~state);
         | Type_Debug.CreateTransform(entity) => Transform_Component.create(~entity, ~state, ());        | Type_Debug.CreateSprite(entity) => Sprite_Component.create(~entity, ~state, ~src="", ());
@@ -40,7 +40,12 @@ let make = (~initialState: Type.state) => {
             ~radius=1.0,
             ()
           );
-        },
+        };
+
+        SyncState.set(newState);
+
+        newState;
+      },
       initialState,
     );
 
@@ -63,13 +68,16 @@ let make = (~initialState: Type.state) => {
 
   // Sync once at the saart
   React.useEffect0(() => {
-    dispatch(Type_Debug.SetState(SyncState.get()));
-    Js.log(Js.Json.stringifyAny(SyncState.get()));
+    SyncState.getStateFromLocalStorage()
+      ->Type_Debug.SetState
+      ->dispatch
+
     Some(() => {()});
   });
 
   <div className="text-gray-500 bg-gray-900 w-full h-full flex">
     <div className="flex flex-col flex-1 justify-between py-2 pl-2 pr-1">
+      <Save_Debug state />
       <StartStop_Debug isPlaying setIsPlaying />
       <CreateEntity_Debug dispatch/>
       <div className="flex flex-col flex-1 overflow-y-scroll mt-2">

@@ -50,7 +50,6 @@ let runTests = () => {
         );
 
       let data = Js.Json.string(simpleCorrect);
-      // Js.log(simpleCorrect);
 
       switch(parseState(data)) {
       | Some(_) => _assert(true);

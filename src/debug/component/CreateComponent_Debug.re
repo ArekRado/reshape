@@ -14,8 +14,6 @@ let options: Belt.List.t(Select_UI.selectOption) = [
 ];
 
 let mapStringToAction = (value, entity) => {
-    Js.log(value);
-
   switch value {
   | "Transform" => Type_Debug.CreateTransform(entity);
   | "Sprite" => Type_Debug.CreateSprite(entity);

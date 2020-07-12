@@ -24,8 +24,6 @@ let timingFunctionToString = (timingFunction: Type.timingFunction) =>
   | Type.CubicBezier(_, _ ,_ ,_) => "CubicBezier"
   };
 
-  Js.log(Js.Float.toFixed(10.12345678));
-
 let msToTime = (ms) => {
   let seconds = mod_float(ms /. 1000.0, 60.0);
   let minutes = mod_float(ms /. (1000.0 *. 60.0), 60.0);
