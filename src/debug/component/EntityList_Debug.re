@@ -1,6 +1,6 @@
 [@react.component]
 let make = (
-  ~state: Type.state,
+  ~gameState: Type.state,
   ~setEntity
 ) => 
   <>  
@@ -8,7 +8,7 @@ let make = (
       {React.string("Entity")}
     </div>
     {
-      state.entity
+      gameState.entity
       ->Belt.List.map(entity =>
           <button 
             key={entity} 

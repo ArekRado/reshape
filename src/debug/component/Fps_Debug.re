@@ -1,6 +1,6 @@
 [@react.component]
-let make = (~state: Type.state) => {
-  let fps = 1000.0 /. state.time.delta;
+let make = (~gameState: Type.state) => {
+  let fps = 1000.0 /. gameState.time.delta;
 
   <div className="text-white">
     {React.string("FPS: ")}

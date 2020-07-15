@@ -35,3 +35,7 @@ body {
 #engine-game {
   flex: 1;
 }
+
+.modal-wrapper {
+  top: 50%; /* why it doesnt work tailwind config? */
+}

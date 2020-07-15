@@ -36,10 +36,10 @@ let getComponents = (entity, state: Type.state):entityComponents => {
 
 [@react.component]
 let make = (
-  ~state: Type.state,
+  ~gameState: Type.state,
   ~entity,
 ) => {
-  let components = getComponents(entity, state);
+  let components = getComponents(entity, gameState);
 
   <>  
     <div className="text-white mb-3">

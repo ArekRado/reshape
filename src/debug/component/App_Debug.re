@@ -1,8 +1,8 @@
 [@react.component]
 let make = (~initialState: Type.state) => {
-  let (state, setState) = React.useState(_ => initialState);
+  // let (state, setState) = React.useState(_ => initialState);
 
-  let (state, dispatch) =
+  let (gameState, dispatch) =
     React.useReducer(
       (state, action) => {
         let newState = switch (action) {
@@ -49,6 +49,11 @@ let make = (~initialState: Type.state) => {
       initialState,
     );
 
+  let (modalContext, setModalContext) = React.useReducer(
+    Modal_Context.reducer,
+    Modal_Context.initialState,
+  )
+
   let (entity, setEntity) = React.useState(_ => "");
   let (isPlaying, setIsPlaying) = React.useState(_ => false);
   let isPlayingRef = React.useRef(false);
@@ -75,26 +80,31 @@ let make = (~initialState: Type.state) => {
     Some(() => {()});
   });
 
-  <div className="text-gray-500 bg-gray-900 w-full h-full flex">
-    <div className="flex flex-col flex-1 justify-between py-2 pl-2 pr-1">
-      <Save_Debug state />
-      <StartStop_Debug isPlaying setIsPlaying />
-      <CreateEntity_Debug dispatch/>
-      <div className="flex flex-col flex-1 overflow-y-scroll mt-2">
-        <EntityList_Debug state setEntity />
+  Js.log(modalContext);
+
+  <Modal_Context.Provider value={(modalContext, setModalContext)}>
+    <div className="text-gray-500 bg-gray-900 w-full h-full flex">
+      <div className="flex flex-col flex-1 justify-between py-2 pl-2 pr-1">
+        <Save_Debug gameState />
+        <StartStop_Debug isPlaying setIsPlaying />
+        <CreateEntity_Debug dispatch/>
+        <div className="flex flex-col flex-1 overflow-y-scroll mt-2">
+          <EntityList_Debug gameState setEntity />
+        </div>
+        <Fps_Debug gameState/>
       </div>
-      <Fps_Debug state/>
+      <div className="flex flex-col flex-1 overflow-y-scroll overflow-x-hidden py-2 pr-2 pl-1">
+        {entity !== ""
+          ? 
+          <>
+            <CreateComponent_Debug dispatch entity />
+            <div className="mt-2"/>
+            <ComponentList_Debug gameState entity /> 
+          </>
+          : React.string("Entity not selected")
+        }
+      </div>
+      <Modal_Container_Debug />
     </div>
-    <div className="flex flex-col flex-1 overflow-y-scroll overflow-x-hidden py-2 pr-2 pl-1">
-      {entity !== ""
-        ? 
-        <>
-          <CreateComponent_Debug dispatch entity />
-          <div className="mt-2"/>
-          <ComponentList_Debug state entity /> 
-        </>
-        : React.string("Entity not selected")
-      }
-    </div>
-  </div>;
+  </Modal_Context.Provider>;
 }
