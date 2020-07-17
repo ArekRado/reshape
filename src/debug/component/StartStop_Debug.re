@@ -1,8 +1,10 @@
 [@react.component]
-let make = (~isPlaying, ~setIsPlaying) => {
+let make = () => {
+  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
+
   <Button_UI 
-    onClick={(_) => setIsPlaying((_) => !isPlaying)}  
+    onClick={(_) => editorDispatch(SetIsPlaying(!editorState.isPlaying))}  
   >
-    {React.string(isPlaying ? "Stop" : "Play")}
+    {React.string(editorState.isPlaying ? "Stop" : "Play")}
   </Button_UI>
 }

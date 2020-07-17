@@ -1,27 +1,32 @@
+type data = 
+  | None
+  | Entity(Type.entity);
+
 type modal = {
   name: string,
   isOpen: bool,
+  data,
 }
 
 let initialState = Belt.Map.String.empty;
 
 type action = 
-  | OpenModal(string)
+  | OpenModal(string, data)
   | CloseModal(string);
 
-let reducer = (state, action) => {
-  Js.log2(state, action)
-  
+let reducer = (state, action) =>
   switch(action) {
-    | OpenModal(name) => {
+    | OpenModal(name, data) => {
         let modal = Belt.Map.String.get(state, name);
 
         switch modal {
         | Some(modal) => Belt.Map.String.set(state, name, {
             ...modal,
+            data,
             isOpen: true,
           })
         | None => Belt.Map.String.set(state, name, {
+          data,
           name,
           isOpen: true,
         })
@@ -36,8 +41,7 @@ let reducer = (state, action) => {
         | None => state
       }
     | _ => state
-  }
-};
+  };
 
 type dispatch = action => unit;
 type contextType = (Belt.Map.String.t(modal), dispatch);

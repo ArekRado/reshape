@@ -4,7 +4,7 @@ if(nodeEnv !== "test") {
   [%bs.raw {|require("./tailwind.css")|}];
 }
 
-let initialize = (initialState: Type.state) => {
+let initialize = () => {
   switch (Webapi.Dom.Document.querySelector("body", Webapi.Dom.document)) {
     | Some(body) => {
       let container = Webapi.Dom.Document.createElement("div", Webapi.Dom.document);
@@ -14,5 +14,5 @@ let initialize = (initialState: Type.state) => {
     | None => ()
   };
 
-  ReactDOMRe.renderToElementWithId(<App_Debug initialState={initialState} />, "engine-debug");
+  ReactDOMRe.renderToElementWithId(<App_Debug />, "engine-debug");
 }

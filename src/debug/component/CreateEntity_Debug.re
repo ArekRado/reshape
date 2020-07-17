@@ -1,5 +1,8 @@
 [@react.component]
-let make = (~dispatch) => {
+let make = () => {
+  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
+  let (appState, appDispatch) = React.useContext(App_Context.context);
+
   let (entity, setEntity) = React.useState(_ => "");
 
   <div>
@@ -12,7 +15,8 @@ let make = (~dispatch) => {
       size={Button_UI.Xs}
       onClick={(_) => {
         setEntity((_) => "");
-        dispatch(Type_Debug.CreateEntity(entity));
+        appDispatch(CreateEntity(entity));
+        editorDispatch(SelectEntity(entity));
       }}
     >
       {React.string("Add entity")}

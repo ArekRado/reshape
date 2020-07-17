@@ -35,11 +35,11 @@ let getComponents = (entity, state: Type.state):entityComponents => {
 };
 
 [@react.component]
-let make = (
-  ~gameState: Type.state,
-  ~entity,
-) => {
-  let components = getComponents(entity, gameState);
+let make = () => {
+  let (editorState, _) = React.useContext(Editor_Context.context);
+  let (appState, _) = React.useContext(App_Context.context);
+
+  let components = getComponents(editorState.selectedEntity, appState);
 
   <>  
     <div className="text-white mb-3">

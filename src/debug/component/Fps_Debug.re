@@ -1,6 +1,8 @@
 [@react.component]
-let make = (~gameState: Type.state) => {
-  let fps = 1000.0 /. gameState.time.delta;
+let make = () => {
+  let (appState, appDispatch) = React.useContext(App_Context.context);
+
+  let fps = 1000.0 /. appState.time.delta;
 
   <div className="text-white">
     {React.string("FPS: ")}

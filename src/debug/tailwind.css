@@ -38,4 +38,5 @@ body {
 
 .modal-wrapper {
   top: 50%; /* why it doesnt work tailwind config? */
+  left: 50%;
 }

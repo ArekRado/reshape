@@ -1,24 +1,40 @@
 [@react.component]
-let make = (
-  ~gameState: Type.state,
-  ~setEntity
-) => 
+let make = () => {
+  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
+  let (appState, _) = React.useContext(App_Context.context);
+  let (_, modalDispatch) = React.useContext(Modal_Context.context);
+
   <>  
     <div className="text-white mb-3">
       {React.string("Entity")}
     </div>
     {
-      gameState.entity
+      appState.entity
       ->Belt.List.map(entity =>
-          <button 
-            key={entity} 
-            className="hover:text-gray-800 hover:bg-gray-400 text-left"
-            onClick={(_) => setEntity((_) => entity)}
+          <div
+            key={entity}  
+            className="flex justify-between"
             title={entity}
           >
-            {entity->Uuid_Util.humanFriendlyEntity->React.string}
-          </button>
+            <Button_UI 
+              size={Button_UI.Xs}
+              onClick={(_) => editorDispatch(SelectEntity(entity))}
+              className="flex-1 text-left"
+            >
+              {entity->Uuid_Util.humanFriendlyEntity->React.string}
+            </Button_UI>
+
+            <Button_UI 
+              size={Button_UI.Xs}
+              onClick={(_) => {
+                modalDispatch(OpenModal("DeleteEntity", Entity(entity)))
+              }}
+            >
+              {React.string("x")}
+            </Button_UI>
+          </div>
         )
       ->(items => React.array(Array.of_list(items)))
     }
   </>
+};

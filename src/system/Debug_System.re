@@ -2,7 +2,7 @@
 let update = (~state: Type.state, ~debug:bool): Type.state => {
   if(debug) {
     if(!state.isDebugInitialized) {
-      Debug.initialize(state);
+      Debug.initialize();
 
       {
         ...state,

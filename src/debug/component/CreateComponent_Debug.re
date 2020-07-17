@@ -15,20 +15,23 @@ let options: Belt.List.t(Select_UI.selectOption) = [
 
 let mapStringToAction = (value, entity) => {
   switch value {
-  | "Transform" => Type_Debug.CreateTransform(entity);
-  | "Sprite" => Type_Debug.CreateSprite(entity);
-  | "FieldFloat" => Type_Debug.CreateFieldFloat(entity);
-  | "FieldInt" => Type_Debug.CreateFieldInt(entity);
-  | "FieldVector" => Type_Debug.CreateFieldVector(entity);
-  | "AnimationFloat" => Type_Debug.CreateAnimationFloat(entity);
-  | "AnimationVector" => Type_Debug.CreateAnimationVector(entity);
-  | "CollideBox" => Type_Debug.CreateCollideBox(entity);
-  | "CollideCircle" => Type_Debug.CreateCollideCircle(entity);
+  | "Transform" => App_Context.CreateTransform(entity);
+  | "Sprite" => App_Context.CreateSprite(entity);
+  | "FieldFloat" => App_Context.CreateFieldFloat(entity);
+  | "FieldInt" => App_Context.CreateFieldInt(entity);
+  | "FieldVector" => App_Context.CreateFieldVector(entity);
+  | "AnimationFloat" => App_Context.CreateAnimationFloat(entity);
+  | "AnimationVector" => App_Context.CreateAnimationVector(entity);
+  | "CollideBox" => App_Context.CreateCollideBox(entity);
+  | "CollideCircle" => App_Context.CreateCollideCircle(entity);
   };
   };
 
 [@react.component]
-let make = (~dispatch, ~entity) => {
+let make = () => {
+  let (editorState, _) = React.useContext(Editor_Context.context);
+  let (_, appDispatch) = React.useContext(App_Context.context);
+
   <Select_UI
     label="Add component"
     options={options}
@@ -36,8 +39,8 @@ let make = (~dispatch, ~entity) => {
     onChange={
       event => ReactEvent.Form.target(event)
         ##value
-        ->mapStringToAction(entity)
-        ->dispatch
+        ->mapStringToAction(editorState.selectedEntity)
+        ->appDispatch
     }
   />
 }

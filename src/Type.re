@@ -1,4 +1,4 @@
-type entity = Belt.List.t(string);
+type entity = string;
 
 type vector = (float, float);
 
@@ -81,7 +81,7 @@ type time = {
 };
 
 type state = {
-  entity,
+  entity: Belt.List.t(string),
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
   // rigidbody: Belt.Map.String.t(rigidbody),
