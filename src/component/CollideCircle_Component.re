@@ -14,3 +14,16 @@ let create = (
     collisions: [],
   }),
 };
+
+let remove = (~name: string, ~state: Type.state): Type.state => {
+  ...state,
+  collideCircle: Belt.Map.String.remove(state.collideCircle, name),
+};
+
+let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+  ...state,
+  collideCircle: Belt.Map.String.keep(
+    state.collideCircle,
+    (_, collideCircle) => collideCircle.entity !== entity
+  ),
+};

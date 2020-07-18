@@ -1,7 +1,7 @@
 [@react.component]
 let make = () => {
   <>
-      <DeleteEntityModal_Debug/>
+      <RemoveEntityModal_Debug/>
       <SaveModal_Debug/>
   </>
 }

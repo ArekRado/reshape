@@ -12,13 +12,14 @@ type action =
   | CreateAnimationVector(Type.entity)
   | CreateCollideBox(Type.entity)
   | CreateCollideCircle(Type.entity)
-  | DeleteEntity(Type.entity)
+  | RemoveEntity(Type.entity)
 
 let reducer = (state, action): Type.state => {
   let newState = switch (action) {
   | SetState(state) => state;
   | CreateEntity(entity) => Entity.create(~entity, ~state);
-  | CreateTransform(entity) => Transform_Component.create(~entity, ~state, ());        | CreateSprite(entity) => Sprite_Component.create(~entity, ~state, ~src="", ());
+  | CreateTransform(entity) => Transform_Component.create(~entity, ~state, ());       
+  | CreateSprite(entity) => Sprite_Component.create(~entity, ~state, ~src="");
   | CreateFieldFloat(_) => state //FieldFloat_Component.create(~entity, ~state);
   | CreateFieldInt(_) => state //FieldInt_Component.create(~entity, ~state);
   | CreateFieldVector(_) => state //FieldVector_Component.create(~entity, ~state);
@@ -50,12 +51,9 @@ let reducer = (state, action): Type.state => {
       ~radius=1.0,
       ()
     );
-  | DeleteEntity(entity) => CollideCircle_Component.create(
+  | RemoveEntity(entity) => Entity.remove(
       ~entity,
       ~state,
-      ~name=Uuid_Util.v4(),
-      ~radius=1.0,
-      ()
     );
   };
 

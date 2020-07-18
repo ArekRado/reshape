@@ -27,7 +27,7 @@ let make = () => {
             <Button_UI 
               size={Button_UI.Xs}
               onClick={(_) => {
-                modalDispatch(OpenModal("DeleteEntity", Entity(entity)))
+                modalDispatch(OpenModal("RemoveEntity", Entity(entity)))
               }}
             >
               {React.string("x")}

@@ -12,16 +12,15 @@ let mapParamToKeyframes =
   );
 
 let create =
-    (
-      ~name: string,
-      ~isPlaying=?,
-      ~keyframes: Belt.List.t(Type.keyframe(Vector_Util.t)),
-      ~entity: string,
-      ~state: Type.state,
-      ~wrapMode=?,
-      (),
-    )
-    : Type.state => {
+  (
+    ~name: string,
+    ~isPlaying=?,
+    ~keyframes: Belt.List.t(Type.keyframe(Vector_Util.t)),
+    ~entity: string,
+    ~state: Type.state,
+    ~wrapMode=?,
+    (),
+  ) : Type.state => {
   ...state,
   animationVector:
     Belt.Map.String.set(
@@ -45,4 +44,17 @@ let create =
         isFinished: false,
       },
     ),
+};
+
+let remove = (~name: string, ~state: Type.state): Type.state => {
+  ...state,
+  animationVector: Belt.Map.String.remove(state.animationVector, name),
+};
+
+let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+  ...state,
+  animationVector: Belt.Map.String.keep(
+    state.animationVector,
+    (_, animationVector) => animationVector.entity !== entity
+  ),
 };

@@ -3,19 +3,18 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Type.keyframe(float))) =>
     duration: keyframe.duration,
     timingFunction: keyframe.timingFunction,
     valueRange: keyframe.valueRange,
-  })
+  });
 
-  let create =
-    (
-      ~name: string,
-      ~isPlaying=?,
-      ~keyframes: Belt.List.t(Type.keyframe(float)),
-      ~entity: string,
-      ~state: Type.state,
-      ~wrapMode=?,
-      (),
-    )
-    : Type.state => {
+let create =
+  (
+    ~name: string,
+    ~isPlaying=?,
+    ~keyframes: Belt.List.t(Type.keyframe(float)),
+    ~entity: string,
+    ~state: Type.state,
+    ~wrapMode=?,
+    (),
+  ) : Type.state => {
   ...state,
   animationFloat:
     Belt.Map.String.set(
@@ -39,4 +38,17 @@ let mapParamToKeyframes = (keyframes: Belt.List.t(Type.keyframe(float))) =>
         isFinished: false,
       },
     ),
+};
+
+let remove = (~name: string, ~state: Type.state): Type.state => {
+  ...state,
+  animationFloat: Belt.Map.String.remove(state.animationFloat, name),
+};
+
+let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+  ...state,
+  animationFloat: Belt.Map.String.keep(
+    state.animationFloat,
+    (_, animationFloat) => animationFloat.entity !== entity
+  ),
 };

@@ -26,3 +26,9 @@ let create =
       },
     ),
 };
+
+let remove = (~entity: string, ~state: Type.state): Type.state => {
+  ...state,
+  transform: Belt.Map.String.remove(state.transform, entity),
+};
+  
