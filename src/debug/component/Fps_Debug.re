@@ -1,6 +1,6 @@
 [@react.component]
 let make = () => {
-  let (appState, appDispatch) = React.useContext(App_Context.context);
+  let (appState, _) = React.useContext(App_Context.context);
 
   let fps = 1000.0 /. appState.time.delta;
 

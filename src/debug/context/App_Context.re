@@ -13,6 +13,7 @@ type action =
   | CreateCollideBox(Type.entity)
   | CreateCollideCircle(Type.entity)
   | RemoveEntity(Type.entity)
+  | RemoveAnimationFloat(Type.entity)
 
 let reducer = (state, action): Type.state => {
   let newState = switch (action) {
@@ -55,6 +56,7 @@ let reducer = (state, action): Type.state => {
       ~entity,
       ~state,
     );
+  | RemoveAnimationFloat(name) => AnimationFloat_Component.remove(~name, ~state);
   };
 
   SyncState.set(newState);

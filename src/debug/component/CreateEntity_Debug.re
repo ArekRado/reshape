@@ -1,8 +1,7 @@
 [@react.component]
 let make = () => {
-  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
-  let (appState, appDispatch) = React.useContext(App_Context.context);
-
+  let (_, editorDispatch) = React.useContext(Editor_Context.context);
+  let (_, appDispatch) = React.useContext(App_Context.context);
   let (entity, setEntity) = React.useState(_ => "");
 
   <div>

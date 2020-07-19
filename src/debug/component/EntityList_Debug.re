@@ -1,6 +1,6 @@
 [@react.component]
 let make = () => {
-  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
+  let (_, editorDispatch) = React.useContext(Editor_Context.context);
   let (appState, _) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
@@ -27,7 +27,7 @@ let make = () => {
             <Button_UI 
               size={Button_UI.Xs}
               onClick={(_) => {
-                modalDispatch(OpenModal("RemoveEntity", Entity(entity)))
+                modalDispatch(OpenModal("removeEntity", Entity(entity)))
               }}
             >
               {React.string("x")}

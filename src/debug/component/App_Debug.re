@@ -47,7 +47,7 @@ let make = () => {
       <Modal_Context.Provider value={(modalContext, setModalContext)}>
         <div className="text-gray-500 bg-gray-900 w-full h-full flex">
           <div className="flex flex-col flex-1 justify-between py-2 pl-2 pr-1">
-            <Button_UI onClick={(_) => setModalContext(Modal_Context.OpenModal("SaveState", None))}>
+            <Button_UI onClick={(_) => setModalContext(Modal_Context.OpenModal("saveState", None))}>
               {React.string("Save")}
             </Button_UI>
 
@@ -61,11 +61,11 @@ let make = () => {
           <div className="flex flex-col flex-1 overflow-y-scroll overflow-x-hidden py-2 pr-2 pl-1">
             {editorContext.selectedEntity !== ""
               ? 
-              <>
+              <div className="w-full">
                 <CreateComponent_Debug />
                 <div className="mt-2"/>
                 <ComponentList_Debug /> 
-              </>
+              </div>
               : React.string("Entity not selected")
             }
           </div>

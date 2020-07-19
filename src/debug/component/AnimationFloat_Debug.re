@@ -40,7 +40,10 @@ let msToTime = (ms) => {
 };
 
 [@react.component]
-let make = (~items: Belt.Map.String.t(Type.animation(float))) => 
+let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
+  let (_, appDispatch) = React.useContext(App_Context.context);
+  let (_, modalDispatch) = React.useContext(Modal_Context.context);
+
   items
     ->Belt.Map.String.toArray
     ->Belt.Array.map(((id, animation)) => {
@@ -51,10 +54,28 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) =>
         );
 
         <div key={id}>
-          <div className="grid grid-cols-12 gap-1 mb-3 my-1">
+          <div className="flex justify-between">
             <div className="text-white mb-3 col-span-12">
               {React.string("Animation (float)")}
             </div>
+
+            <Button_UI
+              size={Button_UI.Xs}
+              onClick={(_) => {
+                modalDispatch(OpenModal(id, None))
+              }}
+            >
+              {React.string("x")}
+            </Button_UI>
+
+            <ConfirmModal_Debug 
+              name={id}
+              title={React.string("Are you sure you want to remove animation?")}
+              onAccept={(_) => appDispatch(RemoveAnimationFloat(id))}
+            />
+          </div>
+
+          <div className="grid grid-cols-12 gap-1 mb-3 my-1">
             <div className="col-span-4">{React.string("name")}</div>
             <div className="col-span-8">{React.string(Uuid_Util.humanFriendlyEntity(id))}</div>
             <div className="col-span-4">{React.string("isPlaying")}</div>
@@ -108,3 +129,4 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) =>
       }
     )
     ->React.array;
+};

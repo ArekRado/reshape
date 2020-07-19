@@ -24,8 +24,12 @@ let mapStringToAction = (value, entity) => {
   | "AnimationVector" => App_Context.CreateAnimationVector(entity);
   | "CollideBox" => App_Context.CreateCollideBox(entity);
   | "CollideCircle" => App_Context.CreateCollideCircle(entity);
+  | _ => {
+      Js.log3("mapStringToAction has been called with wrong arguments", value, entity);
+      App_Context.CreateTransform(entity);
+    }
   };
-  };
+};
 
 [@react.component]
 let make = () => {

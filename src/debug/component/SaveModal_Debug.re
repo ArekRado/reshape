@@ -31,7 +31,7 @@ let make = () => {
   let (saveSlots, _) = React.useState(_ => getSaveSlots());
 
   <Modal_UI 
-    name="SaveState"
+    name="saveState"
     render={(modal) => {
       <div>
         <div> {React.string("e")}</div>
@@ -41,7 +41,7 @@ let make = () => {
         //     ->Belt.Array.map(slot => 
         //       <Button_UI 
         //         key={slot}
-        //         onClick={(_) => modalDispatch(CloseModal("SaveState"))} 
+        //         onClick={(_) => modalDispatch(CloseModal("saveState"))} 
         //       >
         //         {React.string("Save")}
         //       </Button_UI>
