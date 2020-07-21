@@ -1,11 +1,11 @@
 [@react.component]
-let make = (~items: Belt.Map.String.t(Type.collideBox)) => {
+let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
   let (_, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
-
+  
   items
     ->Belt.Map.String.toArray
-    ->Belt.Array.map(((key, collideBox)) =>
+    ->Belt.Array.map(((key, collideCircle)) =>
       <>
         <div className="flex justify-between">
           <div className="text-white mb-3 col-span-12">
@@ -23,23 +23,26 @@ let make = (~items: Belt.Map.String.t(Type.collideBox)) => {
 
           <ConfirmModal_Debug 
             name={key}
-            title={React.string("Are you sure you want to remove collide box?")}
-            onAccept={(_) => appDispatch(RemoveCollideBox(key))}
+            title={React.string("Are you sure you want to remove collide circle?")}
+            onAccept={(_) => appDispatch(RemoveCollideCircle(key))}
           />
         </div>
-
         <div key={key} className="grid grid-cols-12 gap-1 mb-3">
-          <div className="col-span-4">{React.string("size")}</div>
-          <div className="col-span-8"><Vector_Debug vector={collideBox.size} /></div>
+          <div className="text-white mb-3 col-span-12">
+            {React.string("Collide box")}
+          </div>
+
+          <div className="col-span-4">{React.string("radius")}</div>
+          <div className="col-span-8">{React.string(Belt.Float.toString(collideCircle.radius))}</div>
 
           <div className="col-span-4">{React.string("position")}</div>
-          <div className="col-span-8"><Vector_Debug vector={collideBox.position} /></div>
+          <div className="col-span-8"><Vector_Debug vector={collideCircle.position} /></div>
 
-          {Belt.List.length(collideBox.collisions) > 0 
+          {Belt.List.length(collideCircle.collisions) > 0 
           ? <div>{React.string("Collisions:")}</div> 
           : React.null}
 
-          {Belt.List.map(collideBox.collisions, (collisionType: Type.collideType) =>
+          {Belt.List.map(collideCircle.collisions, (collisionType: Type.collideType) =>
           switch(collisionType) {
             | Box(entity) => 
               <Entity_Debug 

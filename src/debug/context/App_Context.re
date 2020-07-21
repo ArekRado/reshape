@@ -14,6 +14,9 @@ type action =
   | CreateCollideCircle(Type.entity)
   | RemoveEntity(Type.entity)
   | RemoveAnimationFloat(Type.entity)
+  | RemoveAnimationVector(Type.entity)
+  | RemoveCollideBox(Type.entity)
+  | RemoveCollideCircle(Type.entity)
 
 let reducer = (state, action): Type.state => {
   let newState = switch (action) {
@@ -57,6 +60,9 @@ let reducer = (state, action): Type.state => {
       ~state,
     );
   | RemoveAnimationFloat(name) => AnimationFloat_Component.remove(~name, ~state);
+  | RemoveAnimationVector(name) => AnimationVector_Component.remove(~name, ~state);
+  | RemoveCollideBox(name) => CollideBox_Component.remove(~name, ~state);
+  | RemoveCollideCircle(name) => CollideCircle_Component.remove(~name, ~state);
   };
 
   SyncState.set(newState);
