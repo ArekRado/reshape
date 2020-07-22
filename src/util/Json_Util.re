@@ -1,4 +1,10 @@
 module Parse = {
+  let emptyArray = Js.Json.array([||]);
+  let emptyObject = Js.Json.object_(Js.Dict.fromList([]));
+  let emptyNumber = Js.Json.number(0.0);
+  let emptyString = Js.Json.string("");
+  let emptyBool = value => Js.Json.boolean(value);
+
   let maybeString = (map, json) =>
     switch (Js.Json.classify(json)) {
       | Js.Json.JSONString(value) => map(Some(value))
@@ -18,16 +24,16 @@ module Parse = {
       | _ => map(None)
     };
 
-  let maybeArray = (map, json) =>
+  let maybeArray = (json, map) =>
     switch (Js.Json.classify(json)) {
       | Js.Json.JSONArray(value) => map(value)
-      | _ => failwith("Expected an array")
+      | _ => [| |]
     };
 
-  let maybeProperty = (property, obj) =>
+  let maybeProperty = (obj, property, defaultValue) =>
     switch (Js.Dict.get(obj, property)) {
     | Some(value) => value
-    | _ => failwith("Property: " ++ property ++ " doesn't exist")
+    | None => defaultValue
   };
 
   let maybeObject = (map, json) => 
@@ -37,6 +43,12 @@ module Parse = {
     };
 
   // UTILS
+
+  // let propertyWithDefault = (property, obj) =>
+  //   switch (Js.Dict.get(obj, property)) {
+  //   | Some(value) => value
+  //   | None => None
+  // };
 
   let stringWithDefault = default => maybeString((maybeValue) => 
     switch (maybeValue) {
@@ -72,39 +84,37 @@ module Parse = {
     | None => default
     };
 
-  let maybeVector = maybeArray(array => {
-    let floatArray = Belt.Array.map(array, floatWithDefault(0.0));
+  let maybeVector = (json) => {
+    let floatArray = maybeArray(json, array => Belt.Array.map(array, floatWithDefault(0.0)));
     
     (
       getArrayWithDefault(0.0, floatArray, 0),
       getArrayWithDefault(0.0, floatArray, 1)
     );
-  });
+  }
 
-  let collisions = maybeArray(array =>
-    array
-      ->Belt.List.fromArray
-      ->Belt.List.map(value =>
-        maybeArray(collision => {
+  let collisions = json =>
+    maybeArray(json, json => json)
+    ->Belt.List.fromArray
+    ->Belt.List.map(value => {
+      let collision = maybeArray(value, collision => collision);
 
-          let collisionType = switch (Belt.Array.get(collision, 0)) {
-          | Some(value) => stringWithDefault("Circle", value)
-          | None => "Circle"
-          };
+      let collideType = switch (Belt.Array.get(collision, 0)) {
+      | Some(value) => stringWithDefault("Circle", value)
+      | None => "Circle"
+      };
 
-          let collisionValue = switch (Belt.Array.get(collision, 1)) {
-          | Some(value) => stringWithDefault("", value)
-          | None => ""
-          };
+      let collisionValue = switch (Belt.Array.get(collision, 1)) {
+      | Some(value) => stringWithDefault("", value)
+      | None => ""
+      };
 
-          switch(collisionType) {
-          | "Box" => Type.Box(collisionValue)
-          | "Circle" => Type.Circle(collisionValue)
-          | _ => Type.Circle(collisionValue)
-          };
-        }, value)
-      )
-    );
+      switch(collideType) {
+      | "Box" => Type.Box(collisionValue)
+      | "Circle" => Type.Circle(collisionValue)
+      | _ => Type.Circle(collisionValue)
+      };
+    });
   
   let wrapMode = wrapMode => 
     switch(wrapMode) {
@@ -163,59 +173,57 @@ module Parse = {
 
     let someState = (stateObj): Type.state => {
       entity: stateObj
-        |> maybeProperty("entity")
-        |> maybeArray(array => 
-          array
-            ->Belt.List.fromArray
-            ->Belt.List.map(stringWithDefault("", _))
-        ),
+        ->maybeProperty("entity", emptyArray)
+        ->maybeArray(array => array)
+        ->Belt.List.fromArray
+        ->Belt.List.map(stringWithDefault("", _)),
       mouseButtons: stateObj
-        |> maybeProperty("mouseButtons")
+        ->maybeProperty("mouseButtons", emptyNumber)
         |> floatWithDefault(0.0)
         |> Belt.Float.toInt,
       mousePosition: stateObj
-        |> maybeProperty("mousePosition")
+        ->maybeProperty("mousePosition", emptyArray)
         |> maybeVector,
       time: stateObj 
-        |> maybeProperty("time")
+        ->maybeProperty("time", emptyObject)
         |> maybeObject(timeObj: Type.time =>
           switch (timeObj) {
           | Some(timeObj) => {
               timeNow: timeObj
-                |> maybeProperty("timeNow") 
+                ->maybeProperty("timeNow", emptyNumber)
                 |> floatWithDefault(0.0),
               delta: timeObj
-                |> maybeProperty("delta") 
+                ->maybeProperty("delta", emptyNumber)
                 |> floatWithDefault(0.0),
             }
           | None => Type.initialState.time;
         }),
       isDebugInitialized: stateObj
-        |> maybeProperty("isDebugInitialized")
+        ->maybeProperty("isDebugInitialized", emptyBool(false))
         |> boolWithDefault(false),
       transform: stateObj
-        |> maybeProperty("transform")
+        ->maybeProperty("transform", emptyObject)
         |> dictToMapString((transform): Type.transform => {
           rotation: transform
-            |> maybeProperty("rotation")
+            ->maybeProperty("rotation", emptyNumber)
             |> floatWithDefault(0.0),
           localRotation: transform
-            |> maybeProperty("localRotation")
+            ->maybeProperty("localRotation", emptyNumber)
             |> floatWithDefault(0.0),
           scale: transform
-            |> maybeProperty("scale")
+            ->maybeProperty("scale", emptyArray)
             |> maybeVector,
           localScale: transform
-            |> maybeProperty("localScale")
+            ->maybeProperty("localScale", emptyArray)
             |> maybeVector,
           position: transform
-            |> maybeProperty("position")
+            ->maybeProperty("position", emptyArray)
             |> maybeVector,
           localPosition: transform
-            |> maybeProperty("localPosition")
+            ->maybeProperty("localPosition", emptyArray)
             |> maybeVector,
           parent: transform
-            |> maybeProperty("parent")
+            ->maybeProperty("parent", emptyString)
             |> maybeString(parent =>
               switch(parent) {
                 | Some(parent) => Some(parent)
@@ -224,35 +232,35 @@ module Parse = {
             ),
         }),
       sprite: stateObj
-        |> maybeProperty("sprite")
+        ->maybeProperty("sprite", emptyObject)
         |> dictToMapString((sprite): Type.sprite => {
           src: sprite
-            |> maybeProperty("parent")
+            ->maybeProperty("parent", emptyString)
             |> stringWithDefault(""),
         }),
       animationFloat: stateObj
-        |> maybeProperty("animationFloat")
+        ->maybeProperty("animationFloat", emptyObject)
         |> dictToMapString((animationFloat): Type.animation(float) => {
           entity: animationFloat
-            |> maybeProperty("entity")
+            ->maybeProperty("entity", emptyString)
             |> stringWithDefault(""),
           name: animationFloat
-            |> maybeProperty("name")
+            ->maybeProperty("name", emptyString)
             |> stringWithDefault(""),
           isPlaying: animationFloat
-            |> maybeProperty("isPlaying")
+            ->maybeProperty("isPlaying", emptyBool(false))
             |> boolWithDefault(false),
           isFinished: animationFloat
-            |> maybeProperty("isFinished")
+            ->maybeProperty("isFinished", emptyBool(false))
             |> boolWithDefault(false),
           currentTime: animationFloat
-            |> maybeProperty("currentTime")
+            ->maybeProperty("currentTime", emptyNumber)
             |> floatWithDefault(0.0),
           value: animationFloat
-            |> maybeProperty("value")
+            ->maybeProperty("value", emptyNumber)
             |> floatWithDefault(0.0),
           wrapMode: animationFloat
-            |> maybeProperty("wrapMode")
+            ->maybeProperty("wrapMode", emptyString)
             |> maybeString(value =>
               switch(value) {
                 | Some(value) => wrapMode(value)
@@ -260,62 +268,60 @@ module Parse = {
               }
             ),
           keyframes: animationFloat
-            |> maybeProperty("keyframes")
-            |> maybeArray(array =>
-              array
-                ->Belt.List.fromArray
-                ->Belt.List.map(
-                    maybeObject(keyframe: Type.keyframe(float) =>
-                    switch (keyframe) {
-                    | Some(keyframe) => {
-                      duration: keyframe
-                        |> maybeProperty("duration")
-                        |> floatWithDefault(0.0),
-                      timingFunction: keyframe
-                        |> maybeProperty("timingFunction")
-                        |> maybeString(value =>
-                          switch(value) {
-                            | Some(value) => timingFunction(value)
-                            | None => Type.Linear
-                          }
-                        ),
-                      valueRange: keyframe
-                        |> maybeProperty("valueRange")
-                        |> maybeVector,
+            ->maybeProperty("keyframes", emptyArray)
+            ->maybeArray(array => array)
+            ->Belt.List.fromArray
+            ->Belt.List.map(
+                maybeObject(keyframe: Type.keyframe(float) =>
+                switch (keyframe) {
+                | Some(keyframe) => {
+                  duration: keyframe
+                    ->maybeProperty("duration", emptyNumber)
+                    |> floatWithDefault(0.0),
+                  timingFunction: keyframe
+                    ->maybeProperty("timingFunction", emptyString)
+                    |> maybeString(value =>
+                      switch(value) {
+                        | Some(value) => timingFunction(value)
+                        | None => Type.Linear
                       }
-                    | None => {
-                        duration: 0.0,
-                        timingFunction: Type.Linear,
-                        valueRange: (0.0, 0.0),
-                      };
-                    }
-                  )
-                )
+                    ),
+                  valueRange: keyframe
+                    ->maybeProperty("valueRange", emptyArray)
+                    |> maybeVector,
+                  }
+                | None => {
+                    duration: 0.0,
+                    timingFunction: Type.Linear,
+                    valueRange: (0.0, 0.0),
+                  };
+                }
               )
+            )
         }),
       animationVector: stateObj
-        |> maybeProperty("animationVector")
+        ->maybeProperty("animationVector", emptyObject)
         |> dictToMapString((animationVector): Type.animation(Vector_Util.t) => {
           entity: animationVector
-            |> maybeProperty("entity")
+            ->maybeProperty("entity", emptyString)
             |> stringWithDefault(""),
           name: animationVector
-            |> maybeProperty("name")
+            ->maybeProperty("name", emptyString)
             |> stringWithDefault(""),
           isPlaying: animationVector
-            |> maybeProperty("isPlaying")
+            ->maybeProperty("isPlaying", emptyBool(false))
             |> boolWithDefault(false),
           isFinished: animationVector
-            |> maybeProperty("isFinished")
+            ->maybeProperty("isFinished", emptyBool(false))
             |> boolWithDefault(false),
           currentTime: animationVector
-            |> maybeProperty("currentTime")
+            ->maybeProperty("currentTime", emptyNumber)
             |> floatWithDefault(0.0),
           value: animationVector
-            |> maybeProperty("value")
+            ->maybeProperty("value", emptyArray)
             |> maybeVector,
           wrapMode: animationVector
-            |> maybeProperty("wrapMode")
+            ->maybeProperty("wrapMode", emptyString)
             |> maybeString(value =>
               switch(value) {
                 | Some(value) => wrapMode(value)
@@ -323,82 +329,91 @@ module Parse = {
               }
             ),
           keyframes: animationVector
-            |> maybeProperty("keyframes")
-            |> maybeArray(array =>
-              array
-                ->Belt.List.fromArray
-                ->Belt.List.map(
-                    maybeObject(keyframe: Type.keyframe(Vector_Util.t) =>
-                    switch (keyframe) {
-                    | Some(keyframe) => {
-                      duration: keyframe
-                        |> maybeProperty("duration")
-                        |> floatWithDefault(0.0),
-                      timingFunction: keyframe
-                        |> maybeProperty("timingFunction")
-                        |> maybeString(value =>
-                          switch(value) {
-                            | Some(value) => timingFunction(value)
-                            | None => Type.Linear
-                          }
-                        ),
-                      valueRange: keyframe
-                        |> maybeProperty("valueRange")
-                        |> maybeArray(array => {
-                          let from = switch (Belt.Array.get(array, 0)) {
-                          | Some(value) => maybeVector(value);
-                          | None => Vector_Util.zero;
-                          };
-
-                          let to_ = switch (Belt.Array.get(array, 1)) {
-                          | Some(value) => maybeVector(value);
-                          | None => Vector_Util.zero;
-                          };
-
-                          (from, to_);
-                        }),
+            ->maybeProperty("keyframes", emptyArray)
+            ->maybeArray(array => array)
+            ->Belt.List.fromArray
+            ->Belt.List.map(
+                maybeObject(keyframe: Type.keyframe(Vector_Util.t) =>
+                switch (keyframe) {
+                | Some(keyframe) => {
+                  duration: keyframe
+                    ->maybeProperty("duration", emptyNumber)
+                    |> floatWithDefault(0.0),
+                  timingFunction: keyframe
+                    ->maybeProperty("timingFunction", emptyString)
+                    |> maybeString(value =>
+                      switch(value) {
+                        | Some(value) => timingFunction(value)
+                        | None => Type.Linear
                       }
-                    | None => {
-                        duration: 0.0,
-                        timingFunction: Type.Linear,
-                        valueRange: (Vector_Util.zero, Vector_Util.zero),
+                    ),
+                  valueRange: keyframe
+                    ->maybeProperty("valueRange", emptyArray)
+                    ->maybeArray(array => array) 
+                    ->(array => {
+                      let from = switch (Belt.Array.get(array, 0)) {
+                      | Some(value) => maybeVector(value);
+                      | None => Vector_Util.zero;
                       };
-                    }
-                  )
-                )
+
+                      let to_ = switch (Belt.Array.get(array, 1)) {
+                      | Some(value) => maybeVector(value);
+                      | None => Vector_Util.zero;
+                      };
+
+                      (from, to_);
+                    }),
+                  }
+                | None => {
+                    duration: 0.0,
+                    timingFunction: Type.Linear,
+                    valueRange: (Vector_Util.zero, Vector_Util.zero),
+                  };
+                }
               )
+            )
         }),
       collideBox: stateObj
-        |> maybeProperty("collideBox")
+        ->maybeProperty("collideBox", emptyObject)
         |> dictToMapString((collideBox): Type.collideBox => {
           entity: collideBox
-            |> maybeProperty("entity")
+            ->maybeProperty("entity", emptyString)
             |> stringWithDefault(""),
           size: collideBox
-            |> maybeProperty("size")
+            ->maybeProperty("size", emptyArray)
             |> maybeVector,
           position: collideBox
-            |> maybeProperty("position")
+            ->maybeProperty("position", emptyArray)
             |> maybeVector,
           collisions: collideBox
-            |> maybeProperty("collisions")
+            ->maybeProperty("collisions", emptyArray)
             |> collisions
         }),
       collideCircle: stateObj
-        |> maybeProperty("collideBox")
+        ->maybeProperty("collideBox", emptyObject)
         |> dictToMapString((collideCircle): Type.collideCircle => {
           entity: collideCircle
-            |> maybeProperty("entity")
+            ->maybeProperty("entity", emptyString)
             |> stringWithDefault(""),
           radius: collideCircle
-            |> maybeProperty("radius")
+            ->maybeProperty("radius", emptyNumber)
             |> floatWithDefault(0.0),
           position: collideCircle
-            |> maybeProperty("position")
+            ->maybeProperty("position", emptyArray)
             |> maybeVector,
           collisions: collideCircle
-            |> maybeProperty("collisions")
+            ->maybeProperty("collisions", emptyArray)
             |> collisions
+        }),
+      fieldFloat: stateObj
+        ->maybeProperty("fieldFloat", emptyObject)
+        |> dictToMapString((fieldFloat): Type.field(float) => {
+          entity: fieldFloat
+            ->maybeProperty("entity", emptyString)
+            |> stringWithDefault(""),
+          value: fieldFloat
+            ->maybeProperty("value", emptyNumber)
+            |> floatWithDefault(0.0),
         }),
   };
 
@@ -620,6 +635,23 @@ module Stringify = {
     Js.Json.object_(dict)
   };
 
+  let fieldFloat = (fieldFloat) => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(fieldFloat, (entity, x: Type.field(float)) => {
+        let fieldFloat = Js.Dict.empty();
+
+        Js.Dict.set(fieldFloat, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(fieldFloat, "value", Js.Json.number(x.value));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(fieldFloat));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
   let time = (time: Type.time) => {
     let dict = Js.Dict.empty();
 
@@ -639,6 +671,7 @@ module Stringify = {
     Js.Dict.set(dict, "animationVector", animationVector(state.animationVector));
     Js.Dict.set(dict, "collideBox", collideBox(state.collideBox));
     Js.Dict.set(dict, "collideCircle", collideCircle(state.collideCircle));
+    Js.Dict.set(dict, "fieldFloat", fieldFloat(state.fieldFloat));
     Js.Dict.set(dict, "time", time(state.time));
 
     Js.Dict.set(dict, "mouseButtons", Js.Json.number(Belt.Int.toFloat(state.mouseButtons)));

@@ -8,7 +8,7 @@ let create = (~entity: string, ~state: Type.state): Type.state => {
 let remove = (~entity: string, ~state: Type.state): Type.state => {
   let newState = {
     ...state,
-    entity: Belt.List.filter(state.entity, (item) => item !== entity)
+    entity: Belt.List.keep(state.entity, (item) => item !== entity)
   };
   
   newState

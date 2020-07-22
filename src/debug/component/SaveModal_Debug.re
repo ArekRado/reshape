@@ -1,40 +1,35 @@
-// [@react.component]
-// let make = (~state: Type.state) => {
+// let getSaveSlots = () => {
+//   let saveSlots = Dom.Storage.getItem("saveSlots", Dom.Storage.localStorage);
 
-//   <>
-//     <Button_UI 
-//       onClick={(_) => SyncState.saveStateInLocalStorage(state)} 
-//     >
-//       {React.string("Save")}
-//     </Button_UI>
-    
-//   </>
-// }
-
-let getSaveSlots = () => {
-  let saveSlots = Dom.Storage.getItem("saveSlots", Dom.Storage.localStorage);
-
-  switch(saveSlots) {
-  | Some(saveSlots) => 
-    Json_Util.Parse.maybeArray(
-      array => Belt.Array.map(array, Json_Util.Parse.stringWithDefault("", _)), 
-      Js.Json.parseExn(saveSlots)
-    )
-  | None => [| |]
-  };
-};
+//   switch(saveSlots) {
+//   | Some(saveSlots) => 
+//     Json_Util.Parse.maybeArray(
+//       array => Belt.Array.map(array, Json_Util.Parse.stringWithDefault("", _)), 
+//       Js.Json.parseExn(saveSlots)
+//     )
+//   | None => [| |]
+//   };
+// };
 
 [@react.component]
 let make = () => {
+  let (appState, _) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
-  let (saveSlots, _) = React.useState(_ => getSaveSlots());
+  // let (saveSlots, _) = React.useState(_ => getSaveSlots());
 
   <Modal_UI 
     name="saveState"
-    render={(modal) => {
+    render={(_) => {
       <div>
-        <div> {React.string("e")}</div>
+        <Button_UI
+          onClick={(_) => {
+            SyncState.saveStateInLocalStorage(appState)
+            modalDispatch(CloseModal("saveState"))
+          }}
+        >
+          {React.string("Click to save")}
+        </Button_UI>
 
         // {
         //   saveSlots

@@ -37,7 +37,7 @@ let runOneFrame =
   let newState =
     state
     ->Debug_System.update(~state=_, ~debug)
-    ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_)
+    ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_, ())
     ->IO_System.update(~state=_)
     ->Transform_System.update(~state=_)
     ->Collide_System.update(~state=_)

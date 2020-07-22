@@ -40,7 +40,6 @@ let reducer = (state, action) =>
           })
         | None => state
       }
-    | _ => state
   };
 
 type dispatch = action => unit;

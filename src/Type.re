@@ -7,14 +7,14 @@ type collideType =
   | Circle(string);
 
 type collideBox = {
-  entity: string,
+  entity,
   size: vector,
   position: vector,
   collisions: Belt.List.t(collideType),
 };
 
 type collideCircle = {
-  entity: string,
+  entity,
   radius: float,
   position: vector,
   collisions: Belt.List.t(collideType),
@@ -29,6 +29,11 @@ type transform = {
   localPosition: vector,
   parent: option(string),
 };
+
+type field('a) = {
+  entity,
+  value: 'a,
+}
 
 type timingFunction =
   | Linear
@@ -63,7 +68,7 @@ type keyframe('a) = {
 };
 
 type animation('a) = {
-  entity: string,
+  entity,
   name: string,
   keyframes: Belt.List.t(keyframe('a)),
   isPlaying: bool,
@@ -84,18 +89,19 @@ type state = {
   entity: Belt.List.t(string),
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
-  // rigidbody: Belt.Map.String.t(rigidbody),
+
   animationFloat: Belt.Map.String.t(animation(float)),
   animationVector: Belt.Map.String.t(animation(Vector_Util.t)),
 
   collideBox: Belt.Map.String.t(collideBox),
   collideCircle: Belt.Map.String.t(collideCircle),
 
+  fieldFloat: Belt.Map.String.t(field(float)),
+
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,
   isDebugInitialized: bool,
-  // event: todo
 };
 
 let initialState: state = {
@@ -106,6 +112,7 @@ let initialState: state = {
   animationVector: Belt.Map.String.empty,
   collideBox: Belt.Map.String.empty,
   collideCircle: Belt.Map.String.empty,
+  fieldFloat: Belt.Map.String.empty,
   time: {
     timeNow: 0.0,
     delta: 0.0,

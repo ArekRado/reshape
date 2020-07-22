@@ -26,23 +26,23 @@ let runTests = () => {
                 switch (timeObj) {
                 | Some(timeObj) =>
                   Some({
-                    timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
-                    delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
+                    timeNow: floatWithDefault(0.0, maybeProperty(timeObj, "timeNow", emptyObject)),
+                    delta: floatWithDefault(0.0, maybeProperty(timeObj, "delta", emptyObject))
                   });
                 | None => raise(Not_found);
               }, 
-              maybeProperty("time", obj)
+              maybeProperty(obj, "time", emptyObject)
             );
 
             Some({
               entity: [],
-              mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
-              mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
+              mouseButtons: floatWithDefault(0.0, maybeProperty(obj, "mouseButtons", emptyNumber)),
+              mousePosition: maybeVector(maybeProperty(obj, "mousePosition", emptyArray)),
               time: switch (time) {
                 | Some(v) => v;
                 | None => raise(Not_found);
               },
-              isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
+              isDebugInitialized: boolWithDefault(false, maybeProperty(obj, "isDebugInitialized", emptyBool(false))),
             });
           }
           | None => None;
@@ -81,23 +81,23 @@ let runTests = () => {
                 switch (timeObj) {
                 | Some(timeObj) =>
                   Some({
-                    timeNow: floatWithDefault(0.0, maybeProperty("timeNow", timeObj)),
-                    delta: floatWithDefault(0.0, maybeProperty("delta", timeObj))
+                    timeNow: floatWithDefault(0.0, maybeProperty(timeObj, "timeNow", emptyNumber)),
+                    delta: floatWithDefault(0.0, maybeProperty(timeObj, "delta", emptyNumber))
                   });
                 | None => raise(Not_found);
               }, 
-              maybeProperty("time", obj)
+              maybeProperty(obj, "time", emptyObject)
             );
 
             Some({
               entity: [],
-              mouseButtons: floatWithDefault(0.0, maybeProperty("mouseButtons", obj)),
-              mousePosition: maybeVector(maybeProperty("mousePosition", obj)),
+              mouseButtons: floatWithDefault(0.0, maybeProperty(obj, "mouseButtons", emptyNumber)),
+              mousePosition: maybeVector(maybeProperty(obj, "mousePosition", emptyArray)),
               time: switch (time) {
                 | Some(v) => v;
                 | None => raise(Not_found);
               },
-              isDebugInitialized: boolWithDefault(false, maybeProperty("isDebugInitialized", obj)),
+              isDebugInitialized: boolWithDefault(false, maybeProperty(obj, "isDebugInitialized", emptyBool(false))),
             });
           }
           | None => None
