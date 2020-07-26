@@ -18,31 +18,31 @@ let runTests = () => {
       open Json_Util.Parse;
 
       let parseState =
-        maybeObject((v) => 
+        maybeObject(_, (v) => 
           switch (v) {
           | Some(obj) => {
             let time = maybeObject(
+              maybeProperty(obj, "time", emptyObject),
               (timeObj): option(Type.time) =>
                 switch (timeObj) {
                 | Some(timeObj) =>
                   Some({
-                    timeNow: floatWithDefault(0.0, maybeProperty(timeObj, "timeNow", emptyObject)),
-                    delta: floatWithDefault(0.0, maybeProperty(timeObj, "delta", emptyObject))
+                    timeNow: floatWithDefault(maybeProperty(timeObj, "timeNow", emptyObject), 0.0),
+                    delta: floatWithDefault(maybeProperty(timeObj, "delta", emptyObject), 0.0)
                   });
                 | None => raise(Not_found);
               }, 
-              maybeProperty(obj, "time", emptyObject)
             );
 
             Some({
               entity: [],
-              mouseButtons: floatWithDefault(0.0, maybeProperty(obj, "mouseButtons", emptyNumber)),
+              mouseButtons: floatWithDefault(maybeProperty(obj, "mouseButtons", emptyNumber), 0.0),
               mousePosition: maybeVector(maybeProperty(obj, "mousePosition", emptyArray)),
               time: switch (time) {
                 | Some(v) => v;
                 | None => raise(Not_found);
               },
-              isDebugInitialized: boolWithDefault(false, maybeProperty(obj, "isDebugInitialized", emptyBool(false))),
+              isDebugInitialized: boolWithDefault(maybeProperty(obj, "isDebugInitialized", emptyBool(false)), false),
             });
           }
           | None => None;
@@ -73,31 +73,33 @@ let runTests = () => {
       Js.Dict.set(dict, "isDebugInitialized", Js.Json.boolean(false));
 
       let parseState =
-        maybeObject((v) => 
+        maybeObject(
+          _,
+          (v) => 
           switch (v) {
           | Some(obj) => {
             let time = maybeObject(
+              maybeProperty(obj, "time", emptyObject),
               (timeObj): option(Type.time) =>
                 switch (timeObj) {
                 | Some(timeObj) =>
                   Some({
-                    timeNow: floatWithDefault(0.0, maybeProperty(timeObj, "timeNow", emptyNumber)),
-                    delta: floatWithDefault(0.0, maybeProperty(timeObj, "delta", emptyNumber))
+                    timeNow: floatWithDefault(maybeProperty(timeObj, "timeNow", emptyNumber), 0.0),
+                    delta: floatWithDefault(maybeProperty(timeObj, "delta", emptyNumber), 0.0)
                   });
                 | None => raise(Not_found);
               }, 
-              maybeProperty(obj, "time", emptyObject)
             );
 
             Some({
               entity: [],
-              mouseButtons: floatWithDefault(0.0, maybeProperty(obj, "mouseButtons", emptyNumber)),
+              mouseButtons: floatWithDefault(maybeProperty(obj, "mouseButtons", emptyNumber), 0.0),
               mousePosition: maybeVector(maybeProperty(obj, "mousePosition", emptyArray)),
               time: switch (time) {
-                | Some(v) => v;
-                | None => raise(Not_found);
+              | Some(v) => v;
+              | None => raise(Not_found);
               },
-              isDebugInitialized: boolWithDefault(false, maybeProperty(obj, "isDebugInitialized", emptyBool(false))),
+              isDebugInitialized: boolWithDefault(maybeProperty(obj, "isDebugInitialized", emptyBool(false)), false),
             });
           }
           | None => None

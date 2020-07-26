@@ -5,19 +5,19 @@ module Parse = {
   let emptyString = Js.Json.string("");
   let emptyBool = value => Js.Json.boolean(value);
 
-  let maybeString = (map, json) =>
+  let maybeString = (json, map) =>
     switch (Js.Json.classify(json)) {
       | Js.Json.JSONString(value) => map(Some(value))
       | _ => map(None)
     };
 
-  let maybeFloat = (map, json) =>
+  let maybeFloat = (json, map) =>
     switch (Js.Json.classify(json)) {
       | Js.Json.JSONNumber(value) => map(Some(value))
       | _ => map(None)
     };
 
-  let maybeBool = (map, json) =>
+  let maybeBool = (json, map) =>
     switch (Js.Json.classify(json)) {
       | Js.Json.JSONTrue => map(Some(true))
       | Js.Json.JSONFalse => map(Some(false))
@@ -36,7 +36,7 @@ module Parse = {
     | None => defaultValue
   };
 
-  let maybeObject = (map, json) => 
+  let maybeObject = (json, map) => 
     switch (Js.Json.classify(json)) {
     | Js.Json.JSONObject(value) => map(Some(value))
     | _ => map(None)
@@ -44,39 +44,26 @@ module Parse = {
 
   // UTILS
 
-  // let propertyWithDefault = (property, obj) =>
-  //   switch (Js.Dict.get(obj, property)) {
-  //   | Some(value) => value
-  //   | None => None
-  // };
-
-  let stringWithDefault = default => maybeString((maybeValue) => 
+  let stringWithDefault = (json, default) => maybeString(json, (maybeValue) => 
     switch (maybeValue) {
     | Some(value) => value
     | None => default
     }
   );
 
-  let floatWithDefault = default => maybeFloat((maybeValue) => 
+  let floatWithDefault = (json, default) => maybeFloat(json, (maybeValue) => 
     switch (maybeValue) {
     | Some(value) => value
     | None => default
     }
   );
 
-  let boolWithDefault = default => maybeBool((maybeValue) => 
+  let boolWithDefault = (json, default) => maybeBool(json, (maybeValue) => 
     switch (maybeValue) {
     | Some(value) => value
     | None => default
     }
   );
-
-  // let vectorWithDefault = default => maybeVector((maybeValue) => 
-  //   switch (maybeValue) {
-  //   | Some(value) => value
-  //   | None => default
-  //   }
-  // );
 
   let getArrayWithDefault = (default, array, index) => 
     switch (Belt.Array.get(array, index)) {
@@ -85,7 +72,7 @@ module Parse = {
     };
 
   let maybeVector = (json) => {
-    let floatArray = maybeArray(json, array => Belt.Array.map(array, floatWithDefault(0.0)));
+    let floatArray = maybeArray(json, array => Belt.Array.map(array, floatWithDefault(_, 0.0)));
     
     (
       getArrayWithDefault(0.0, floatArray, 0),
@@ -100,12 +87,12 @@ module Parse = {
       let collision = maybeArray(value, collision => collision);
 
       let collideType = switch (Belt.Array.get(collision, 0)) {
-      | Some(value) => stringWithDefault("Circle", value)
+      | Some(value) => stringWithDefault(value, "Circle")
       | None => "Circle"
       };
 
       let collisionValue = switch (Belt.Array.get(collision, 1)) {
-      | Some(value) => stringWithDefault("", value)
+      | Some(value) => stringWithDefault(value, "")
       | None => ""
       };
 
@@ -144,9 +131,9 @@ module Parse = {
     | _ => Type.Linear;
     }
 
-  let dictToMapString = (map, dict) =>
+  let dictToMapString = (dict, map) =>
     dict
-      |> maybeObject(dict => 
+      ->maybeObject(dict => 
         switch(dict) {
         | Some(dict) =>
           dict
@@ -155,11 +142,11 @@ module Parse = {
           ->Belt.Map.String.reduce(
             Belt.Map.String.empty,
             (acc, key, value) => {
-              let maybeItem = maybeObject(value => 
+              let maybeItem = maybeObject(value, value => 
                 switch (value) {
                 | Some(value) => Some(map(value));
                 | None => None;
-              }, value);
+              });
 
               switch(maybeItem) {
               | Some(item) => Belt.Map.String.set(acc, key, item);
@@ -176,55 +163,55 @@ module Parse = {
         ->maybeProperty("entity", emptyArray)
         ->maybeArray(array => array)
         ->Belt.List.fromArray
-        ->Belt.List.map(stringWithDefault("", _)),
+        ->Belt.List.map(stringWithDefault(_, "")),
       mouseButtons: stateObj
         ->maybeProperty("mouseButtons", emptyNumber)
-        |> floatWithDefault(0.0)
-        |> Belt.Float.toInt,
+        ->floatWithDefault(0.0)
+        ->Belt.Float.toInt,
       mousePosition: stateObj
         ->maybeProperty("mousePosition", emptyArray)
-        |> maybeVector,
+        ->maybeVector,
       time: stateObj 
         ->maybeProperty("time", emptyObject)
-        |> maybeObject(timeObj: Type.time =>
+        ->maybeObject(timeObj: Type.time =>
           switch (timeObj) {
           | Some(timeObj) => {
               timeNow: timeObj
                 ->maybeProperty("timeNow", emptyNumber)
-                |> floatWithDefault(0.0),
+                ->floatWithDefault(0.0),
               delta: timeObj
                 ->maybeProperty("delta", emptyNumber)
-                |> floatWithDefault(0.0),
+                ->floatWithDefault(0.0),
             }
           | None => Type.initialState.time;
         }),
       isDebugInitialized: stateObj
         ->maybeProperty("isDebugInitialized", emptyBool(false))
-        |> boolWithDefault(false),
+        ->boolWithDefault(false),
       transform: stateObj
         ->maybeProperty("transform", emptyObject)
-        |> dictToMapString((transform): Type.transform => {
+        ->dictToMapString((transform): Type.transform => {
           rotation: transform
             ->maybeProperty("rotation", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           localRotation: transform
             ->maybeProperty("localRotation", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           scale: transform
             ->maybeProperty("scale", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           localScale: transform
             ->maybeProperty("localScale", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           position: transform
             ->maybeProperty("position", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           localPosition: transform
             ->maybeProperty("localPosition", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           parent: transform
             ->maybeProperty("parent", emptyString)
-            |> maybeString(parent =>
+            ->maybeString(parent =>
               switch(parent) {
                 | Some(parent) => Some(parent)
                 | None => None
@@ -233,38 +220,38 @@ module Parse = {
         }),
       sprite: stateObj
         ->maybeProperty("sprite", emptyObject)
-        |> dictToMapString((sprite): Type.sprite => {
+        ->dictToMapString((sprite): Type.sprite => {
           src: sprite
             ->maybeProperty("parent", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
         }),
       animationFloat: stateObj
         ->maybeProperty("animationFloat", emptyObject)
-        |> dictToMapString((animationFloat): Type.animation(float) => {
+        ->dictToMapString((animationFloat): Type.animation(float) => {
           entity: animationFloat
             ->maybeProperty("entity", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           name: animationFloat
             ->maybeProperty("name", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           isPlaying: animationFloat
             ->maybeProperty("isPlaying", emptyBool(false))
-            |> boolWithDefault(false),
+            ->boolWithDefault(false),
           isFinished: animationFloat
             ->maybeProperty("isFinished", emptyBool(false))
-            |> boolWithDefault(false),
+            ->boolWithDefault(false),
           currentTime: animationFloat
             ->maybeProperty("currentTime", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           value: animationFloat
             ->maybeProperty("value", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           wrapMode: animationFloat
             ->maybeProperty("wrapMode", emptyString)
-            |> maybeString(value =>
+            ->maybeString(value =>
               switch(value) {
-                | Some(value) => wrapMode(value)
-                | None => Type.Once
+              | Some(value) => wrapMode(value)
+              | None => Type.Once
               }
             ),
           keyframes: animationFloat
@@ -272,23 +259,23 @@ module Parse = {
             ->maybeArray(array => array)
             ->Belt.List.fromArray
             ->Belt.List.map(
-                maybeObject(keyframe: Type.keyframe(float) =>
+                maybeObject(_, keyframe: Type.keyframe(float) =>
                 switch (keyframe) {
                 | Some(keyframe) => {
                   duration: keyframe
                     ->maybeProperty("duration", emptyNumber)
-                    |> floatWithDefault(0.0),
+                    ->floatWithDefault(0.0),
                   timingFunction: keyframe
                     ->maybeProperty("timingFunction", emptyString)
-                    |> maybeString(value =>
+                    ->maybeString(value =>
                       switch(value) {
-                        | Some(value) => timingFunction(value)
-                        | None => Type.Linear
+                      | Some(value) => timingFunction(value)
+                      | None => Type.Linear
                       }
                     ),
                   valueRange: keyframe
                     ->maybeProperty("valueRange", emptyArray)
-                    |> maybeVector,
+                    ->maybeVector,
                   }
                 | None => {
                     duration: 0.0,
@@ -301,28 +288,28 @@ module Parse = {
         }),
       animationVector: stateObj
         ->maybeProperty("animationVector", emptyObject)
-        |> dictToMapString((animationVector): Type.animation(Vector_Util.t) => {
+        ->dictToMapString((animationVector): Type.animation(Vector_Util.t) => {
           entity: animationVector
             ->maybeProperty("entity", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           name: animationVector
             ->maybeProperty("name", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           isPlaying: animationVector
             ->maybeProperty("isPlaying", emptyBool(false))
-            |> boolWithDefault(false),
+            ->boolWithDefault(false),
           isFinished: animationVector
             ->maybeProperty("isFinished", emptyBool(false))
-            |> boolWithDefault(false),
+            ->boolWithDefault(false),
           currentTime: animationVector
             ->maybeProperty("currentTime", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           value: animationVector
             ->maybeProperty("value", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           wrapMode: animationVector
             ->maybeProperty("wrapMode", emptyString)
-            |> maybeString(value =>
+            ->maybeString(value =>
               switch(value) {
                 | Some(value) => wrapMode(value)
                 | None => Type.Once
@@ -333,15 +320,15 @@ module Parse = {
             ->maybeArray(array => array)
             ->Belt.List.fromArray
             ->Belt.List.map(
-                maybeObject(keyframe: Type.keyframe(Vector_Util.t) =>
+                maybeObject(_, keyframe: Type.keyframe(Vector_Util.t) =>
                 switch (keyframe) {
                 | Some(keyframe) => {
                   duration: keyframe
                     ->maybeProperty("duration", emptyNumber)
-                    |> floatWithDefault(0.0),
+                    ->floatWithDefault(0.0),
                   timingFunction: keyframe
                     ->maybeProperty("timingFunction", emptyString)
-                    |> maybeString(value =>
+                    ->maybeString(value =>
                       switch(value) {
                         | Some(value) => timingFunction(value)
                         | None => Type.Linear
@@ -375,50 +362,50 @@ module Parse = {
         }),
       collideBox: stateObj
         ->maybeProperty("collideBox", emptyObject)
-        |> dictToMapString((collideBox): Type.collideBox => {
+        ->dictToMapString((collideBox): Type.collideBox => {
           entity: collideBox
             ->maybeProperty("entity", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           size: collideBox
             ->maybeProperty("size", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           position: collideBox
             ->maybeProperty("position", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           collisions: collideBox
             ->maybeProperty("collisions", emptyArray)
             |> collisions
         }),
       collideCircle: stateObj
         ->maybeProperty("collideBox", emptyObject)
-        |> dictToMapString((collideCircle): Type.collideCircle => {
+        ->dictToMapString((collideCircle): Type.collideCircle => {
           entity: collideCircle
             ->maybeProperty("entity", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           radius: collideCircle
             ->maybeProperty("radius", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
           position: collideCircle
             ->maybeProperty("position", emptyArray)
-            |> maybeVector,
+            ->maybeVector,
           collisions: collideCircle
             ->maybeProperty("collisions", emptyArray)
             |> collisions
         }),
       fieldFloat: stateObj
         ->maybeProperty("fieldFloat", emptyObject)
-        |> dictToMapString((fieldFloat): Type.field(float) => {
+        ->dictToMapString((fieldFloat): Type.field(float) => {
           entity: fieldFloat
             ->maybeProperty("entity", emptyString)
-            |> stringWithDefault(""),
+            ->stringWithDefault(""),
           value: fieldFloat
             ->maybeProperty("value", emptyNumber)
-            |> floatWithDefault(0.0),
+            ->floatWithDefault(0.0),
         }),
   };
 
   let state =
-    maybeObject((stateObj): Type.state => 
+    maybeObject(_, (stateObj): Type.state => 
       switch (stateObj) {
       | Some(stateObj) => someState(stateObj)
       | None => Type.initialState
