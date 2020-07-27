@@ -46,44 +46,60 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
 
   items
     ->Belt.Map.String.toArray
-    ->Belt.Array.map(((id, animation)) => {
+    ->Belt.Array.map(((name, animation)) => {
         let animationLength = Belt.List.reduce(
           animation.keyframes, 
           0.0, 
           (sum, keyframe) => keyframe.duration +. sum
         );
 
-        <div key={id}>
+        <div key={name} className="mt-3">
           <div className="flex justify-between">
-            <div className="text-white mb-3 col-span-12">
+            <div className="text-white col-span-12">
               {React.string("Animation (float)")}
             </div>
 
             <Button_UI
-              size={Button_UI.Xs}
+              
               onClick={(_) => {
-                modalDispatch(OpenModal(id, None))
+                modalDispatch(OpenModal(name, None))
               }}
             >
               {React.string("x")}
             </Button_UI>
 
             <ConfirmModal_Debug 
-              name={id}
+              name={name}
               title={React.string("Are you sure you want to remove animation?")}
-              onAccept={(_) => appDispatch(RemoveAnimationFloat(id))}
+              onAccept={(_) => appDispatch(RemoveAnimationFloat(name))}
             />
           </div>
 
-          <div className="grid grid-cols-12 gap-1 mb-3 my-1">
+          <div className="grid grid-cols-12 gap-1 my-1">
             <div className="col-span-4">{React.string("name")}</div>
-            <div className="col-span-8">{React.string(Uuid_Util.humanFriendlyEntity(id))}</div>
-            <div className="col-span-4">{React.string("isPlaying")}</div>
+            <div className="col-span-8">
+              <Input_UI 
+                value={name} 
+                onChange={(_) => {()}}
+              />
+            </div>            <div className="col-span-4">{React.string("isPlaying")}</div>
             <div className="col-span-8">{React.string(animation.isPlaying ? "true" : "false")}</div>
             <div className="col-span-4">{React.string("currentTime")}</div>
-            <div className="col-span-8">{React.string(Belt.Float.toString(animation.currentTime))}</div>
+            <div className="col-span-8">
+              <Input_UI 
+                type_="number" 
+                value={Belt.Float.toString(animation.currentTime)} 
+                onChange={(_) => {()}}
+              />
+            </div>
             <div className="col-span-4">{React.string("value")}</div>
-            <div className="col-span-8">{React.string(Belt.Float.toString(animation.value))}</div>
+            <div className="col-span-8">
+              <Input_UI 
+                type_="number" 
+                value={Belt.Float.toString(animation.value)} 
+                onChange={(_) => {()}}
+              />
+            </div>
             <div className="col-span-4">{React.string("isFinished")}</div>
             <div className="col-span-8">{React.string(animation.isFinished ? "true" : "false")}</div>
             <div className="col-span-4">{React.string("wrapMode")}</div>

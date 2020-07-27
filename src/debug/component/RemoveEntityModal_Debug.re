@@ -19,14 +19,14 @@ let make = () => {
 
         <div className="flex justify-around mt-6">
           <Button_UI 
-            size={Button_UI.Xs}
+            
             onClick={(_) => modalDispatch(CloseModal("removeEntity"))} 
           >
             {React.string("Cancel")}
           </Button_UI>
 
           <Button_UI 
-            size={Button_UI.Xs}
+            
             onClick={(_) => {
               modalDispatch(CloseModal("removeEntity"));
               editorDispatch(SelectEntity(""));

@@ -3,7 +3,7 @@ let options: Belt.List.t(Select_UI.selectOption) = [
   {value: "Sprite", text: "Sprite", disabled: false},
 
   {value: "FieldFloat", text: "Field Float", disabled: false},
-  {value: "FieldInt", text: "Field Int", disabled: false},
+  // {value: "FieldInt", text: "Field Int", disabled: false},
   {value: "FieldVector", text: "Field Vector", disabled: false},
 
   {value: "AnimationFloat", text: "Animation Float", disabled: false},
@@ -18,7 +18,7 @@ let mapStringToAction = (value, entity) => {
   | "Transform" => App_Context.CreateTransform(entity);
   | "Sprite" => App_Context.CreateSprite(entity);
   | "FieldFloat" => App_Context.CreateFieldFloat(entity);
-  | "FieldInt" => App_Context.CreateFieldInt(entity);
+  // | "FieldInt" => App_Context.CreateFieldInt(entity);
   | "FieldVector" => App_Context.CreateFieldVector(entity);
   | "AnimationFloat" => App_Context.CreateAnimationFloat(entity);
   | "AnimationVector" => App_Context.CreateAnimationVector(entity);

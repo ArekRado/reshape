@@ -2,6 +2,7 @@ let initialState = Type.initialState;
 
 type action = 
   | SetState(Type.state)
+
   | CreateEntity(Type.entity)
   | CreateTransform(Type.entity)
   | CreateSprite(Type.entity)
@@ -12,11 +13,16 @@ type action =
   | CreateAnimationVector(Type.entity)
   | CreateCollideBox(Type.entity)
   | CreateCollideCircle(Type.entity)
+
   | RemoveEntity(Type.entity)
   | RemoveAnimationFloat(Type.entity)
   | RemoveAnimationVector(Type.entity)
   | RemoveCollideBox(Type.entity)
   | RemoveCollideCircle(Type.entity)
+  | RemoveFieldFloat(Type.entity)
+
+  | SetFieldFloatName(Type.entity, Type.entity)
+  | SetFieldFloatValue(Type.entity, float)
 
 let reducer = (state, action): Type.state => {
   let newState = switch (action) {
@@ -24,7 +30,12 @@ let reducer = (state, action): Type.state => {
   | CreateEntity(entity) => Entity.create(~entity, ~state);
   | CreateTransform(entity) => Transform_Component.create(~entity, ~state, ());       
   | CreateSprite(entity) => Sprite_Component.create(~entity, ~state, ~src="");
-  | CreateFieldFloat(_) => state //FieldFloat_Component.create(~entity, ~state);
+  | CreateFieldFloat(entity) => FieldFloat_Component.create(
+      ~entity,
+      ~state,
+      ~name=Uuid_Util.v4(),
+      ~value=0.0
+    );
   | CreateFieldInt(_) => state //FieldInt_Component.create(~entity, ~state);
   | CreateFieldVector(_) => state //FieldVector_Component.create(~entity, ~state);
   | CreateAnimationFloat(entity) => AnimationFloat_Component.create(
@@ -63,6 +74,27 @@ let reducer = (state, action): Type.state => {
   | RemoveAnimationVector(name) => AnimationVector_Component.remove(~name, ~state);
   | RemoveCollideBox(name) => CollideBox_Component.remove(~name, ~state);
   | RemoveCollideCircle(name) => CollideCircle_Component.remove(~name, ~state);
+  | RemoveFieldFloat(name) => FieldFloat_Component.remove(~name, ~state);
+
+  | SetFieldFloatName(name, newName) => {
+      ...state,
+      fieldFloat: switch(Belt.Map.String.get(state.fieldFloat, name)) {
+      | Some(fieldFloat) => 
+        Belt.Map.String.set(state.fieldFloat, newName, fieldFloat)
+        ->Belt.Map.String.remove(_, name)
+      | None => state.fieldFloat
+      }
+    };
+  | SetFieldFloatValue(name, value) => {
+      ...state,
+      fieldFloat: switch(Belt.Map.String.get(state.fieldFloat, name)) {
+      | Some(fieldFloat) => Belt.Map.String.set(state.fieldFloat, name, {
+        ...fieldFloat,
+        value,
+      });
+      | None => state.fieldFloat
+      }
+    };
   };
 
   SyncState.set(newState);

@@ -6,14 +6,14 @@ let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
   items
     ->Belt.Map.String.toArray
     ->Belt.Array.map(((key, collideCircle)) =>
-      <>
-        <div className="flex justify-between">
-          <div className="text-white mb-3 col-span-12">
+      <React.Fragment key>
+        <div className="flex justify-between mt-3">
+          <div className="text-white col-span-12">
             {React.string("Collide box")}
           </div>
 
           <Button_UI
-            size={Button_UI.Xs}
+            
             onClick={(_) => {
               modalDispatch(OpenModal(key, None))
             }}
@@ -27,16 +27,22 @@ let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
             onAccept={(_) => appDispatch(RemoveCollideCircle(key))}
           />
         </div>
-        <div key={key} className="grid grid-cols-12 gap-1 mb-3">
-          <div className="text-white mb-3 col-span-12">
-            {React.string("Collide box")}
-          </div>
 
+        <div  className="grid grid-cols-12 gap-1 mb-3">
           <div className="col-span-4">{React.string("radius")}</div>
-          <div className="col-span-8">{React.string(Belt.Float.toString(collideCircle.radius))}</div>
-
+          <div className="col-span-8">
+            <Input_UI 
+              value={Belt.Float.toString(collideCircle.radius)} 
+              onChange={(_) => {()}}
+            />
+          </div>  
           <div className="col-span-4">{React.string("position")}</div>
-          <div className="col-span-8"><Vector_Debug vector={collideCircle.position} /></div>
+          <div className="col-span-8">
+            <Vector_Debug 
+              value={collideCircle.position}
+              onChange={(_) => {()}}
+            />
+          </div>
 
           {Belt.List.length(collideCircle.collisions) > 0 
           ? <div>{React.string("Collisions:")}</div> 
@@ -62,7 +68,7 @@ let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
           ->React.array
           }
         </div>
-      </>
+      </React.Fragment >
     )
     ->React.array
 }

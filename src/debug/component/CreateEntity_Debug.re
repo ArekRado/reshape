@@ -6,12 +6,12 @@ let make = () => {
 
   <div>
     <Input_UI 
-      label="entity" 
+      label={React.string("entity")} 
       value={entity} 
       onChange={event => setEntity(ReactEvent.Form.target(event)##value)}
     />
     <Button_UI 
-      size={Button_UI.Xs}
+      
       onClick={(_) => {
         setEntity((_) => "");
         appDispatch(CreateEntity(entity));

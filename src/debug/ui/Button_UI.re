@@ -5,7 +5,7 @@ type size =
   | Lg;
 
 [@react.component]
-let make = (~onClick, ~children, ~size=Md, ~className="") => {
+let make = (~onClick, ~children, ~size=Xs, ~className="") => {
   let btnSize = switch(size) {
     | Xs => "p-1"
     | Sm => "p-2"

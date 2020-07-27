@@ -1,4 +1,4 @@
-let create = (~entity, ~name, ~state, ~value) => {
+let create = (~entity, ~name, ~state: Type.state, ~value): Type.state => {
   ...state,
   fieldFloat: Belt.Map.String.set(state.fieldFloat, name, {
     entity,

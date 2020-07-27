@@ -5,6 +5,7 @@ type entityComponents = {
   animationVector: Belt.Map.String.t(Type.animation(Vector_Util.t)),
   collideBox: Belt.Map.String.t(Type.collideBox),
   collideCircle: Belt.Map.String.t(Type.collideCircle),
+  fieldFloat: Belt.Map.String.t(Type.field(float)),
 }
 
 let getComponents = (entity, state: Type.state): entityComponents => {
@@ -28,6 +29,10 @@ let getComponents = (entity, state: Type.state): entityComponents => {
       state.collideCircle, 
       (_, collideCircle) => collideCircle.entity === entity
     ),
+  fieldFloat: Belt.Map.String.keep(
+      state.fieldFloat, 
+      (_, fieldFloat) => fieldFloat.entity === entity
+    ),
 };
 
 [@react.component]
@@ -42,6 +47,7 @@ let make = () => {
       {React.string("Components")}
     </div>
     
+    <FieldFloat_Debug items={components.fieldFloat}/>
     <Transform_Debug transform={components.transform}/>
     <Sprite_Debug sprite={components.sprite}/>
     <AnimationFloat_Debug items={components.animationFloat}/>

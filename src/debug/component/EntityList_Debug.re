@@ -17,7 +17,7 @@ let make = () => {
             title={entity}
           >
             <Button_UI 
-              size={Button_UI.Xs}
+              
               onClick={(_) => editorDispatch(SelectEntity(entity))}
               className="flex-1 text-left"
             >
@@ -25,7 +25,7 @@ let make = () => {
             </Button_UI>
 
             <Button_UI 
-              size={Button_UI.Xs}
+              
               onClick={(_) => {
                 modalDispatch(OpenModal("removeEntity", Entity(entity)))
               }}
