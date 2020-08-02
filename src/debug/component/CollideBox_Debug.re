@@ -8,7 +8,7 @@ let make = (~items: Belt.Map.String.t(Type.collideBox)) => {
     ->Belt.Array.map(((key, collideBox)) =>
       <React.Fragment key>
         <div className="flex justify-between mt-3">
-          <div className="text-white col-span-12">
+          <div className="text-white">
             {React.string("Collide box")}
           </div>
 

@@ -55,12 +55,11 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
 
         <div key={name} className="mt-3">
           <div className="flex justify-between">
-            <div className="text-white col-span-12">
+            <div className="text-white">
               {React.string("Animation (float)")}
             </div>
 
             <Button_UI
-              
               onClick={(_) => {
                 modalDispatch(OpenModal(name, None))
               }}

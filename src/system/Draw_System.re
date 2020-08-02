@@ -1,38 +1,40 @@
 [@bs.module "../util/pixiDraw"]
-external pixiDraw: list(string) => unit = "default";
+external pixiDraw: (array(string), bool) => unit = "default";
 
 let update = (~state: Type.state, ~enableDraw:bool): Type.state => {
-  let drawState: Belt.List.t(string) =
-    Belt.List.reduce(
-      state.entity,
-      [],
-      (sprites, entity) => {
-        let sprite = Belt.Map.String.get(state.sprite, entity);
-        let transform = Belt.Map.String.get(state.transform, entity);
+  let drawState: Js.Array2.t(string) = [| |];
 
-        switch (sprite, transform) {
-        | (None, None) => sprites
-        | (Some(_), None) => sprites
-        | (None, Some(_)) => sprites
-        | (Some(img), Some(transform)) =>
-          let (x, y) = transform.position;
-          let src = img.src;
+  Belt.List.forEach(
+    state.entity,
+    (entity) => {
+      let sprite = Belt.Map.String.get(state.sprite, entity);
+      let transform = Belt.Map.String.get(state.transform, entity);
 
-          Belt.List.add(
-            sprites,
-            {j|{
-                "entity":"$(entity)",
-                "src":"$(src)",
-                "x":"$(x)",
-                "y":"$(y)"
-              }|j},
-          );
-        };
-      },
-    );
+      switch (sprite, transform) {
+      | (None, None) => ()
+      | (Some(_), None) => ()
+      | (None, Some(_)) => ()
+      | (Some(img), Some(transform)) =>
+        let (x, y) = transform.position;
+        let src = img.src;
 
-  if(enableDraw === true && Belt.List.size(drawState) > 0) {
-    pixiDraw(drawState);
+        let _ = Js.Array2.push(
+          drawState,
+          {j|{
+            "entity":"$(entity)",
+            "src":"$(src)",
+            "x":"$(x)",
+            "y":"$(y)"
+          }|j},
+        );
+
+        ();
+      };
+    },
+  );
+
+  if(enableDraw === true && Js.Array2.length(drawState) > 0) {
+    pixiDraw(drawState, state.isDebugInitialized);
   }
 
   state;

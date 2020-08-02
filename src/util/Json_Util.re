@@ -222,7 +222,7 @@ module Parse = {
         ->maybeProperty("sprite", emptyObject)
         ->dictToMapString((sprite): Type.sprite => {
           src: sprite
-            ->maybeProperty("parent", emptyString)
+            ->maybeProperty("src", emptyString)
             ->stringWithDefault(""),
         }),
       animationFloat: stateObj
@@ -374,7 +374,7 @@ module Parse = {
             ->maybeVector,
           collisions: collideBox
             ->maybeProperty("collisions", emptyArray)
-            |> collisions
+            ->collisions
         }),
       collideCircle: stateObj
         ->maybeProperty("collideBox", emptyObject)
@@ -390,7 +390,7 @@ module Parse = {
             ->maybeVector,
           collisions: collideCircle
             ->maybeProperty("collisions", emptyArray)
-            |> collisions
+            ->collisions
         }),
       fieldFloat: stateObj
         ->maybeProperty("fieldFloat", emptyObject)
@@ -401,6 +401,24 @@ module Parse = {
           value: fieldFloat
             ->maybeProperty("value", emptyNumber)
             ->floatWithDefault(0.0),
+        }),
+      asset: stateObj 
+        ->maybeProperty("asset", emptyObject)
+        ->maybeObject(assetObj: Type.asset =>
+          switch (assetObj) {
+          | Some(assetObj) => {
+              sprite: assetObj
+                ->maybeProperty("sprite", emptyArray)
+                ->maybeArray(array => array)
+                ->Belt.List.fromArray
+                ->Belt.List.map((sprite) => stringWithDefault(sprite, ""))
+                // ->Belt.List.map((sprite): Type.asset => {
+                //   src: sprite 
+                //     ->maybeProperty("src", emptyString)
+                //     ->stringWithDefault(""),
+                // })
+            }
+          | None => Type.initialState.asset;
         }),
   };
 
@@ -575,7 +593,7 @@ module Stringify = {
       Belt.Map.String.mapWithKey(sprite, (entity, x: Type.sprite) => {
         let spriteDict = Js.Dict.empty();
 
-        Js.Dict.set(dict, "entity", Js.Json.string(x.src));
+        Js.Dict.set(spriteDict, "src", Js.Json.string(x.src));
 
         Js.Dict.set(dict, entity, Js.Json.object_(spriteDict));
       })
@@ -648,6 +666,20 @@ module Stringify = {
     Js.Json.object_(dict);
   };
 
+  let asset = (asset: Type.asset) => {
+    let dict = Js.Dict.empty();
+
+    Js.Dict.set(
+      dict, 
+      "sprite", 
+      asset.sprite
+        ->Belt.List.toArray
+        ->Js.Json.stringArray
+    );
+
+    Js.Json.object_(dict);
+  };
+
   let state = (state: Type.state): string => {
     let dict = Js.Dict.empty();
 
@@ -660,6 +692,7 @@ module Stringify = {
     Js.Dict.set(dict, "collideCircle", collideCircle(state.collideCircle));
     Js.Dict.set(dict, "fieldFloat", fieldFloat(state.fieldFloat));
     Js.Dict.set(dict, "time", time(state.time));
+    Js.Dict.set(dict, "asset", asset(state.asset));
 
     Js.Dict.set(dict, "mouseButtons", Js.Json.number(Belt.Int.toFloat(state.mouseButtons)));
     Js.Dict.set(dict, "mousePosition", vector(state.mousePosition));

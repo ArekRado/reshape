@@ -1,6 +1,8 @@
 [@bs.val] external requestAnimationFrame : (unit => unit) => unit = "requestAnimationFrame";
 [@bs.val] external setTimeout : (unit => unit, int) => float = "setTimeout";
 
+[@bs.module "./asset/example.png"] external example : string = "default";
+
 type gameState = {
     yourState: string,
 }
@@ -14,7 +16,7 @@ let initialState: state = {
   game: {
     yourState: "",
   },
-  engine: Type.initialState,
+  engine: Engine.Asset.addSprite(~state=Type.initialState, ~sprite=example),
 };
 
 let rec logic = (state: state) => {

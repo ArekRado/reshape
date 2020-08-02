@@ -38,6 +38,10 @@ let initialize = () => {
 }
 
 exports.default = (params, devMode = false) => {
+  if(Array.isArray(params) === false) {
+    return
+  }
+  
   if (!isInitialized) {
     initialize()
   }

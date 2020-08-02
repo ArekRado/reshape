@@ -25,6 +25,7 @@ module Util = {
 };
 
 module Entity = Entity;
+module Asset = Asset;
 
 module Type = Type;
 

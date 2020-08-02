@@ -14,8 +14,13 @@ type action =
 
 let reducer = (state, action): initialState =>
   switch (action) {
-  | SelectEntity(selectedEntity) => { ...state, selectedEntity }
-  | SetIsPlaying(isPlaying) => { ...state, isPlaying }
+  | SelectEntity(selectedEntity) => { 
+    ...state, 
+    selectedEntity: state.selectedEntity === selectedEntity 
+      ? "" 
+      : selectedEntity 
+  }
+  | SetIsPlaying(isPlaying) => { ...state, isPlaying };
   };
 
 type dispatch = action => unit;

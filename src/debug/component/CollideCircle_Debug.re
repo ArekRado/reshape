@@ -8,12 +8,11 @@ let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
     ->Belt.Array.map(((key, collideCircle)) =>
       <React.Fragment key>
         <div className="flex justify-between mt-3">
-          <div className="text-white col-span-12">
+          <div className="text-white">
             {React.string("Collide box")}
           </div>
 
           <Button_UI
-            
             onClick={(_) => {
               modalDispatch(OpenModal(key, None))
             }}

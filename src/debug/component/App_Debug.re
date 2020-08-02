@@ -15,16 +15,16 @@ let make = () => {
     Modal_Context.initialState,
   );
 
-  // let (entity, setEntity) = React.useState(_ => "");
-  // let (isPlaying, setIsPlaying) = React.useState(_ => false);
-
   let isPlayingRef = React.useRef(false);
   isPlayingRef.current = editorContext.isPlaying;
 
   React.useEffect1(() => {
     let id = Js.Global.setInterval(() => {
       if(isPlayingRef.current) {
-        setAppContext(App_Context.SetState(SyncState.get()));
+        switch (SyncState.get(Editor)) {
+        | Some(state) => setAppContext(App_Context.SetState(state));
+        | None => ();
+        }
       }
     }, 50);
     
@@ -35,7 +35,11 @@ let make = () => {
 
   // Sync once at the saart
   React.useEffect0(() => {
-    SyncState.getStateFromLocalStorage()
+    let initialState = switch (SyncState.get(Editor)) {
+    | Some(state) => state
+    | None => Type.initialState
+    }
+    SyncState.getStateFromLocalStorage(initialState)
       ->App_Context.SetState
       ->setAppContext
 

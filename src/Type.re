@@ -2,6 +2,8 @@ type entity = string;
 
 type vector = (float, float);
 
+type rotation = float;
+
 type collideType = 
   | Box(string)
   | Circle(string);
@@ -21,7 +23,7 @@ type collideCircle = {
 };
 
 type transform = {
-  rotation: float,
+  rotation,
   localRotation: float,
   scale: vector,
   localScale: vector,
@@ -78,11 +80,17 @@ type animation('a) = {
   wrapMode,
 };
 
-type sprite = {src: string};
+type spriteSrc = string;
+
+type sprite = {src: spriteSrc};
 
 type time = {
   timeNow: float,
   delta: float,
+};
+
+type asset = {
+  sprite: Belt.List.t(string),
 };
 
 type state = {
@@ -102,6 +110,7 @@ type state = {
   mutable mousePosition: vector,
   time,
   isDebugInitialized: bool,
+  asset,
 };
 
 let initialState: state = {
@@ -120,4 +129,7 @@ let initialState: state = {
   mouseButtons: 0,
   mousePosition: Vector_Util.zero,
   isDebugInitialized: false,
+  asset: {
+    sprite: [],
+  },
 };

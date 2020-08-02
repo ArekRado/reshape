@@ -23,6 +23,16 @@ type action =
 
   | SetFieldFloatName(Type.entity, Type.entity)
   | SetFieldFloatValue(Type.entity, float)
+  // Sprite
+  | SetSpriteSrc(Type.entity, Type.spriteSrc)
+  // Transform
+  | SetTransformRotation(Type.entity, Type.rotation)
+  | SetTransformLocalRotation(Type.entity, Type.rotation)
+  | SetTransformScale(Type.entity, Vector_Util.t)
+  | SetTransformLocalScale(Type.entity, Vector_Util.t)
+  | SetTransformPosition(Type.entity, Vector_Util.t)
+  | SetTransformLocalPosition(Type.entity, Vector_Util.t)
+  // | SetTransformParent(Type.entity, Type.entity)
 
 let reducer = (state, action): Type.state => {
   let newState = switch (action) {
@@ -95,9 +105,20 @@ let reducer = (state, action): Type.state => {
       | None => state.fieldFloat
       }
     };
+  | SetSpriteSrc(entity, src) => Sprite_Component.setSrc(~entity, ~src, ~state);
+
+  // Transform
+
+  | SetTransformRotation(entity, rotation) => Transform_Component.setRotation(~entity, ~state, ~rotation);
+  | SetTransformLocalRotation(entity, localRotation) => Transform_Component.setLocalRotation(~entity, ~state, ~localRotation);
+  | SetTransformScale(entity, scale) => Transform_Component.setScale(~entity, ~state, ~scale);
+  | SetTransformLocalScale(entity, localScale) => Transform_Component.setLocalScale(~entity, ~state, ~localScale);
+  | SetTransformPosition(entity, position) => Transform_Component.setPosition(~entity, ~state, ~position);
+  | SetTransformLocalPosition(entity, localPosition) => Transform_Component.setLocalPosition(~entity, ~state, ~localPosition);
+  // | SetTransformParent(entity, parentEntity) => Transform_Component(~entity, ~state, ~rotation);
   };
 
-  SyncState.set(newState);
+  SyncState.set(newState, Game);
 
   newState;
 };
