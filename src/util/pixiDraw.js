@@ -41,16 +41,16 @@ exports.default = (params, devMode = false) => {
   if(Array.isArray(params) === false) {
     return
   }
-  
+
   if (!isInitialized) {
     initialize()
   }
   debugGraphics.clear()
 
-  const state = params.flat(Infinity).slice(0, -1)
+  // const state = params.flat(Infinity).slice(0, -1)
 
-  for (let i = 0; i < state.length; i++) {
-    const image = JSON.parse(state[i])
+  for (let i = 0; i < params.length; i++) {
+    const image = JSON.parse(params[i])
     const pixiImage = images.get(image.entity)
 
     if (pixiImage) {
@@ -82,10 +82,10 @@ const drawImage = (pixiImage, image, devMode, debugGraphic) => {
   pixiImage.anchor.set(0, 0)
 
   if (devMode) {
-    const r = gameObject.rigidbody
-
     debugGraphic.lineStyle(1, 0x0000ff, 1)
-    debugGraphic.drawRect(r.position.x, r.position.y, r.size.x, r.size.y)
+    debugGraphic.drawRect(image.x, image.y, 20, 20)
+    
+    // debugGraphic.drawRect(r.position.x, r.position.y, r.size.x, r.size.y)
   }
 }
 
