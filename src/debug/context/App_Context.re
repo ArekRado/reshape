@@ -109,12 +109,42 @@ let reducer = (state, action): Type.state => {
 
   // Transform
 
-  | SetTransformRotation(entity, rotation) => Transform_Component.setRotation(~entity, ~state, ~rotation);
-  | SetTransformLocalRotation(entity, localRotation) => Transform_Component.setLocalRotation(~entity, ~state, ~localRotation);
-  | SetTransformScale(entity, scale) => Transform_Component.setScale(~entity, ~state, ~scale);
-  | SetTransformLocalScale(entity, localScale) => Transform_Component.setLocalScale(~entity, ~state, ~localScale);
-  | SetTransformPosition(entity, position) => Transform_Component.setPosition(~entity, ~state, ~position);
-  | SetTransformLocalPosition(entity, localPosition) => Transform_Component.setLocalPosition(~entity, ~state, ~localPosition);
+  | SetTransformRotation(entity, rotation) => 
+    Transform_Component.setRotation(
+      ~entity, 
+      ~state, 
+      ~rotation
+    );
+  | SetTransformLocalRotation(entity, localRotation) => 
+    Transform_Component.setLocalRotation(
+      ~entity, 
+      ~state, 
+      ~localRotation
+    );
+  | SetTransformScale(entity, scale) => 
+    Transform_Component.setScale(
+      ~entity, 
+      ~state, 
+      ~scale
+    );
+  | SetTransformLocalScale(entity, localScale) => 
+    Transform_Component.setLocalScale(
+      ~entity, 
+      ~state, 
+      ~localScale
+    );
+  | SetTransformPosition(entity, position) => 
+    Transform_Component.setPosition(
+      ~entity, 
+      ~state, 
+      ~position
+    );
+  | SetTransformLocalPosition(entity, localPosition) => 
+    Transform_Component.setLocalPosition(
+      ~entity, 
+      ~state, 
+      ~localPosition
+    );
   // | SetTransformParent(entity, parentEntity) => Transform_Component(~entity, ~state, ~rotation);
   };
 

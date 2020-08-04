@@ -32,3 +32,80 @@ let remove = (~entity: string, ~state: Type.state): Type.state => {
   transform: Belt.Map.String.remove(state.transform, entity),
 };
   
+let setRotation = (~entity, ~state: Type.state, ~rotation): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      rotation,
+    })
+    | None => transform
+    }
+  )
+};
+
+let setLocalRotation = (~entity, ~state: Type.state, ~localRotation): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      localRotation,
+    })
+    | None => transform
+    }
+  )
+};
+
+let setScale = (~entity, ~state: Type.state, ~scale): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      scale,
+    })
+    | None => transform
+    }
+  )
+};
+
+let setLocalScale = (~entity, ~state: Type.state, ~localScale): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      localScale,
+    })
+    | None => transform
+    }
+  )
+};
+
+let setPosition = (~entity, ~state: Type.state, ~position): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      position,
+    })
+    | None => transform
+    }
+  )
+};
+
+let setLocalPosition = (~entity, ~state: Type.state, ~localPosition): Type.state => {
+  ...state,
+  transform: Belt.Map.String.update(state.transform, entity, transform => 
+    switch (transform) {
+    | Some(transform) => Some({
+      ...transform,
+      localPosition,
+    })
+    | None => transform
+    }
+  )
+};
