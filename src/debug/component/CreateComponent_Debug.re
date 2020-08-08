@@ -6,8 +6,7 @@ let options: Belt.List.t(Select_UI.selectOption) = [
   // {value: "FieldInt", text: "Field Int", disabled: false},
   {value: "FieldVector", text: "Field Vector", disabled: false},
 
-  {value: "AnimationFloat", text: "Animation Float", disabled: false},
-  {value: "AnimationVector", text: "Animation Vector", disabled: false},
+  {value: "Animation", text: "Animation Float", disabled: false},
 
   {value: "CollideBox", text: "Collide Box", disabled: false},
   {value: "CollideCircle", text: "Collide Circle", disabled: false},
@@ -20,8 +19,7 @@ let mapStringToAction = (value, entity) => {
   | "FieldFloat" => App_Context.CreateFieldFloat(entity);
   // | "FieldInt" => App_Context.CreateFieldInt(entity);
   | "FieldVector" => App_Context.CreateFieldVector(entity);
-  | "AnimationFloat" => App_Context.CreateAnimationFloat(entity);
-  | "AnimationVector" => App_Context.CreateAnimationVector(entity);
+  | "Animation" => App_Context.CreateAnimation(entity);
   | "CollideBox" => App_Context.CreateCollideBox(entity);
   | "CollideCircle" => App_Context.CreateCollideCircle(entity);
   | _ => {

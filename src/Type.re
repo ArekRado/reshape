@@ -39,6 +39,7 @@ type field('a) = {
 
 type animationValue = 
   | FieldFloat(entity)
+  | FieldVector(entity)
   | TransformLocalPosition(entity)
 
 type animationValueRange = 
@@ -130,6 +131,7 @@ type state = {
   collideCircle: Belt.Map.String.t(collideCircle),
 
   fieldFloat: Belt.Map.String.t(field(float)),
+  fieldVector: Belt.Map.String.t(field(Vector_Util.t)),
 
   mutable mouseButtons: int,
   mutable mousePosition: vector,
@@ -149,6 +151,7 @@ let initialState: state = {
   collideBox: Belt.Map.String.empty,
   collideCircle: Belt.Map.String.empty,
   fieldFloat: Belt.Map.String.empty,
+  fieldVector: Belt.Map.String.empty,
   time: {
     timeNow: 0.0,
     delta: 0.0,

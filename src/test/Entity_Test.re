@@ -17,17 +17,11 @@ let runTests = () => {
           ~src="",
           ~state=_,
         )
-        ->AnimationFloat_Component.create(
+        ->Animation_Component.create(
+          ~value=Type.FieldFloat(""),
           ~keyframes=[],
           ~entity,
           ~name="AnimationFloat",
-          ~state=_,
-          (),
-        )
-        ->AnimationVector_Component.create(
-          ~keyframes=[],
-          ~entity,
-          ~name="AnimationVector",
           ~state=_,
           (),
         )

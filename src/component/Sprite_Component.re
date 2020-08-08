@@ -14,7 +14,7 @@ let setSrc = (~state: Type.state, ~entity: Type.entity, ~src: Type.spriteSrc) =>
   ...state,
   sprite: Belt.Map.String.update(state.sprite, entity, sprite =>
     switch sprite {
-    | Some(sprite) => {
+    | Some(_) => {
       let newSprite: Type.sprite = {
         src: src,
       };

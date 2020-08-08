@@ -14,8 +14,7 @@ let remove = (~entity: string, ~state: Type.state): Type.state => {
   newState
   ->Transform_Component.remove(~entity, ~state=_)
   ->Sprite_Component.remove(~entity, ~state=_)
-  ->AnimationFloat_Component.removeByEntity(~entity, ~state=_)
-  ->AnimationVector_Component.removeByEntity(~entity, ~state=_)
+  ->Animation_Component.removeByEntity(~entity, ~state=_)
   ->CollideBox_Component.removeByEntity(~entity, ~state=_)
   ->CollideCircle_Component.removeByEntity(~entity, ~state=_);
 };

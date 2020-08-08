@@ -411,6 +411,16 @@ module Parse = {
             ->maybeProperty("value", emptyNumber)
             ->floatWithDefault(0.0),
         }),
+      fieldVector: stateObj
+        ->maybeProperty("fieldVector", emptyObject)
+        ->dictToMapString((fieldVector): Type.field(Vector_Util.t) => {
+          entity: fieldVector
+            ->maybeProperty("entity", emptyString)
+            ->stringWithDefault(""),
+          value: fieldVector
+            ->maybeProperty("value", emptyArray)
+            ->maybeVector,
+        }),
       asset: stateObj 
         ->maybeProperty("asset", emptyObject)
         ->maybeObject(assetObj: Type.asset =>
@@ -668,6 +678,23 @@ module Stringify = {
     Js.Json.object_(dict)
   };
 
+  let fieldVector = (fieldVector) => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(fieldVector, (entity, x: Type.field(Vector_Util.t)) => {
+        let fieldVector = Js.Dict.empty();
+
+        Js.Dict.set(fieldVector, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(fieldVector, "value", vector(x.value));
+
+        Js.Dict.set(dict, entity, Js.Json.object_(fieldVector));
+      })
+    );
+
+    Js.Json.object_(dict)
+  };
+
   let time = (time: Type.time) => {
     let dict = Js.Dict.empty();
 
@@ -702,6 +729,7 @@ module Stringify = {
     Js.Dict.set(dict, "collideBox", collideBox(state.collideBox));
     Js.Dict.set(dict, "collideCircle", collideCircle(state.collideCircle));
     Js.Dict.set(dict, "fieldFloat", fieldFloat(state.fieldFloat));
+    Js.Dict.set(dict, "fieldVector", fieldVector(state.fieldVector));
     Js.Dict.set(dict, "time", time(state.time));
     Js.Dict.set(dict, "asset", asset(state.asset));
 

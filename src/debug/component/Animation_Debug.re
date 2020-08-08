@@ -40,7 +40,7 @@ let msToTime = (ms) => {
 };
 
 [@react.component]
-let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
+let make = (~items: Belt.Map.String.t(Type.newAnimation)) => {
   let (_, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
@@ -67,10 +67,10 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
               {React.string("x")}
             </Button_UI>
 
-            <ConfirmModal_Debug 
+            <ConfirmModal_Debug
               name={name}
               title={React.string("Are you sure you want to remove animation?")}
-              onAccept={(_) => appDispatch(RemoveAnimationFloat(name))}
+              onAccept={(_) => appDispatch(RemoveAnimation(name))}
             />
           </div>
 
@@ -93,11 +93,11 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
             </div>
             <div className="col-span-4">{React.string("value")}</div>
             <div className="col-span-8">
-              <Input_UI 
-                type_="number" 
-                value={Belt.Float.toString(animation.value)} 
-                onChange={(_) => {()}}
-              />
+              // <Input_UI 
+              //   type_="number" 
+              //   value={Belt.Float.toString(animation.value)} 
+              //   onChange={(_) => {()}}
+              // />
             </div>
             <div className="col-span-4">{React.string("isFinished")}</div>
             <div className="col-span-8">{React.string(animation.isFinished ? "true" : "false")}</div>
@@ -106,27 +106,27 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
           </div>
 
           <div className="flex border-solid border border-black h-20 bg-gray-700 bg-opacity-75 relative overflow-hidden">
-            {Belt.List.mapWithIndex(animation.keyframes, (index, keyframe) => {
-              let (from, to_) = keyframe.valueRange;
+            // {Belt.List.mapWithIndex(animation.keyframes, (index, keyframe) => {
+            //   let (from, to_) = keyframe.valueRange;
 
-              <div 
-                key={Belt.Int.toString(index)}
-                className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
-                style={ReactDOMRe.Style.make(
-                  ~flex=Belt.Float.toString(keyframe.duration *. animationLength /. 100.0),
-                   ()
-                )}
-              >
-                {React.string(timingFunctionToString(keyframe.timingFunction))}
-                <br/>
-                {React.string(Belt.Float.toString(from))}
-                {React.string(" - ")}
-                {React.string(Belt.Float.toString(to_))}
-              </div>
-            })
-            ->Array.of_list
-            ->React.array
-            }
+            //   <div 
+            //     key={Belt.Int.toString(index)}
+            //     className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
+            //     style={ReactDOMRe.Style.make(
+            //       ~flex=Belt.Float.toString(keyframe.duration *. animationLength /. 100.0),
+            //        ()
+            //     )}
+            //   >
+            //     {React.string(timingFunctionToString(keyframe.timingFunction))}
+            //     <br/>
+            //     {React.string(Belt.Float.toString(from))}
+            //     {React.string(" - ")}
+            //     {React.string(Belt.Float.toString(to_))}
+            //   </div>
+            // })
+            // ->Array.of_list
+            // ->React.array
+            // }
 
             <div
               className="absolute w-full h-full flex flex-col justify-between"
@@ -137,7 +137,7 @@ let make = (~items: Belt.Map.String.t(Type.animation(float))) => {
             >
                 <div className="ml-1 overflow-hidden w-10">{React.string(msToTime(animation.currentTime))}</div>
                 <div className="absolute border-l border-red-500 h-full"/>
-                <div className="ml-1 overflow-hidden w-10">{React.string(Js.Float.toFixedWithPrecision(animation.value, ~digits=2))}</div>
+                // <div className="ml-1 overflow-hidden w-10">{React.string(Js.Float.toFixedWithPrecision(animation.value, ~digits=2))}</div>
             </div>
           </div>
         </div>

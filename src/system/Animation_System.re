@@ -172,7 +172,7 @@ let update = (~state: Type.state): Type.state =>
           ~animation={
             ...animation,
             currentTime: 0.0,
-            // value: 0.0, // todo reset value?
+            // value: 0.0, // todo add option to back to prev value
             isPlaying: false,
             isFinished: true,
           }
@@ -187,8 +187,6 @@ let update = (~state: Type.state): Type.state =>
               keyframe.duration,
               keyframe.timingFunction,
             );
-            // FieldFloat
-            // TransformLocalPosition
 
           switch(keyframe.valueRange) {
           | Float(_) =>
@@ -209,12 +207,12 @@ let update = (~state: Type.state): Type.state =>
 
             switch (animation.value) {
             | FieldFloat(fieldFloatName) =>
-            Js.log2("łogiń", value);
               FieldFloat_Component.setValue(
                 ~state=stateWithNewAnimation,
                 ~name=fieldFloatName,
                 ~value,
               );
+            | FieldVector(_) => state
             | TransformLocalPosition(_) => state
             };
           | Vector(_) =>
@@ -233,8 +231,16 @@ let update = (~state: Type.state): Type.state =>
               ~animation=updatedAnimation,
             );
 
+            // Js.log2(value);
+
             switch (animation.value) {
             | FieldFloat(_) => state
+            | FieldVector(fieldVectorName) => 
+              FieldVector_Component.setValue(
+                ~state=stateWithNewAnimation,
+                ~name=fieldVectorName,
+                ~value,
+              );
             | TransformLocalPosition(entity) =>
               Transform_Component.setLocalPosition(
                 ~state=stateWithNewAnimation,

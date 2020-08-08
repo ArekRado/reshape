@@ -4,19 +4,16 @@ module System = {
   module Time = Time_System;
   /* module Scene = Scene_System; */
   module Collide = Collide_System;
-  module AnimationFloat = AnimationFloat_System;
-  module AnimationVector = AnimationVector_System;
+  module Animation = Animation_System;
   module Transform = Transform_System;
 };
 
 module Component = {
   module Sprite = Sprite_Component;
   module Transform = Transform_Component;
-  module AnimationFloat = AnimationFloat_Component;
-  module AnimationVector = AnimationVector_Component;
+  module Animation = Animation_Component;
   module CollideBox = CollideBox_Component;
   module CollideCircle = CollideCircle_Component;
-  module Animation = Animation_Component;
   module FieldFloat = FieldFloat_Component;
   module FieldVector = FieldVector_Component;
 };
@@ -46,8 +43,6 @@ let runOneFrame =
     ->Transform_System.update(~state=_)
     ->Collide_System.update(~state=_)
     ->Animation_System.update(~state=_)
-    ->AnimationFloat_System.update(~state=_)
-    ->AnimationVector_System.update(~state=_)
     ->Draw_System.update(~enableDraw, ~state=_);
 
   newState;

@@ -1,35 +1,35 @@
-// let create =
-//     (
-//       ~id: Belt.Map.String.key,
-//       ~isPlaying=?,
-//       ~keyframes: Belt.List.t(Type.keyframe(Vector_Util.t)),
-//       ~entity: string,
-//       ~state: Type.state,
-//       ~wrapMode=?,
-//       (),
-//     )
-//     : Type.state => {
-//   ...state,
-//   animationVector:
-//     Belt.Map.String.set(
-//       state.animationVector,
-//       id,
-//       {
-//         entity,
-//         name: Uuid_Util.humanFriendlyEntity(id),
-//         keyframes: mapParamToKeyframes(keyframes),
-//         isPlaying:
-//           switch (isPlaying) {
-//           | None => false
-//           | Some(v) => v
-//           },
-//         wrapMode: switch (wrapMode) {
-//           | None => Once
-//           | Some(v) => v
-//           },
-//         currentTime: 0.0,
-//         value: Vector_Util.zero,
-//         isFinished: false,
-//       },
-//     ),
-// };
+let create = (~entity, ~name, ~state: Type.state, ~value): Type.state => {
+  ...state,
+  fieldVector: Belt.Map.String.set(state.fieldVector, name, {
+    entity,
+    value,
+  }),
+}
+
+let remove = (~name: string, ~state: Type.state): Type.state => {
+  ...state,
+  fieldVector: Belt.Map.String.remove(state.fieldVector, name),
+};
+
+let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+  ...state,
+  fieldVector: Belt.Map.String.keep(
+    state.fieldVector,
+    (_, fieldVector) => fieldVector.entity !== entity
+  ),
+};
+
+
+let setValue = (~state: Type.state, ~name: Type.entity, ~value) => {
+  ...state,
+  fieldVector: Belt.Map.String.update(state.fieldVector, name, fieldVector =>
+    switch fieldVector {
+    | Some(fieldVector) =>
+      Some({
+        ...fieldVector,
+        value,
+      });
+    | None => fieldVector
+    }
+  )
+}

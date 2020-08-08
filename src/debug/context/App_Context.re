@@ -9,14 +9,12 @@ type action =
   | CreateFieldFloat(Type.entity)
   | CreateFieldInt(Type.entity)
   | CreateFieldVector(Type.entity)
-  | CreateAnimationFloat(Type.entity)
-  | CreateAnimationVector(Type.entity)
+  | CreateAnimation(Type.entity)
   | CreateCollideBox(Type.entity)
   | CreateCollideCircle(Type.entity)
 
   | RemoveEntity(Type.entity)
-  | RemoveAnimationFloat(Type.entity)
-  | RemoveAnimationVector(Type.entity)
+  | RemoveAnimation(Type.entity)
   | RemoveCollideBox(Type.entity)
   | RemoveCollideCircle(Type.entity)
   | RemoveFieldFloat(Type.entity)
@@ -50,14 +48,8 @@ let reducer = (state, action): Type.state => {
     );
   | CreateFieldInt(_) => state //FieldInt_Component.create(~entity, ~state);
   | CreateFieldVector(_) => state //FieldVector_Component.create(~entity, ~state);
-  | CreateAnimationFloat(entity) => AnimationFloat_Component.create(
-      ~entity,
-      ~state,
-      ~name=Uuid_Util.v4(),
-      ~keyframes=[],
-      ()
-    );
-  | CreateAnimationVector(entity) => AnimationVector_Component.create(
+  | CreateAnimation(entity) => Animation_Component.create(
+      ~value=Type.FieldFloat(""),
       ~entity,
       ~state,
       ~name=Uuid_Util.v4(),
@@ -82,8 +74,7 @@ let reducer = (state, action): Type.state => {
       ~entity,
       ~state,
     );
-  | RemoveAnimationFloat(name) => AnimationFloat_Component.remove(~name, ~state);
-  | RemoveAnimationVector(name) => AnimationVector_Component.remove(~name, ~state);
+  | RemoveAnimation(name) => Animation_Component.remove(~name, ~state);
   | RemoveCollideBox(name) => CollideBox_Component.remove(~name, ~state);
   | RemoveCollideCircle(name) => CollideCircle_Component.remove(~name, ~state);
   | RemoveFieldFloat(name) => FieldFloat_Component.remove(~name, ~state);

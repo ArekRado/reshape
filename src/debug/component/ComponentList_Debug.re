@@ -1,8 +1,7 @@
 type entityComponents = {
   transform: option(Type.transform),
   sprite: option(Type.sprite),
-  animationFloat: Belt.Map.String.t(Type.animation(float)),
-  animationVector: Belt.Map.String.t(Type.animation(Vector_Util.t)),
+  animation: Belt.Map.String.t(Type.newAnimation),
   collideBox: Belt.Map.String.t(Type.collideBox),
   collideCircle: Belt.Map.String.t(Type.collideCircle),
   fieldFloat: Belt.Map.String.t(Type.field(float)),
@@ -11,14 +10,9 @@ type entityComponents = {
 let getComponents = (entity, state: Type.state): entityComponents => {
   transform: Belt.Map.String.get(state.transform, entity),
   sprite: Belt.Map.String.get(state.sprite, entity),
-  animationFloat: 
+  animation: 
     Belt.Map.String.keep(
-      state.animationFloat, 
-      (_, animation) => animation.entity === entity
-    ),
-  animationVector: 
-    Belt.Map.String.keep(
-      state.animationVector, 
+      state.animation, 
       (_, animation) => animation.entity === entity
     ),
   collideBox: Belt.Map.String.keep(
@@ -50,8 +44,7 @@ let make = () => {
     <FieldFloat_Debug items={components.fieldFloat}/>
     <Transform_Debug transform={components.transform}/>
     <Sprite_Debug sprite={components.sprite}/>
-    <AnimationFloat_Debug items={components.animationFloat}/>
-    <AnimationVector_Debug items={components.animationVector}/>
+    <Animation_Debug items={components.animation}/>
     <CollideBox_Debug items={components.collideBox}/>
     <CollideCircle_Debug items={components.collideCircle}/>
   </>
