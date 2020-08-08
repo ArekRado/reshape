@@ -73,12 +73,21 @@ module Parse = {
 
   let maybeVector = (json) => {
     let floatArray = maybeArray(json, array => Belt.Array.map(array, floatWithDefault(_, 0.0)));
-    
+    Js.log("maybeVector");
     (
       getArrayWithDefault(0.0, floatArray, 0),
       getArrayWithDefault(0.0, floatArray, 1)
     );
   }
+  
+  // let maybeVector = (json) => {
+  //   let floatArray = maybeArray(json, array => Belt.Array.map(array, stringWithDefault(_, "0.0")));
+
+  //   (
+  //     Js.Float.fromString(getArrayWithDefault("0.0", floatArray, 0)),
+  //     Js.Float.fromString(getArrayWithDefault("0.0", floatArray, 1))
+  //   );
+  // }
 
   let collisions = json =>
     maybeArray(json, json => json)
@@ -420,6 +429,8 @@ module Parse = {
             }
           | None => Type.initialState.asset;
         }),
+
+      animation: Belt.Map.String.empty,
   };
 
   let state =

@@ -16,6 +16,9 @@ module Component = {
   module AnimationVector = AnimationVector_Component;
   module CollideBox = CollideBox_Component;
   module CollideCircle = CollideCircle_Component;
+  module Animation = Animation_Component;
+  module FieldFloat = FieldFloat_Component;
+  module FieldVector = FieldVector_Component;
 };
 
 module Util = {
@@ -42,6 +45,7 @@ let runOneFrame =
     ->IO_System.update(~state=_)
     ->Transform_System.update(~state=_)
     ->Collide_System.update(~state=_)
+    ->Animation_System.update(~state=_)
     ->AnimationFloat_System.update(~state=_)
     ->AnimationVector_System.update(~state=_)
     ->Draw_System.update(~enableDraw, ~state=_);

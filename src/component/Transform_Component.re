@@ -31,7 +31,7 @@ let remove = (~entity: string, ~state: Type.state): Type.state => {
   ...state,
   transform: Belt.Map.String.remove(state.transform, entity),
 };
-  
+
 let setRotation = (~entity, ~state: Type.state, ~rotation): Type.state => {
   ...state,
   transform: Belt.Map.String.update(state.transform, entity, transform => 

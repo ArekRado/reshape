@@ -18,3 +18,18 @@ let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
     (_, fieldFloat) => fieldFloat.entity !== entity
   ),
 };
+
+
+let setValue = (~state: Type.state, ~name: Type.entity, ~value: float) => {
+  ...state,
+  fieldFloat: Belt.Map.String.update(state.fieldFloat, name, fieldFloat =>
+    switch fieldFloat {
+    | Some(fieldFloat) =>
+      Some({
+        ...fieldFloat,
+        value,
+      });
+    | None => fieldFloat
+    }
+  )
+}

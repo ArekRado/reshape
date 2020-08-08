@@ -37,6 +37,14 @@ type field('a) = {
   value: 'a,
 }
 
+type animationValue = 
+  | FieldFloat(entity)
+  | TransformLocalPosition(entity)
+
+type animationValueRange = 
+  | Float((float, float))
+  | Vector((Vector_Util.t, Vector_Util.t))
+
 type timingFunction =
   | Linear
   | EaseInQuad
@@ -80,6 +88,23 @@ type animation('a) = {
   wrapMode,
 };
 
+type newKeyframe = {
+  duration: float,
+  timingFunction,
+  valueRange: animationValueRange,
+};
+
+type newAnimation = {
+  entity,
+  name: string,
+  keyframes: Belt.List.t(newKeyframe),
+  isPlaying: bool,
+  isFinished: bool,
+  currentTime: float,
+  value: animationValue,
+  wrapMode,
+};
+
 type spriteSrc = string;
 
 type sprite = {src: spriteSrc};
@@ -111,6 +136,8 @@ type state = {
   time,
   isDebugInitialized: bool,
   asset,
+
+  animation: Belt.Map.String.t(newAnimation),
 };
 
 let initialState: state = {
@@ -132,4 +159,6 @@ let initialState: state = {
   asset: {
     sprite: [],
   },
+
+  animation: Belt.Map.String.empty,
 };

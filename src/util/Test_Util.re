@@ -1,4 +1,4 @@
-let _assert = (description,assertion: bool) =>
+let _assert = (description, assertion: bool) =>
   if (assertion === false) {
     failwith("Assertion failed " ++ description);
   };

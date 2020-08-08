@@ -1,4 +1,5 @@
 Time_System_Test.runTests();
+Animation_System_Test.runTests();
 AnimationFloat_System_Test.runTests();
 AnimationVector_System_Test.runTests();
 Transform_System_Test.runTests();

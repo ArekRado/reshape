@@ -20,6 +20,8 @@ type action =
   | RemoveCollideBox(Type.entity)
   | RemoveCollideCircle(Type.entity)
   | RemoveFieldFloat(Type.entity)
+  | RemoveSprite(Type.entity)
+  | RemoveTransform(Type.entity)
 
   | SetFieldFloatName(Type.entity, Type.entity)
   | SetFieldFloatValue(Type.entity, float)
@@ -85,6 +87,8 @@ let reducer = (state, action): Type.state => {
   | RemoveCollideBox(name) => CollideBox_Component.remove(~name, ~state);
   | RemoveCollideCircle(name) => CollideCircle_Component.remove(~name, ~state);
   | RemoveFieldFloat(name) => FieldFloat_Component.remove(~name, ~state);
+  | RemoveSprite(entity) => Sprite_Component.remove(~entity, ~state);
+  | RemoveTransform(entity) => Transform_Component.remove(~entity, ~state);
 
   | SetFieldFloatName(name, newName) => {
       ...state,
