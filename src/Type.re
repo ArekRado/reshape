@@ -72,23 +72,6 @@ type wrapMode =
   // Plays back the animation. When it reaches the end, it will keep playing the last frame and never stop playing.
   | ClampForever	
 
-type keyframe('a) = {
-  duration: float,
-  timingFunction,
-  valueRange: ('a, 'a),
-};
-
-type animation('a) = {
-  entity,
-  name: string,
-  keyframes: Belt.List.t(keyframe('a)),
-  isPlaying: bool,
-  isFinished: bool,
-  currentTime: float,
-  value: 'a,
-  wrapMode,
-};
-
 type newKeyframe = {
   duration: float,
   timingFunction,
@@ -124,8 +107,7 @@ type state = {
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
 
-  animationFloat: Belt.Map.String.t(animation(float)),
-  animationVector: Belt.Map.String.t(animation(Vector_Util.t)),
+  animation: Belt.Map.String.t(newAnimation),
 
   collideBox: Belt.Map.String.t(collideBox),
   collideCircle: Belt.Map.String.t(collideCircle),
@@ -138,16 +120,13 @@ type state = {
   time,
   isDebugInitialized: bool,
   asset,
-
-  animation: Belt.Map.String.t(newAnimation),
 };
 
 let initialState: state = {
   entity: [],
   transform: Belt.Map.String.empty,
   sprite: Belt.Map.String.empty,
-  animationFloat: Belt.Map.String.empty,
-  animationVector: Belt.Map.String.empty,
+  animation: Belt.Map.String.empty,
   collideBox: Belt.Map.String.empty,
   collideCircle: Belt.Map.String.empty,
   fieldFloat: Belt.Map.String.empty,
@@ -163,5 +142,4 @@ let initialState: state = {
     sprite: [],
   },
 
-  animation: Belt.Map.String.empty,
 };

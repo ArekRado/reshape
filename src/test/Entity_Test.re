@@ -48,8 +48,7 @@ let runTests = () => {
       _assert(Belt.List.length(stateWithoutEntity.entity) === 0);
       _assert(Belt.Map.String.size(stateWithoutEntity.transform) === 0);
       _assert(Belt.Map.String.size(stateWithoutEntity.sprite) === 0);
-      _assert(Belt.Map.String.size(stateWithoutEntity.animationFloat) === 0);
-      _assert(Belt.Map.String.size(stateWithoutEntity.animationVector) === 0);
+      _assert(Belt.Map.String.size(stateWithoutEntity.animation) === 0);
       _assert(Belt.Map.String.size(stateWithoutEntity.collideBox) === 0);
       _assert(Belt.Map.String.size(stateWithoutEntity.collideCircle) === 0);
 
