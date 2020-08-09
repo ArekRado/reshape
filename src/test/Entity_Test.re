@@ -18,7 +18,7 @@ let runTests = () => {
           ~state=_,
         )
         ->Animation_Component.create(
-          ~value=Type.FieldFloat(""),
+          ~component=Type.FieldFloat(""),
           ~keyframes=[],
           ~entity,
           ~name="AnimationFloat",

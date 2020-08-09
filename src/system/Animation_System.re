@@ -23,7 +23,7 @@ type acc = {
 }
 
 let rec getActiveKeyframe = (
-  animation: Type.newAnimation, 
+  animation: Type.animation, 
   secondLoop: bool
 ): activeKeyframe => {
   let size = Belt.List.size(animation.keyframes);
@@ -86,12 +86,12 @@ let rec getActiveKeyframe = (
   };
 };
 
-type updateFloatAnimationType = (float, Type.newAnimation);
+type updateFloatAnimationType = (float, Type.animation);
 
 let updateFloatAnimation = (
-  ~keyframe: Type.newKeyframe,
+  ~keyframe: Type.keyframe,
   ~time: Type.time,
-  ~animation: Type.newAnimation,
+  ~animation: Type.animation,
   ~progress: float,
   ~keyframeCurrentTime: float,
   ~timeExceeded: bool,
@@ -120,12 +120,12 @@ let updateFloatAnimation = (
   );
 };
 
-type updateVectorAnimationType = (Vector_Util.t, Type.newAnimation);
+type updateVectorAnimationType = (Vector_Util.t, Type.animation);
 
 let updateVectorAnimation = (
-  ~keyframe: Type.newKeyframe,
+  ~keyframe: Type.keyframe,
   ~time: Type.time,
-  ~animation: Type.newAnimation,
+  ~animation: Type.animation,
   ~progress: float,
   ~keyframeCurrentTime: float,
   ~timeExceeded: bool,
@@ -158,7 +158,44 @@ let updateVectorAnimation = (
   );
 };
 
-// animationValue
+// type setValueValue = 
+//   | Float(float)
+//   | Vector(Vector_Util.t);
+
+// let setValue = (
+//   ~value: setValueValue,
+//   ~state,
+// ) =>
+//   switch (value) {
+//   | Float(value) =>
+//     switch (animation.value) {
+//     | FieldFloat(fieldFloatName) =>
+//       FieldFloat_Component.setValue(
+//         ~state,
+//         ~name=fieldFloatName,
+//         ~value,
+//       );
+//     | FieldVector(fieldVectorName) => state
+//     | TransformLocalPosition(entity) => state
+//     };
+//   | Vector(value) =>
+//     switch (animation.value) {
+//     | FieldFloat(fieldFloatName) => state
+//     | FieldVector(fieldVectorName) => 
+//       FieldVector_Component.setValue(
+//         ~state,
+//         ~name=fieldVectorName,
+//         ~value,
+//       );
+//     | TransformLocalPosition(entity) =>
+//       Transform_Component.setLocalPosition(
+//         ~state,
+//         ~entity,
+//         ~localPosition=value,
+//       );
+//     };
+//   };
+
 let update = (~state: Type.state): Type.state =>
   Belt.Map.String.reduce(state.animation, state, (acc, name, animation) =>
     if (animation.isPlaying) {
@@ -189,7 +226,7 @@ let update = (~state: Type.state): Type.state =>
             );
 
           switch(keyframe.valueRange) {
-          | Float(_) =>
+          | Type.Float(_) =>
             let (value, updatedAnimation) = updateFloatAnimation(
               ~keyframe,
               ~time=state.time,
@@ -205,7 +242,7 @@ let update = (~state: Type.state): Type.state =>
               ~animation=updatedAnimation,
             );
 
-            switch (animation.value) {
+            switch (animation.component) {
             | FieldFloat(fieldFloatName) =>
               FieldFloat_Component.setValue(
                 ~state=stateWithNewAnimation,
@@ -215,7 +252,7 @@ let update = (~state: Type.state): Type.state =>
             | FieldVector(_) => state
             | TransformLocalPosition(_) => state
             };
-          | Vector(_) =>
+          | Type.Vector(_) =>
             let (value, updatedAnimation) = updateVectorAnimation(
               ~keyframe, 
               ~time=state.time, 
@@ -233,7 +270,7 @@ let update = (~state: Type.state): Type.state =>
 
             // Js.log2(value);
 
-            switch (animation.value) {
+            switch (animation.component) {
             | FieldFloat(_) => state
             | FieldVector(fieldVectorName) => 
               FieldVector_Component.setValue(

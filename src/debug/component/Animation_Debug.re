@@ -40,7 +40,7 @@ let msToTime = (ms) => {
 };
 
 [@react.component]
-let make = (~items: Belt.Map.String.t(Type.newAnimation)) => {
+let make = (~items: Belt.Map.String.t(Type.animation)) => {
   let (_, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 

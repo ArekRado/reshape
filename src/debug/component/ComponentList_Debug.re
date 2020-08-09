@@ -1,7 +1,7 @@
 type entityComponents = {
   transform: option(Type.transform),
   sprite: option(Type.sprite),
-  animation: Belt.Map.String.t(Type.newAnimation),
+  animation: Belt.Map.String.t(Type.animation),
   collideBox: Belt.Map.String.t(Type.collideBox),
   collideCircle: Belt.Map.String.t(Type.collideCircle),
   fieldFloat: Belt.Map.String.t(Type.field(float)),

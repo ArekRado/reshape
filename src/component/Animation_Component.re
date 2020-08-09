@@ -1,5 +1,5 @@
-let mapParamToKeyframes = (keyframes: Belt.List.t(Type.newKeyframe)) => 
-  Belt.List.map(keyframes, (keyframe):Type.newKeyframe => {
+let mapParamToKeyframes = (keyframes: Belt.List.t(Type.keyframe)) => 
+  Belt.List.map(keyframes, (keyframe):Type.keyframe => {
     duration: keyframe.duration,
     timingFunction: keyframe.timingFunction,
     valueRange: keyframe.valueRange,
@@ -9,10 +9,10 @@ let create =
   (
     ~name: string,
     ~isPlaying=?,
-    ~keyframes: Belt.List.t(Type.newKeyframe),
+    ~keyframes: Belt.List.t(Type.keyframe),
     ~entity: string,
     ~state: Type.state,
-    ~value: Type.animationValue,
+    ~component: Type.animatedComponent,
     ~wrapMode=?,
     (),
   ) : Type.state => {
@@ -35,7 +35,7 @@ let create =
           | Some(v) => v
           },
         currentTime: 0.0,
-        value,
+        component,
         isFinished: false,
       },
     ),

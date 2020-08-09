@@ -37,7 +37,7 @@ type field('a) = {
   value: 'a,
 }
 
-type animationValue = 
+type animatedComponent = 
   | FieldFloat(entity)
   | FieldVector(entity)
   | TransformLocalPosition(entity)
@@ -72,20 +72,20 @@ type wrapMode =
   // Plays back the animation. When it reaches the end, it will keep playing the last frame and never stop playing.
   | ClampForever	
 
-type newKeyframe = {
+type keyframe = {
   duration: float,
   timingFunction,
   valueRange: animationValueRange,
 };
 
-type newAnimation = {
+type animation = {
   entity,
   name: string,
-  keyframes: Belt.List.t(newKeyframe),
+  keyframes: Belt.List.t(keyframe),
   isPlaying: bool,
   isFinished: bool,
   currentTime: float,
-  value: animationValue,
+  component: animatedComponent,
   wrapMode,
 };
 
@@ -107,7 +107,7 @@ type state = {
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
 
-  animation: Belt.Map.String.t(newAnimation),
+  animation: Belt.Map.String.t(animation),
 
   collideBox: Belt.Map.String.t(collideBox),
   collideCircle: Belt.Map.String.t(collideCircle),

@@ -6,21 +6,21 @@ let runTests = () => {
     let name = "test";
     let fieldVectorName = "testFieldVector";
 
-    let defaultAnimation: Type.newAnimation = {
-      entity: "",
-      name: "",
-      keyframes: [],
-      isPlaying: false,
-      currentTime: 0.0,
-      value: FieldVector(fieldVectorName),
-      isFinished: false,
-      wrapMode: Once,
-    };
+    // let defaultAnimation: Type.animation = {
+    //   entity: "",
+    //   name: "",
+    //   keyframes: [],
+    //   isPlaying: false,
+    //   currentTime: 0.0,
+    //   component: FieldVector(fieldVectorName),
+    //   isFinished: false,
+    //   wrapMode: Once,
+    // };
 
     let getAnimation = (state: Type.state, name: string) =>
       switch (Belt.Map.String.get(state.animation, name)) {
       | Some(animation) => animation
-      | None => defaultAnimation
+      | None => failwith("Can't find animation " ++ name);//defaultAnimation
       };
 
     let getFieldVector = (state: Type.state, name: Type.entity) =>
@@ -30,7 +30,7 @@ let runTests = () => {
       };
 
     it("Linear animation should change value in proper way", _assert => {
-      let keyframe: Type.newKeyframe = {
+      let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
         valueRange: Vector((
@@ -48,7 +48,7 @@ let runTests = () => {
         ~value=Vector_Util.zero,
         )
       ->Engine.Component.Animation.create(
-          ~value=FieldVector(fieldVectorName),
+          ~component=FieldVector(fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
           ~entity="",
@@ -143,7 +143,7 @@ let runTests = () => {
     });
 
     it("Should not update frame values when time is over", _assert => {
-      let keyframe: Type.newKeyframe = {
+      let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
         valueRange: Vector((Vector_Util.create(0.0, 0.0), Vector_Util.create(1.0, 1.0))),
@@ -157,7 +157,7 @@ let runTests = () => {
         ~value=Vector_Util.zero,
         )
       ->Engine.Component.Animation.create(
-          ~value=FieldVector(fieldVectorName),
+          ~component=FieldVector(fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
           ~entity="",
@@ -204,7 +204,7 @@ let runTests = () => {
     });
 
     it("Should works with negative values", _assert => {
-      let keyframe: Type.newKeyframe = {
+      let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
         valueRange: Vector((
@@ -222,7 +222,7 @@ let runTests = () => {
         ~value=Vector_Util.zero,
         )
       ->Engine.Component.Animation.create(
-          ~value=FieldVector(fieldVectorName),
+          ~component=FieldVector(fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
           ~entity="",
@@ -294,10 +294,10 @@ let runTests = () => {
 
     it("Should works with multiple frames", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe
+        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
       ]
 
       Type.initialState
@@ -309,7 +309,7 @@ let runTests = () => {
         ~value=Vector_Util.zero,
         )
       ->Engine.Component.Animation.create(
-          ~value=FieldVector(fieldVectorName),
+          ~component=FieldVector(fieldVectorName),
           ~isPlaying=true,
           ~keyframes,
           ~entity="",
@@ -393,10 +393,10 @@ let runTests = () => {
 
     it("Should works with looped animations", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe
+        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
       ]
 
       Type.initialState
@@ -408,7 +408,7 @@ let runTests = () => {
         ~value=Vector_Util.zero,
         )
       ->Engine.Component.Animation.create(
-          ~value=FieldVector(fieldVectorName),
+          ~component=FieldVector(fieldVectorName),
           ~isPlaying=true,
           ~keyframes,
           ~entity="",
@@ -448,14 +448,14 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let animation: Type.newAnimation = {
+      let animation: Type.animation = {
         entity: "",
         name: "",
         isPlaying: true,
         currentTime: 0.0,
-        value: FieldVector(fieldVectorName),
+        component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}:  Type.newKeyframe
+          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}:  Type.keyframe
         ],
         isFinished: false,
         wrapMode: Once,
@@ -469,14 +469,14 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let animation: Type.newAnimation = {
+      let animation: Type.animation = {
         entity: "",
         name: "",
         isPlaying: true,
         currentTime: 5.0,
-        value: FieldVector(fieldVectorName),
+        component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
+          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
         ],
         isFinished: false,
         wrapMode: Once,
@@ -490,15 +490,15 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let animation: Type.newAnimation = {
+      let animation: Type.animation = {
         entity: "",
         name: "",
         isPlaying: true,
         currentTime: 10.5,
-        value: FieldVector(fieldVectorName),
+        component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe
+          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
         ],
         isFinished: false,
         wrapMode: Once,
@@ -512,17 +512,17 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should return active frame", _assert => {
-      let animation: Type.newAnimation = {
+      let animation: Type.animation = {
         entity: "",
         name: "",
         isPlaying: true,
         currentTime: 2000.0,
-        value: FieldVector(fieldVectorName),
+        component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
+          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
         ],
         isFinished: false,
         wrapMode: Once,
@@ -537,17 +537,17 @@ let runTests = () => {
     });
 
     it("getActiveFrame - should works with Loop animation", _assert => {
-      let animation: Type.newAnimation = {
+      let animation: Type.animation = {
         entity: "",
         name: "",
         isPlaying: true,
         currentTime: 2000.0,
-        value: FieldVector(fieldVectorName),
+        component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.newKeyframe,
+          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
         ],
         isFinished: false,
         wrapMode: Loop,

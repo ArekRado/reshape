@@ -6,7 +6,7 @@ let options: Belt.List.t(Select_UI.selectOption) = [
   // {value: "FieldInt", text: "Field Int", disabled: false},
   {value: "FieldVector", text: "Field Vector", disabled: false},
 
-  {value: "Animation", text: "Animation Float", disabled: false},
+  {value: "Animation", text: "Animation", disabled: false},
 
   {value: "CollideBox", text: "Collide Box", disabled: false},
   {value: "CollideCircle", text: "Collide Circle", disabled: false},

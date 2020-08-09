@@ -112,15 +112,15 @@ module Parse = {
       };
     });
 
-  let animationValue = json => {
-    let animationValue = maybeArray(json, animation => animation);
+  let animatedComponent = json => {
+    let animatedComponent = maybeArray(json, animation => animation);
 
-    let animationType = switch (Belt.Array.get(animationValue, 0)) {
+    let animationType = switch (Belt.Array.get(animatedComponent, 0)) {
     | Some(value) => stringWithDefault(value, "FieldFloat")
     | None => "FieldFloat"
     };
 
-    let animationEntity = switch (Belt.Array.get(animationValue, 1)) {
+    let animationEntity = switch (Belt.Array.get(animatedComponent, 1)) {
     | Some(value) => stringWithDefault(value, "")
     | None => ""
     };
@@ -257,7 +257,7 @@ module Parse = {
         }),
       animation: stateObj
         ->maybeProperty("animation", emptyObject)
-        ->dictToMapString((animation): Type.newAnimation => {
+        ->dictToMapString((animation): Type.animation => {
           entity: animation
             ->maybeProperty("entity", emptyString)
             ->stringWithDefault(""),
@@ -273,9 +273,9 @@ module Parse = {
           currentTime: animation
             ->maybeProperty("currentTime", emptyNumber)
             ->floatWithDefault(0.0),
-          value: animation
-            ->maybeProperty("value", emptyArray)
-            ->animationValue,
+          component: animation
+            ->maybeProperty("component", emptyArray)
+            ->animatedComponent,
           wrapMode: animation
             ->maybeProperty("wrapMode", emptyString)
             ->maybeString(value =>
@@ -289,7 +289,7 @@ module Parse = {
             ->maybeArray(array => array)
             ->Belt.List.fromArray
             ->Belt.List.map(
-                maybeObject(_, (keyframe): Type.newKeyframe =>
+                maybeObject(_, (keyframe): Type.keyframe =>
                 switch (keyframe) {
                 | Some(keyframe) => {
                   let rangeType = animation
@@ -297,22 +297,6 @@ module Parse = {
                     ->stringWithDefault("Float");
 
                   switch (rangeType) {
-                    | "Float" => {
-                      duration: keyframe
-                      ->maybeProperty("duration", emptyNumber)
-                        ->floatWithDefault(0.0),
-                      timingFunction: keyframe
-                        ->maybeProperty("timingFunction", emptyString)
-                        ->maybeString(value =>
-                          switch(value) {
-                          | Some(value) => timingFunction(value)
-                          | None => Type.Linear
-                          }
-                        ),
-                      valueRange: Type.Float(keyframe
-                        ->maybeProperty("valueRange", emptyArray)
-                        ->maybeVector),
-                    }
                     | "Vector" => {
                       duration: keyframe
                         ->maybeProperty("duration", emptyNumber)
@@ -341,7 +325,23 @@ module Parse = {
 
                           Type.Vector((from, to_));
                         }),
-                      }
+                    }
+                    | "Float" | _ => {
+                      duration: keyframe
+                      ->maybeProperty("duration", emptyNumber)
+                        ->floatWithDefault(0.0),
+                      timingFunction: keyframe
+                        ->maybeProperty("timingFunction", emptyString)
+                        ->maybeString(value =>
+                          switch(value) {
+                          | Some(value) => timingFunction(value)
+                          | None => Type.Linear
+                          }
+                        ),
+                      valueRange: Type.Float(keyframe
+                        ->maybeProperty("valueRange", emptyArray)
+                        ->maybeVector),
+                    }
                   };
                   }
                 | None => {
@@ -353,51 +353,6 @@ module Parse = {
               )
             )
         }),
-      //     keyframes: animationVector
-      //       ->maybeProperty("keyframes", emptyArray)
-      //       ->maybeArray(array => array)
-      //       ->Belt.List.fromArray
-      //       ->Belt.List.map(
-      //           maybeObject(_, keyframe: Type.keyframe(Vector_Util.t) =>
-      //           switch (keyframe) {
-      //           | Some(keyframe) => {
-      //             duration: keyframe
-      //               ->maybeProperty("duration", emptyNumber)
-      //               ->floatWithDefault(0.0),
-      //             timingFunction: keyframe
-      //               ->maybeProperty("timingFunction", emptyString)
-      //               ->maybeString(value =>
-      //                 switch(value) {
-      //                   | Some(value) => timingFunction(value)
-      //                   | None => Type.Linear
-      //                 }
-      //               ),
-      //             valueRange: keyframe
-      //               ->maybeProperty("valueRange", emptyArray)
-      //               ->maybeArray(array => array) 
-      //               ->(array => {
-      //                 let from = switch (Belt.Array.get(array, 0)) {
-      //                 | Some(value) => maybeVector(value);
-      //                 | None => Vector_Util.zero;
-      //                 };
-
-      //                 let to_ = switch (Belt.Array.get(array, 1)) {
-      //                 | Some(value) => maybeVector(value);
-      //                 | None => Vector_Util.zero;
-      //                 };
-
-      //                 (from, to_);
-      //               }),
-      //             }
-      //           | None => {
-      //               duration: 0.0,
-      //               timingFunction: Type.Linear,
-      //               valueRange: (Vector_Util.zero, Vector_Util.zero),
-      //             };
-      //           }
-      //         )
-      //       )
-      //   }),
       collideBox: stateObj
         ->maybeProperty("collideBox", emptyObject)
         ->dictToMapString((collideBox): Type.collideBox => {
@@ -545,7 +500,7 @@ module Stringify = {
     let dict = Js.Dict.empty();
 
     ignore(
-      Belt.Map.String.mapWithKey(animation, (entity, x: Type.newAnimation) => {
+      Belt.Map.String.mapWithKey(animation, (entity, x: Type.animation) => {
         let animationDict = Js.Dict.empty();
 
         Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
@@ -556,8 +511,8 @@ module Stringify = {
         // rangeType
         Js.Dict.set(
           animationDict, 
-          "value", 
-          switch(x.value) {
+          "component", 
+          switch(x.component) {
           | FieldFloat(entity) => Js.Json.stringArray([| "FieldFloat", entity |])
           | FieldVector(entity) => Js.Json.stringArray([| "FieldVector", entity |])
           | TransformLocalPosition(entity) => Js.Json.stringArray([| "TransformLocalPosition", entity |])
@@ -581,56 +536,20 @@ module Stringify = {
 
             Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
             Js.Dict.set(keyframeDict, "timingFunction", timingFunction(keyframe.timingFunction));
-            Js.Dict.set(keyframeDict, "valueRange", vector(keyframe.valueRange));
 
-            keyframeDict;
-          })
-          ->Array.of_list
-        ));
-
-        Js.Dict.set(dict, entity, Js.Json.object_(animationDict));
-      })
-    );
-
-    Js.Json.object_(dict)
-  };
-
-  let animationVector = animationVector => {
-    let dict = Js.Dict.empty();
-
-    ignore(
-      Belt.Map.String.mapWithKey(animationVector, (entity, x: Type.animation(Type.vector)) => {
-        let animationDict = Js.Dict.empty();
-
-        Js.Dict.set(animationDict, "entity", Js.Json.string(x.entity));
-        Js.Dict.set(animationDict, "name", Js.Json.string(x.name));
-        Js.Dict.set(animationDict, "isPlaying", Js.Json.boolean(x.isPlaying));
-        Js.Dict.set(animationDict, "isFinished", Js.Json.boolean(x.isFinished));
-        Js.Dict.set(animationDict, "currentTime", Js.Json.number(x.currentTime));
-        Js.Dict.set(animationDict, "value", vector(x.value));
-        Js.Dict.set(
-          animationDict, 
-          "wrapMode", 
-          Js.Json.string(switch(x.wrapMode) {
-          | Once => "Once"
-          | Loop => "Loop"
-          | PingPong => "PingPong"
-          | ClampForever => "ClampForever"
-          })
-        );
-
-        Js.Dict.set(animationDict, "keyframes", Js.Json.objectArray(
-          Belt.List.map(x.keyframes, keyframe => {
-            let (v1, v2) = keyframe.valueRange;
-            let keyframeDict = Js.Dict.empty();
-
-            Js.Dict.set(keyframeDict, "duration", Js.Json.number(keyframe.duration));
-            Js.Dict.set(keyframeDict, "timingFunction", timingFunction(keyframe.timingFunction));
-            Js.Dict.set(
-              keyframeDict, 
-              "valueRange", 
-              Js.Json.array([| vector(v1), vector(v2) |])
-            );
+            switch keyframe.valueRange {
+            | Vector((v1, v2)) => {
+              Js.Dict.set(
+                keyframeDict, 
+                "valueRange", 
+                Js.Json.array([| vector(v1), vector(v2) |])
+              );
+            }
+            | Float(v) => {
+              Js.Dict.set(animationDict, "rangeType", Js.Json.string("Float"));
+              Js.Dict.set(keyframeDict, "valueRange", vector(v));
+            }
+            };
 
             keyframeDict;
           })
