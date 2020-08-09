@@ -1,6 +1,6 @@
 [@react.component]
 let make = () => {
-  let (_, editorDispatch) = React.useContext(Editor_Context.context);
+  let (editorState, editorDispatch) = React.useContext(Editor_Context.context);
   let (appState, _) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
@@ -18,7 +18,7 @@ let make = () => {
           >
             <Button_UI 
               onClick={(_) => editorDispatch(SelectEntity(entity))}
-              className="flex-1 text-left"
+              className={(editorState.selectedEntity === entity ? "border-dashed border-2" : "") ++ " flex-1 text-left"}
             >
               {entity->Uuid_Util.humanFriendlyEntity->React.string}
             </Button_UI>

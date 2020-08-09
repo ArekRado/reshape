@@ -32,6 +32,7 @@ type action =
   | SetTransformLocalScale(Type.entity, Vector_Util.t)
   | SetTransformPosition(Type.entity, Vector_Util.t)
   | SetTransformLocalPosition(Type.entity, Vector_Util.t)
+  | SetAnimationComponent(Type.entity, Type.animatedComponent)
   // | SetTransformParent(Type.entity, Type.entity)
 
 let reducer = (state, action): Type.state => {
@@ -140,6 +141,12 @@ let reducer = (state, action): Type.state => {
       ~state, 
       ~localPosition
     );
+  | SetAnimationComponent(name, component) => 
+    Animation_Component.setComponent(
+      ~name,
+      ~component,
+      ~state,
+    )
   // | SetTransformParent(entity, parentEntity) => Transform_Component(~entity, ~state, ~rotation);
   };
 

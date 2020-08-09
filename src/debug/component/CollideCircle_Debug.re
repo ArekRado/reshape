@@ -21,7 +21,7 @@ let make = (~items: Belt.Map.String.t(Type.collideCircle)) => {
           </Button_UI>
 
           <ConfirmModal_Debug 
-            name={key}
+            id={key}
             title={React.string("Are you sure you want to remove collide circle?")}
             onAccept={(_) => appDispatch(RemoveCollideCircle(key))}
           />

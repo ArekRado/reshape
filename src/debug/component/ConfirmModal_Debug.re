@@ -1,6 +1,6 @@
 [@react.component]
 let make = (
-  ~name, 
+  ~id, 
   ~onAccept, 
   ~title, 
   ~onCancel=(_: Modal_Context.modal) => {()}, 
@@ -9,7 +9,7 @@ let make = (
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
   <Modal_UI 
-    name
+    id
     render={(modal: Modal_Context.modal) => {
       <div className="flex flex-col">
         <div className="text-center">{title}</div>
@@ -20,7 +20,7 @@ let make = (
             onClick={(_) => {
               onCancel(modal);
               if(closeOnAction === true) {
-                modalDispatch(CloseModal(name));
+                modalDispatch(CloseModal(id));
               }
             }}
           >
@@ -32,7 +32,7 @@ let make = (
             onClick={(_) => {
               onAccept(modal);
               if(closeOnAction === true) {
-                modalDispatch(CloseModal(name));
+                modalDispatch(CloseModal(id));
               }
             }}
           >

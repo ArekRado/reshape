@@ -22,7 +22,7 @@ let make = (~sprite: option(Type.sprite)) => {
         </Button_UI>
 
         <ConfirmModal_Debug 
-          name={entity ++ "sprite"}
+          id={entity ++ "sprite"}
           title={React.string("Are you sure you want to remove sprite?")}
           onAccept={(_) => appDispatch(RemoveSprite(entity ++ "sprite"))}
         />

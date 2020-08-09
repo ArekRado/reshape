@@ -16,7 +16,7 @@ let make = (~onClick, ~children, ~size=Xs, ~className="") => {
   <button 
     type_="button"
     onClick={onClick}  
-    className={className ++ " " ++ btnSize ++ " border border-gray-600 bg-gray-800 hover:bg-gray-700"}
+    className={btnSize ++ " border border-gray-600 bg-gray-800 hover:bg-gray-700" ++ " " ++ className}
   >
     children
   </button>

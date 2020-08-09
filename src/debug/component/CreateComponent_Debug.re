@@ -39,8 +39,8 @@ let make = () => {
     options={options}
     value=""
     onChange={
-      event => ReactEvent.Form.target(event)
-        ##value
+      value => 
+        value
         ->mapStringToAction(editorState.selectedEntity)
         ->appDispatch
     }

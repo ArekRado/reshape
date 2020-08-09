@@ -19,7 +19,7 @@ let make = () => {
   // let (saveSlots, _) = React.useState(_ => getSaveSlots());
 
   <Modal_UI 
-    name="saveState"
+    id="saveState"
     render={(_) => {
       <div>
         <Button_UI

@@ -39,7 +39,7 @@ let make = (~items: Belt.Map.String.t(Type.field(float))) => {
               </Button_UI>
 
               <ConfirmModal_Debug 
-                name={name}
+                id={name}
                 title={React.string("Are you sure you want to remove field float?")}
                 onAccept={(_) => appDispatch(RemoveFieldFloat(name))}
               />

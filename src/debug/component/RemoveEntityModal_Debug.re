@@ -11,7 +11,7 @@ let make = () => {
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
 
   <Modal_UI 
-    name="removeEntity"
+    id="removeEntity"
     render={(modal: Modal_Context.modal) => {
       <div className="flex flex-col">
         <div className="text-center">{React.string("Are you sure you want to remove entity")}</div>

@@ -10,7 +10,7 @@ let make = (~options: Belt.List.t(selectOption), ~value, ~onChange, ~label="") =
     <div>{React.string(label)}</div>
     <select
       className="text-black w-full"
-      onChange
+      onChange={event => onChange(ReactEvent.Form.target(event)##value)}
       value
     >
       <option/>

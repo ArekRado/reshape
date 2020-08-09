@@ -30,7 +30,7 @@ let make = (~transform: option(Type.transform)) => {
         </Button_UI>
 
         <ConfirmModal_Debug 
-          name={entity ++ "transform"}
+          id={entity ++ "transform"}
           title={React.string("Are you sure you want to remove transform?")}
           onAccept={(_) => appDispatch(RemoveTransform(entity ++ "transform"))}
         />
