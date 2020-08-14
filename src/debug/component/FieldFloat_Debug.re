@@ -2,6 +2,7 @@
 let make = (~items: Belt.Map.String.t(Type.field(float))) => {
   let (_, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
+  let (editorState, _) = React.useContext(Editor_Context.context);
 
   Belt.Map.String.size(items) === 0
     ? React.null
@@ -48,7 +49,11 @@ let make = (~items: Belt.Map.String.t(Type.field(float))) => {
                  title={React.string(
                    "Are you sure you want to remove field float?",
                  )}
-                 onAccept={_ => appDispatch(RemoveFieldFloat(name))}
+                 onAccept={_ =>
+                   appDispatch(
+                     RemoveFieldFloat(editorState.selectedEntity, name),
+                   )
+                 }
                />
              </div>
            )

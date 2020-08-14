@@ -16,6 +16,7 @@ let runTests = () => {
       size: Vector_Util.zero,
       position: Vector_Util.zero,
       collisions: [],
+      name: "",
     };
 
     let getCollideBox = (state: Type.state, id: string) =>

@@ -103,7 +103,13 @@ let mapComponentToText = (component: Type.animatedComponent): string =>
   };
 
 let setAnimationComponent =
-    (~appDispatch, ~component, ~componentEntity, ~animationEntity) => {
+    (
+      ~selectedEntity,
+      ~appDispatch,
+      ~component,
+      ~componentEntity,
+      ~animationName,
+    ) => {
   let animatedComponent =
     switch (component) {
     | Type.FieldFloat(_) => Type.FieldFloat(componentEntity)
@@ -113,7 +119,11 @@ let setAnimationComponent =
     };
 
   appDispatch(
-    App_Context.SetAnimationComponent(animationEntity, animatedComponent),
+    App_Context.SetAnimationComponent(
+      selectedEntity,
+      animationName,
+      animatedComponent,
+    ),
   );
 
   ();
@@ -138,6 +148,7 @@ let msToTime = ms => {
 let make = (~name: Type.entity) => {
   let (appState, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
+  let (editorState, _) = React.useContext(Editor_Context .context);
 
   let stateAnimation = Belt.Map.String.get(appState.animation, name);
 
@@ -182,7 +193,8 @@ let make = (~name: Type.entity) => {
                     ~appDispatch,
                     ~component=mapTextToComponent(component),
                     ~componentEntity="",
-                    ~animationEntity=name,
+                    ~animationName=name,
+                    ~selectedEntity=editorState.selectedEntity,
                   )
                 }
               />
@@ -197,7 +209,8 @@ let make = (~name: Type.entity) => {
                     ~appDispatch,
                     ~component=animation.component,
                     ~componentEntity,
-                    ~animationEntity=name,
+                    ~animationName=name,
+                    ~selectedEntity=editorState.selectedEntity,
                   )
                 }
               />
@@ -217,70 +230,70 @@ let make = (~name: Type.entity) => {
         </div>
         <div
           className="flex border-solid border border-black h-20 bg-gray-700 bg-opacity-75 relative overflow-hidden">
-          {Belt.List.mapWithIndex(
-             animation.keyframes, (index, keyframe: Type.keyframe) =>
-             switch (keyframe.valueRange) {
-             | Float((from, to_)) =>
-               <div
-                 key={Belt.Int.toString(index)}
-                 className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
-                 style={ReactDOMRe.Style.make(
-                   ~flex=
-                     Belt.Float.toString(
-                       keyframe.duration *. animationLength /. 100.0,
-                     ),
-                   (),
-                 )}>
-                 {React.string(
-                    timingFunctionToString(keyframe.timingFunction),
-                  )}
-                 <br />
-                 {React.string(Belt.Float.toString(from))}
-                 {React.string(" - ")}
-                 {React.string(Belt.Float.toString(to_))}
-               </div>
-             | Vector((from, to_)) =>
-               <div
-                 key={Belt.Int.toString(index)}
-                 className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
-                 style={ReactDOMRe.Style.make(
-                   ~flex=
-                     Belt.Float.toString(
-                       keyframe.duration *. animationLength /. 100.0,
-                     ),
-                   (),
-                 )}>
-                 {React.string(
-                    timingFunctionToString(keyframe.timingFunction),
-                  )}
-                 <br />
-                 <Vector_Debug value=from onChange={_ => {()}} />
-                 {React.string(" - ")}
-                 <Vector_Debug value=to_ onChange={_ => {()}} />
-               </div>
-             }
-           )
-           ->Array.of_list
-           ->React.array}
-          <div
-            className="absolute w-full h-full flex flex-col justify-between"
-            style={ReactDOMRe.Style.make(
-              ~transform=
-                "translate("
-                ++ Belt.Float.toString(
-                     animation.currentTime *. 100.0 /. animationLength,
-                   )
-                ++ "%)",
-              (),
-            )}>
 
+            {Belt.List.mapWithIndex(
+               animation.keyframes, (index, keyframe: Type.keyframe) =>
+               switch (keyframe.valueRange) {
+               | Float((from, to_)) =>
+                 <div
+                   key={Belt.Int.toString(index)}
+                   className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
+                   style={ReactDOMRe.Style.make(
+                     ~flex=
+                       Belt.Float.toString(
+                         keyframe.duration *. animationLength /. 100.0,
+                       ),
+                     (),
+                   )}>
+                   {React.string(
+                      timingFunctionToString(keyframe.timingFunction),
+                    )}
+                   <br />
+                   {React.string(Belt.Float.toString(from))}
+                   {React.string(" - ")}
+                   {React.string(Belt.Float.toString(to_))}
+                 </div>
+               | Vector((from, to_)) =>
+                 <div
+                   key={Belt.Int.toString(index)}
+                   className="flex flex-wrap items-center justify-center border-r border-black overflow-hidden"
+                   style={ReactDOMRe.Style.make(
+                     ~flex=
+                       Belt.Float.toString(
+                         keyframe.duration *. animationLength /. 100.0,
+                       ),
+                     (),
+                   )}>
+                   {React.string(
+                      timingFunctionToString(keyframe.timingFunction),
+                    )}
+                   <br />
+                   <Vector_Debug value=from onChange={_ => {()}} />
+                   {React.string(" - ")}
+                   <Vector_Debug value=to_ onChange={_ => {()}} />
+                 </div>
+               }
+             )
+             ->Array.of_list
+             ->React.array}
+            <div
+              className="absolute w-full h-full flex flex-col justify-between"
+              style={ReactDOMRe.Style.make(
+                ~transform=
+                  "translate("
+                  ++ Belt.Float.toString(
+                       animation.currentTime *. 100.0 /. animationLength,
+                     )
+                  ++ "%)",
+                (),
+              )}>
               <div className="ml-1 overflow-hidden w-10">
                 {React.string(msToTime(animation.currentTime))}
               </div>
               <div className="absolute border-l border-red-500 h-full" />
             </div>
-            // <div className="ml-1 overflow-hidden w-10">{React.string(Js.Float.toFixedWithPrecision(animation.value, ~digits=2))}</div>
-        </div>
+          </div>
+          // <div className="ml-1 overflow-hidden w-10">{React.string(Js.Float.toFixedWithPrecision(animation.value, ~digits=2))}</div>
       </>;
     };
 

@@ -203,6 +203,7 @@ let update = (~state: Type.state): Type.state =>
         Animation_Component.set(
           ~state=acc,
           ~name,
+          ~entity=animation.entity,
           ~animation={
             ...animation,
             currentTime: 0.0,
@@ -239,6 +240,7 @@ let update = (~state: Type.state): Type.state =>
                 ~state=acc,
                 ~name,
                 ~animation=updatedAnimation,
+                ~entity=animation.entity,
               );
 
             switch (animation.component) {
@@ -247,6 +249,7 @@ let update = (~state: Type.state): Type.state =>
                 ~state=stateWithNewAnimation,
                 ~name=fieldFloatName,
                 ~value,
+                ~entity=animation.entity,
               )
             | FieldVector(_) => state
             | TransformLocalPosition(_) => state
@@ -267,6 +270,7 @@ let update = (~state: Type.state): Type.state =>
                 ~state=acc,
                 ~name,
                 ~animation=updatedAnimation,
+                ~entity=animation.entity,
               );
 
             // Js.log2(value);
@@ -278,6 +282,7 @@ let update = (~state: Type.state): Type.state =>
                 ~state=stateWithNewAnimation,
                 ~name=fieldVectorName,
                 ~value,
+                ~entity=animation.entity,
               )
             | TransformLocalPosition(entity) =>
               Transform_Component.setLocalPosition(

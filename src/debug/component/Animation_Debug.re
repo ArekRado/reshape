@@ -2,6 +2,7 @@
 let make = (~items: Belt.Map.String.t(Type.animation)) => {
   let (appState, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
+  let (editorState, _) = React.useContext(Editor_Context.context);
 
   items
   ->Belt.Map.String.toArray
@@ -20,7 +21,9 @@ let make = (~items: Belt.Map.String.t(Type.animation)) => {
           <ConfirmModal_Debug
             id=removeModalId
             title={React.string("Are you sure you want to remove animation?")}
-            onAccept={_ => appDispatch(RemoveAnimation(name))}
+            onAccept={_ =>
+              appDispatch(RemoveAnimation(editorState.selectedEntity, name))
+            }
           />
         </div>
         <div className="grid grid-cols-12 gap-1 my-1">

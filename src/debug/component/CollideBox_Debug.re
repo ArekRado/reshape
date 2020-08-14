@@ -2,6 +2,7 @@
 let make = (~items: Belt.Map.String.t(Type.collideBox)) => {
   let (_, appDispatch) = React.useContext(App_Context.context);
   let (_, modalDispatch) = React.useContext(Modal_Context.context);
+  let (editorState, _) = React.useContext(Editor_Context.context);
 
   items
   ->Belt.Map.String.toArray
@@ -17,7 +18,9 @@ let make = (~items: Belt.Map.String.t(Type.collideBox)) => {
             title={React.string(
               "Are you sure you want to remove collide box?",
             )}
-            onAccept={_ => appDispatch(RemoveCollideBox(key))}
+            onAccept={_ =>
+              appDispatch(RemoveCollideBox(editorState.selectedEntity, key))
+            }
           />
         </div>
         <div className="grid grid-cols-12 gap-1 mb-3">
