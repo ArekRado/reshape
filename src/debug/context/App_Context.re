@@ -14,10 +14,10 @@ type action =
   | CreateCollideCircle(Type.entity)
 
   | RemoveEntity(Type.entity)
-  | RemoveAnimation(Type.entity)
-  | RemoveCollideBox(Type.entity)
-  | RemoveCollideCircle(Type.entity)
-  | RemoveFieldFloat(Type.entity)
+  | RemoveAnimation(Type.entity, string)
+  | RemoveCollideBox(Type.entity, string)
+  | RemoveCollideCircle(Type.entity, string)
+  | RemoveFieldFloat(Type.entity, string)
   | RemoveSprite(Type.entity)
   | RemoveTransform(Type.entity)
 
@@ -32,7 +32,7 @@ type action =
   | SetTransformLocalScale(Type.entity, Vector_Util.t)
   | SetTransformPosition(Type.entity, Vector_Util.t)
   | SetTransformLocalPosition(Type.entity, Vector_Util.t)
-  | SetAnimationComponent(Type.entity, Type.animatedComponent)
+  | SetAnimationComponent(Type.entity, string, Type.animatedComponent)
   // | SetTransformParent(Type.entity, Type.entity)
 
 let reducer = (state, action): Type.state => {
@@ -75,10 +75,10 @@ let reducer = (state, action): Type.state => {
       ~entity,
       ~state,
     );
-  | RemoveAnimation(name) => Animation_Component.remove(~name, ~state);
-  | RemoveCollideBox(name) => CollideBox_Component.remove(~name, ~state);
-  | RemoveCollideCircle(name) => CollideCircle_Component.remove(~name, ~state);
-  | RemoveFieldFloat(name) => FieldFloat_Component.remove(~name, ~state);
+  | RemoveAnimation(entity, name) => Animation_Component.remove(~entity, ~name, ~state);
+  | RemoveCollideBox(entity, name) => CollideBox_Component.remove(~entity, ~name, ~state);
+  | RemoveCollideCircle(entity, name) => CollideCircle_Component.remove(~entity, ~name, ~state);
+  | RemoveFieldFloat(entity, name) => FieldFloat_Component.remove(~entity, ~name, ~state);
   | RemoveSprite(entity) => Sprite_Component.remove(~entity, ~state);
   | RemoveTransform(entity) => Transform_Component.remove(~entity, ~state);
 
@@ -141,9 +141,10 @@ let reducer = (state, action): Type.state => {
       ~state, 
       ~localPosition
     );
-  | SetAnimationComponent(name, component) => 
+  | SetAnimationComponent(entity, name, component) => 
     Animation_Component.setComponent(
       ~name,
+      ~entity,
       ~component,
       ~state,
     )

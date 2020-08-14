@@ -1,26 +1,27 @@
 let create = (
   ~state: Type.state,
-  ~name,
-  ~entity,
+  ~name: string,
+  ~entity: Type.entity,
   ~radius,
   ~position=Vector_Util.zero,
   ()
 ) : Type.state => {
   ...state,
-  collideCircle: Belt.Map.String.set(state.collideCircle, name, {
+  collideCircle: Belt.Map.String.set(state.collideCircle, entity ++ name, {
     radius,
     position,
     entity,
     collisions: [],
+    name,
   }),
 };
 
-let remove = (~name: string, ~state: Type.state): Type.state => {
+let remove = (~entity: Type.entity, ~name: string, ~state: Type.state): Type.state => {
   ...state,
-  collideCircle: Belt.Map.String.remove(state.collideCircle, name),
+  collideCircle: Belt.Map.String.remove(state.collideCircle, entity ++ name),
 };
 
-let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
   ...state,
   collideCircle: Belt.Map.String.keep(
     state.collideCircle,

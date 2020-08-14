@@ -29,9 +29,9 @@ If this is your first time using a development container, please follow the [get
 It's just a uniq string - think about it as uniq ID from SQL database.
 
 ```reason
-let newEntity = Engine.Entity.generate("human-friendly-name"); // "human-friendly-name###9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+let newEntity = ReShape.Entity.generate("human-friendly-name"); // "human-friendly-name###9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
 
-let letStateWithNewEntity = Engine.Entity.create(newEntity, Engine.initialState);
+let letStateWithNewEntity = ReShape.Entity.create(newEntity, ReShape.initialState);
 ```
 
 # Component
@@ -39,12 +39,12 @@ let letStateWithNewEntity = Engine.Entity.create(newEntity, Engine.initialState)
 Component describes game state without logic. It's something like a table record from SQL database.
 
 ```reason
-Engine.Component.Sprite;
-Engine.Component.Transform;
-Engine.Component.AnimationFloat;
-Engine.Component.AnimationVector;
-Engine.Component.CollideBox;
-Engine.Component.CollideCircle;
+ReShape.Component.Sprite;
+ReShape.Component.Transform;
+ReShape.Component.AnimationFloat;
+ReShape.Component.AnimationVector;
+ReShape.Component.CollideBox;
+ReShape.Component.CollideCircle;
 ```
 
 Example how to use components in your code:
@@ -54,32 +54,32 @@ let gunSpriteUrl: string = [%raw {|require('../assets/gun.png').default|}];
 
 // blueprint helps you avoid excessive code - It's common pattern used in gamedev
 module Gun_Blueprint {
-  let create = (state: Engine.Type.state): Engine.Type.state => {
+  let create = (state: ReShape.Type.state): ReShape.Type.state => {
     // create new entity
-    let gunEntity = Engine.Entity.generate("gun");
+    let gunEntity = ReShape.Entity.generate("gun");
 
     state.engine
       // push new entity to state
-      ->Engine.Entity.create(
+      ->ReShape.Entity.create(
         ~entity=cityEntity,
         ~state=_,
       )
       // create and push gun sprite and connect it with entity
-      ->Engine.Component.Sprite.create(
+      ->ReShape.Component.Sprite.create(
           ~entity=cityEntity,
           ~src=gunSpriteUrl,
           ~state=_,
           ()
       )
       // do same with transform
-      ->Engine.Component.Transform.create(
+      ->ReShape.Component.Transform.create(
         ~entity=cityEntity,
         ~localPosition=localPosition,
         ~state=_,
         ()
       )
       // and animation :)
-      ->Engine.Component.AnimationFloat.create(
+      ->ReShape.Component.AnimationFloat.create(
         ~entity=gunEntity,
         ~name="shot", // Entity can be connected with multiple animations, name helps you with identify each animation
         ~isPlaying=true,
@@ -96,7 +96,7 @@ module Gun_Blueprint {
 
 # System
 
-Pure logic without state. Every system receives whole state then modifies it and returns new state. Reshape contains several internal systems use `Engine.runOneFrame` funtion to run them.
+Pure logic without state. Every system receives whole state then modifies it and returns new state. Reshape contains several internal systems use `ReShape.runOneFrame` funtion to run them.
 
 # Easy start
 
@@ -112,19 +112,19 @@ type gameState = {
 // Reshape uses only state.engine, your systems should use only state.game
 type state = {
   game: gameState,
-  engine: Engine.Type.state,
+  engine: ReShape.Type.state,
 }
 
 let initialState: state = {
   game: {
     yourState: "",
   },
-  engine: Engine.initialState,
+  engine: ReShape.initialState,
 };
 
 let rec logic = (state: state) => {
-  let newEngine = Engine.runOneFrame(
-    ~state=state.engine, // Engine.Type.state
+  let newEngine = ReShape.runOneFrame(
+    ~state=state.engine, // ReShape.Type.state
     ~debug=true, // Will enable debug UI
     // ~enableDraw=false, // Usefull to avoid canvas rendering during a unit tests
     // ~performanceNow=1000.0 // Usefull to mock unit tests
@@ -141,7 +141,7 @@ let rec logic = (state: state) => {
 };
 
 // do side effects - initialize will mount new DOM elements and attach event listeners
-Engine.initialize();
+ReShape.initialize();
 // your game loop
 logic(initialState);
 ```

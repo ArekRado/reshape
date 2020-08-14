@@ -367,7 +367,10 @@ module Parse = {
             ->maybeVector,
           collisions: collideBox
             ->maybeProperty("collisions", emptyArray)
-            ->collisions
+            ->collisions,
+          name: collideBox
+            ->maybeProperty("name", emptyString)
+            ->stringWithDefault(""),
         }),
       collideCircle: stateObj
         ->maybeProperty("collideBox", emptyObject)
@@ -383,13 +386,19 @@ module Parse = {
             ->maybeVector,
           collisions: collideCircle
             ->maybeProperty("collisions", emptyArray)
-            ->collisions
+            ->collisions,
+          name: collideCircle
+            ->maybeProperty("name", emptyString)
+            ->stringWithDefault(""),
         }),
       fieldFloat: stateObj
         ->maybeProperty("fieldFloat", emptyObject)
         ->dictToMapString((fieldFloat): Type.field(float) => {
           entity: fieldFloat
             ->maybeProperty("entity", emptyString)
+            ->stringWithDefault(""),
+          name: fieldFloat
+            ->maybeProperty("name", emptyString)
             ->stringWithDefault(""),
           value: fieldFloat
             ->maybeProperty("value", emptyNumber)
@@ -400,6 +409,9 @@ module Parse = {
         ->dictToMapString((fieldVector): Type.field(Vector_Util.t) => {
           entity: fieldVector
             ->maybeProperty("entity", emptyString)
+            ->stringWithDefault(""),
+          name: fieldVector
+            ->maybeProperty("name", emptyString)
             ->stringWithDefault(""),
           value: fieldVector
             ->maybeProperty("value", emptyArray)
@@ -587,6 +599,7 @@ module Stringify = {
         let collideDict = Js.Dict.empty();
 
         Js.Dict.set(collideDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(collideDict, "name", Js.Json.string(x.name));
         Js.Dict.set(collideDict, "size", vector(x.size));
         Js.Dict.set(collideDict, "position", vector(x.position));
         Js.Dict.set(collideDict, "collisions", collisions(x.collisions));
@@ -606,6 +619,7 @@ module Stringify = {
         let collideDict = Js.Dict.empty();
 
         Js.Dict.set(collideDict, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(collideDict, "name", Js.Json.string(x.name));
         Js.Dict.set(collideDict, "radius", Js.Json.number(x.radius));
         Js.Dict.set(collideDict, "position", vector(x.position));
         Js.Dict.set(collideDict, "collisions", collisions(x.collisions));
@@ -625,6 +639,7 @@ module Stringify = {
         let fieldFloat = Js.Dict.empty();
 
         Js.Dict.set(fieldFloat, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(fieldFloat, "name", Js.Json.string(x.name));
         Js.Dict.set(fieldFloat, "value", Js.Json.number(x.value));
 
         Js.Dict.set(dict, entity, Js.Json.object_(fieldFloat));
@@ -642,6 +657,7 @@ module Stringify = {
         let fieldVector = Js.Dict.empty();
 
         Js.Dict.set(fieldVector, "entity", Js.Json.string(x.entity));
+        Js.Dict.set(fieldVector, "name", Js.Json.string(x.name));
         Js.Dict.set(fieldVector, "value", vector(x.value));
 
         Js.Dict.set(dict, entity, Js.Json.object_(fieldVector));

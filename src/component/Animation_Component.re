@@ -41,9 +41,9 @@ let create =
     ),
 };
 
-let remove = (~name: Type.entity, ~state: Type.state): Type.state => {
+let remove = (~entity: Type.entity, ~name: string, ~state: Type.state): Type.state => {
   ...state,
-  animation: Belt.Map.String.remove(state.animation, name),
+  animation: Belt.Map.String.remove(state.animation, entity ++ name),
 };
 
 let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
@@ -54,14 +54,14 @@ let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
   ),
 };
 
-let set = (~name: Type.entity, ~state: Type.state, ~animation) => {
+let set = (~entity: Type.entity, ~name: string, ~state: Type.state, ~animation) => {
   ...state,
-  animation: Belt.Map.String.set(state.animation, name, animation),
+  animation: Belt.Map.String.set(state.animation, entity ++ name, animation),
 };
 
-let setComponent = (~name: Type.entity, ~state: Type.state, ~component) => {
+let setComponent = (~entity: Type.entity, ~name: string, ~state: Type.state, ~component) => {
   ...state,
-  animation: Belt.Map.String.update(state.animation, name, animation =>
+  animation: Belt.Map.String.update(state.animation, entity ++ name, animation =>
     switch animation {
     | Some(animation) => 
       Some({

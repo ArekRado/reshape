@@ -10,6 +10,7 @@ type collideType =
 
 type collideBox = {
   entity,
+  name: string,
   size: vector,
   position: vector,
   collisions: Belt.List.t(collideType),
@@ -17,6 +18,7 @@ type collideBox = {
 
 type collideCircle = {
   entity,
+  name: string,
   radius: float,
   position: vector,
   collisions: Belt.List.t(collideType),
@@ -35,6 +37,7 @@ type transform = {
 type field('a) = {
   entity,
   value: 'a,
+  name: string,
 }
 
 type animatedComponent = 

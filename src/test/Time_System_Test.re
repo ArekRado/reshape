@@ -2,7 +2,7 @@ let runTests = () => {
   Test_Util.describe("Time_System", it => {
     it("Should change time - start from 0 case", _assert => {
       let state1 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=Type.initialState,
           ~enableDraw=false,
           ~performanceNow=0.0,
@@ -13,7 +13,7 @@ let runTests = () => {
       _assert(state1.time.delta === 0.0);
 
       let state2 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=state1,
           ~enableDraw=false,
           ~performanceNow=1000.0,
@@ -24,7 +24,7 @@ let runTests = () => {
       _assert(state2.time.delta === 1000.0);
 
       let state3 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=state2,
           ~enableDraw=false,
           ~performanceNow=1002.0,
@@ -37,7 +37,7 @@ let runTests = () => {
 
     it("Should change time - start from non 0 case", _assert => {
       let state1 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=Type.initialState,
           ~enableDraw=false,
           ~performanceNow=10.0,
@@ -48,7 +48,7 @@ let runTests = () => {
       _assert(state1.time.delta === 10.0);
 
       let state2 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=state1,
           ~enableDraw=false,
           ~performanceNow=1000.0,
@@ -59,7 +59,7 @@ let runTests = () => {
       _assert(state2.time.delta === 990.0);
 
       let state3 =
-        Engine.runOneFrame(
+        ReShape.runOneFrame(
           ~state=state2,
           ~enableDraw=false,
           ~performanceNow=1002.0,

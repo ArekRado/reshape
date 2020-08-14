@@ -16,11 +16,11 @@ let initialState: state = {
   game: {
     yourState: "",
   },
-  engine: Engine.Asset.addSprite(~state=Type.initialState, ~sprite=example),
+  engine: ReShape.Asset.addSprite(~state=Type.initialState, ~sprite=example),
 };
 
 let rec logic = (state: state) => {
-  let newEngine = Engine.runOneFrame(~state=state.engine, ~debug=true, ());
+  let newEngine = ReShape.runOneFrame(~state=state.engine, ~debug=true, ());
 
   let newState = ({game: state.game, engine: newEngine} : state)
   // ->System.System1.update
@@ -38,5 +38,5 @@ let rec logic = (state: state) => {
   requestAnimationFrame(() => logic(newState));
 };
 
-Engine.initialize();
+ReShape.initialize();
 logic(initialState);

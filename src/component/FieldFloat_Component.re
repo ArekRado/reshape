@@ -1,14 +1,15 @@
 let create = (~entity, ~name, ~state: Type.state, ~value): Type.state => {
   ...state,
-  fieldFloat: Belt.Map.String.set(state.fieldFloat, name, {
+  fieldFloat: Belt.Map.String.set(state.fieldFloat, entity ++ name, {
     entity,
+    name,
     value,
   }),
 }
 
-let remove = (~name: string, ~state: Type.state): Type.state => {
+let remove = (~entity: Type.entity, ~name: string, ~state: Type.state): Type.state => {
   ...state,
-  fieldFloat: Belt.Map.String.remove(state.fieldFloat, name),
+  fieldFloat: Belt.Map.String.remove(state.fieldFloat, entity ++ name),
 };
 
 let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
@@ -20,9 +21,9 @@ let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
 };
 
 
-let setValue = (~state: Type.state, ~name: Type.entity, ~value: float) => {
+let setValue = (~entity: Type.entity, ~state: Type.state, ~name: string, ~value: float) => {
   ...state,
-  fieldFloat: Belt.Map.String.update(state.fieldFloat, name, fieldFloat =>
+  fieldFloat: Belt.Map.String.update(state.fieldFloat, entity ++ name, fieldFloat =>
     switch fieldFloat {
     | Some(fieldFloat) =>
       Some({

@@ -7,20 +7,21 @@ let create = (
   ()
 ) : Type.state => {
   ...state,
-  collideBox: Belt.Map.String.set(state.collideBox, name, {
+  collideBox: Belt.Map.String.set(state.collideBox, entity ++ name, {
     size,
     position,
     entity,
     collisions: [],
+    name,
   }),
 };
 
-let remove = (~name: string, ~state: Type.state): Type.state => {
+let remove = (~entity: Type.entity, ~name: string, ~state: Type.state): Type.state => {
   ...state,
-  collideBox: Belt.Map.String.remove(state.collideBox, name),
+  collideBox: Belt.Map.String.remove(state.collideBox, entity ++ name),
 };
 
-let removeByEntity = (~entity: string, ~state: Type.state): Type.state => {
+let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
   ...state,
   collideBox: Belt.Map.String.keep(
     state.collideBox,
