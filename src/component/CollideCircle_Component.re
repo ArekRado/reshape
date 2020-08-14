@@ -30,3 +30,6 @@ let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
       collideCircle.entity !== entity
     ),
 };
+
+let get = (entity: Type.entity, ~state: Type.state, ~name: string) => 
+  Belt.Map.String.get(state.collideCircle, entity ++ name);
