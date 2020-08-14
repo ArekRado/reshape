@@ -20,32 +20,33 @@ let runTests = () => {
     let getAnimation = (state: Type.state, name: string) =>
       switch (Belt.Map.String.get(state.animation, name)) {
       | Some(animation) => animation
-      | None => failwith("Can't find animation " ++ name);//defaultAnimation
+      | None => failwith("Can't find animation " ++ name) //defaultAnimation
       };
 
     let getFieldVector = (state: Type.state, name: Type.entity) =>
       switch (Belt.Map.String.get(state.fieldVector, name)) {
       | Some(field) => field
-      | None => failwith("Can't find fieldVector " ++ name);
+      | None => failwith("Can't find fieldVector " ++ name)
       };
 
     it("Linear animation should change value in proper way", _assert => {
       let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
-        valueRange: Vector((
-          Vector_Util.create(0.0, 0.0),
-          Vector_Util.create(1.0, 1.0),
-        )),
+        valueRange:
+          Vector((
+            Vector_Util.create(0.0, 0.0),
+            Vector_Util.create(1.0, 1.0),
+          )),
       };
 
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldVector.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldVectorName, 
-        ~value=Vector_Util.zero,
+          ~entity="",
+          ~state=_,
+          ~name=fieldVectorName,
+          ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldVector(fieldVectorName),
@@ -146,15 +147,19 @@ let runTests = () => {
       let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
-        valueRange: Vector((Vector_Util.create(0.0, 0.0), Vector_Util.create(1.0, 1.0))),
+        valueRange:
+          Vector((
+            Vector_Util.create(0.0, 0.0),
+            Vector_Util.create(1.0, 1.0),
+          )),
       };
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldVector.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldVectorName, 
-        ~value=Vector_Util.zero,
+          ~entity="",
+          ~state=_,
+          ~name=fieldVectorName,
+          ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldVector(fieldVectorName),
@@ -170,9 +175,9 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value, 
-                Vector_Util.create(0.0, 0.0)
-              )
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.0, 0.0),
+              ),
             );
             newState;
           }
@@ -182,9 +187,9 @@ let runTests = () => {
             let newState = tick(20.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value, 
-                Vector_Util.create(0.0, 0.0)
-              )
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.0, 0.0),
+              ),
             );
             newState;
           }
@@ -194,9 +199,9 @@ let runTests = () => {
             let newState = tick(40.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value, 
-                Vector_Util.create(1.0, 1.0)
-              )
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(1.0, 1.0),
+              ),
             );
           }
         );
@@ -207,19 +212,20 @@ let runTests = () => {
       let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
-        valueRange: Vector((
-          Vector_Util.create(-1.0, -1.0),
-          Vector_Util.create(-2.0, -2.0),
-        )),
+        valueRange:
+          Vector((
+            Vector_Util.create(-1.0, -1.0),
+            Vector_Util.create(-2.0, -2.0),
+          )),
       };
 
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldVector.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldVectorName, 
-        ~value=Vector_Util.zero,
+          ~entity="",
+          ~state=_,
+          ~name=fieldVectorName,
+          ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldVector(fieldVectorName),
@@ -294,19 +300,43 @@ let runTests = () => {
 
     it("Should works with multiple frames", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
-      ]
+        (
+          {
+            duration: 10.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 1.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 2.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 100.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+      ];
 
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldVector.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldVectorName, 
-        ~value=Vector_Util.zero,
+          ~entity="",
+          ~state=_,
+          ~name=fieldVectorName,
+          ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldVector(fieldVectorName),
@@ -320,72 +350,80 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.0, 0.0)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.0, 0.0),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(5.0, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.0, 0.0)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.0, 0.0),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.5, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.5, 0.5)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.5, 0.5),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.5, 0.5)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.5, 0.5),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.5, 0.5)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.5, 0.5),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(300.0, state);
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value, 
-              Vector_Util.create(0.87, 0.87)
-            ));
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.87, 0.87),
+              ),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(
-              getAnimation(newState, name).isPlaying === false,
-            );
-            _assert(
-              getAnimation(newState, name).currentTime === 0.0,
-            );
+            _assert(getAnimation(newState, name).isPlaying === false);
+            _assert(getAnimation(newState, name).currentTime === 0.0);
           }
         );
       ();
@@ -393,19 +431,43 @@ let runTests = () => {
 
     it("Should works with looped animations", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
-      ]
+        (
+          {
+            duration: 10.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 1.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 2.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 100.0,
+            timingFunction: Linear,
+            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+          }: Type.keyframe
+        ),
+      ];
 
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldVector.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldVectorName, 
-        ~value=Vector_Util.zero,
+          ~entity="",
+          ~state=_,
+          ~name=fieldVectorName,
+          ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldVector(fieldVectorName),
@@ -417,30 +479,29 @@ let runTests = () => {
           ~wrapMode=Loop,
           (),
         )
-      -> tick(2000.0, _)
+      ->tick(2000.0, _)
       ->(
           state => {
             let newState = tick(2000.0, state);
-            
-            _assert(Vector_Util.isEqual(
-              getFieldVector(newState, fieldVectorName).value,
-              Vector_Util.create(0.66, 0.66)
-            ));
+
+            _assert(
+              Vector_Util.isEqual(
+                getFieldVector(newState, fieldVectorName).value,
+                Vector_Util.create(0.66, 0.66),
+              ),
+            );
             _assert(getAnimation(newState, name).isFinished === true);
-            _assert(
-              getAnimation(newState, name).isPlaying === true,
-            );
-            _assert(
-              getAnimation(newState, name).currentTime === 66.0,
-            );
+            _assert(getAnimation(newState, name).isPlaying === true);
+            _assert(getAnimation(newState, name).currentTime === 66.0);
 
             newState;
-          })
-        ->(
+          }
+        )
+      ->(
           // Second tick should reset isFinished flag
           state => {
             let newState = tick(2000.0, state);
-            
+
             _assert(getAnimation(newState, name).isFinished === false);
           }
         );
@@ -455,7 +516,13 @@ let runTests = () => {
         currentTime: 0.0,
         component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}:  Type.keyframe
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -476,7 +543,13 @@ let runTests = () => {
         currentTime: 5.0,
         component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -497,8 +570,20 @@ let runTests = () => {
         currentTime: 10.5,
         component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -519,10 +604,34 @@ let runTests = () => {
         currentTime: 2000.0,
         component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 2.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 100.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -544,10 +653,34 @@ let runTests = () => {
         currentTime: 2000.0,
         component: FieldVector(fieldVectorName),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Vector(((0.0, 0.0), (1.0, 1.0)))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 2.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 100.0,
+              timingFunction: Linear,
+              valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Loop,

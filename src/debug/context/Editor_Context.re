@@ -3,24 +3,20 @@ type initialState = {
   isPlaying: bool,
 };
 
-let initialState = {
-  selectedEntity: "",
-  isPlaying: false,
-};
+let initialState = {selectedEntity: "", isPlaying: false};
 
-type action = 
+type action =
   | SelectEntity(string)
   | SetIsPlaying(bool);
 
 let reducer = (state, action): initialState =>
   switch (action) {
-  | SelectEntity(selectedEntity) => { 
-    ...state, 
-    selectedEntity: state.selectedEntity === selectedEntity 
-      ? "" 
-      : selectedEntity 
-  }
-  | SetIsPlaying(isPlaying) => { ...state, isPlaying };
+  | SelectEntity(selectedEntity) => {
+      ...state,
+      selectedEntity:
+        state.selectedEntity === selectedEntity ? "" : selectedEntity,
+    }
+  | SetIsPlaying(isPlaying) => {...state, isPlaying}
   };
 
 type dispatch = action => unit;
@@ -30,7 +26,10 @@ let contextValue: contextType = (initialState, _ => ignore());
 let context = React.createContext(contextValue);
 
 module Provider = {
-  let makeProps = (~value, ~children, ()) => {"value": value, "children": children}
+  let makeProps = (~value, ~children, ()) => {
+    "value": value,
+    "children": children,
+  };
 
   let make = React.Context.provider(context);
 };

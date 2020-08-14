@@ -12,16 +12,14 @@ let remove = (~entity: string, ~state: Type.state): Type.state => {
 
 let setSrc = (~state: Type.state, ~entity: Type.entity, ~src: Type.spriteSrc) => {
   ...state,
-  sprite: Belt.Map.String.update(state.sprite, entity, sprite =>
-    switch sprite {
-    | Some(_) => {
-      let newSprite: Type.sprite = {
-        src: src,
-      };
+  sprite:
+    Belt.Map.String.update(state.sprite, entity, sprite =>
+      switch (sprite) {
+      | Some(_) =>
+        let newSprite: Type.sprite = {src: src};
 
-      Some(newSprite);
-    }
-    | None => sprite
-    }
-  )
-}
+        Some(newSprite);
+      | None => sprite
+      }
+    ),
+};

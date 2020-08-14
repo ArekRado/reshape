@@ -5,20 +5,18 @@ let make = () => {
   let (entity, setEntity) = React.useState(_ => "");
 
   <div>
-    <Input_UI 
-      label={React.string("entity")} 
-      value={entity} 
+    <Input_UI
+      label={React.string("entity")}
+      value=entity
       onChange={event => setEntity(ReactEvent.Form.target(event)##value)}
     />
-    <Button_UI 
-      
-      onClick={(_) => {
-        setEntity((_) => "");
+    <Button_UI
+      onClick={_ => {
+        setEntity(_ => "");
         appDispatch(CreateEntity(entity));
         editorDispatch(SelectEntity(entity));
-      }}
-    >
+      }}>
       {React.string("Add entity")}
     </Button_UI>
-  </div>
-}
+  </div>;
+};

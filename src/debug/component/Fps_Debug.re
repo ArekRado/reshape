@@ -7,5 +7,5 @@ let make = () => {
   <div className="text-white">
     {React.string("FPS: ")}
     {fps->int_of_float->Js.Int.toString->React.string}
-  </div>
-}
+  </div>;
+};

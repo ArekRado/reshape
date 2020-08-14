@@ -1,4 +1,4 @@
-let generate = (debugName:string) => debugName ++ "###" ++ Uuid_Util.v4();
+let generate = (debugName: string) => debugName ++ "###" ++ Uuid_Util.v4();
 
 let create = (~entity: string, ~state: Type.state): Type.state => {
   ...state,
@@ -8,9 +8,9 @@ let create = (~entity: string, ~state: Type.state): Type.state => {
 let remove = (~entity: string, ~state: Type.state): Type.state => {
   let newState = {
     ...state,
-    entity: Belt.List.keep(state.entity, (item) => item !== entity)
+    entity: Belt.List.keep(state.entity, item => item !== entity),
   };
-  
+
   newState
   ->Transform_Component.remove(~entity, ~state=_)
   ->Sprite_Component.remove(~entity, ~state=_)

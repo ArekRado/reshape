@@ -25,8 +25,6 @@ let initialize = () => {
       el,
     )
   | None => ()
-  };
-
   // let disableContextMenu = [%raw
   //   {|
   //     function() {
@@ -36,8 +34,8 @@ let initialize = () => {
   //     }
   //   |}
   // ];
-
   // disableContextMenu();
+  };
 };
 
 let update = (~state: Type.state): Type.state => {

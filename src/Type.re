@@ -4,7 +4,7 @@ type vector = (float, float);
 
 type rotation = float;
 
-type collideType = 
+type collideType =
   | Box(string)
   | Circle(string);
 
@@ -38,16 +38,16 @@ type field('a) = {
   entity,
   value: 'a,
   name: string,
-}
+};
 
-type animatedComponent = 
+type animatedComponent =
   | FieldFloat(entity)
   | FieldVector(entity)
-  | TransformLocalPosition(entity)
+  | TransformLocalPosition(entity);
 
-type animationValueRange = 
+type animationValueRange =
   | Float((float, float))
-  | Vector((Vector_Util.t, Vector_Util.t))
+  | Vector((Vector_Util.t, Vector_Util.t));
 
 type timingFunction =
   | Linear
@@ -65,15 +65,15 @@ type timingFunction =
   | EaseInOutQuint
   | CubicBezier(float, float, float, float);
 
-type wrapMode = 
+type wrapMode =
   //When time reaches the end of the animation clip, the clip will automatically stop playing and time will be reset to beginning of the clip.
-  | Once	
+  | Once
   // When time reaches the end of the animation clip, time will continue at the beginning.
-  | Loop	
+  | Loop
   // When time reaches the end of the animation clip, time will ping pong back between beginning and end.
-  | PingPong	
+  | PingPong
   // Plays back the animation. When it reaches the end, it will keep playing the last frame and never stop playing.
-  | ClampForever	
+  | ClampForever;
 
 type keyframe = {
   duration: float,
@@ -101,23 +101,17 @@ type time = {
   delta: float,
 };
 
-type asset = {
-  sprite: Belt.List.t(string),
-};
+type asset = {sprite: Belt.List.t(string)};
 
 type state = {
   entity: Belt.List.t(string),
   transform: Belt.Map.String.t(transform),
   sprite: Belt.Map.String.t(sprite),
-
   animation: Belt.Map.String.t(animation),
-
   collideBox: Belt.Map.String.t(collideBox),
   collideCircle: Belt.Map.String.t(collideCircle),
-
   fieldFloat: Belt.Map.String.t(field(float)),
   fieldVector: Belt.Map.String.t(field(Vector_Util.t)),
-
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,
@@ -144,5 +138,4 @@ let initialState: state = {
   asset: {
     sprite: [],
   },
-
 };

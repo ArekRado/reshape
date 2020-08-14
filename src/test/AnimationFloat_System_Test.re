@@ -9,13 +9,13 @@ let runTests = () => {
     let getAnimation = (state: Type.state, name: Type.entity) =>
       switch (Belt.Map.String.get(state.animation, name)) {
       | Some(animation) => animation
-      | None => failwith("Can't find animation " ++ name);
+      | None => failwith("Can't find animation " ++ name)
       };
 
     let getFieldFloat = (state: Type.state, name: Type.entity) =>
       switch (Belt.Map.String.get(state.fieldFloat, name)) {
       | Some(field) => field
-      | None => failwith("Can't find fieldFloat " ++ name);
+      | None => failwith("Can't find fieldFloat " ++ name)
       };
 
     it("Linear animation should change value in proper way", _assert => {
@@ -27,10 +27,10 @@ let runTests = () => {
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldFloatName, 
-        ~value=0.0,
+          ~entity="",
+          ~state=_,
+          ~name=fieldFloatName,
+          ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldFloat(fieldFloatName),
@@ -102,10 +102,10 @@ let runTests = () => {
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldFloatName, 
-        ~value=0.0,
+          ~entity="",
+          ~state=_,
+          ~name=fieldFloatName,
+          ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldFloat(fieldFloatName),
@@ -143,15 +143,15 @@ let runTests = () => {
       let keyframe: Type.keyframe = {
         duration: 10.0,
         timingFunction: Linear,
-        valueRange: Float((-1.0, -2.0)),
+        valueRange: Float(((-1.0), (-2.0))),
       };
       Type.initialState
       ->ReShape.Entity.create(~entity="", ~state=_)
       ->ReShape.Component.FieldFloat.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldFloatName, 
-        ~value=0.0,
+          ~entity="",
+          ~state=_,
+          ~name=fieldFloatName,
+          ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldFloat(fieldFloatName),
@@ -179,21 +179,27 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === (-0.1));
+            _assert(
+              getFieldFloat(newState, fieldFloatName).value === (-0.1),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(22.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === (-2.0));
+            _assert(
+              getFieldFloat(newState, fieldFloatName).value === (-2.0),
+            );
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === (-2.0));
+            _assert(
+              getFieldFloat(newState, fieldFloatName).value === (-2.0),
+            );
           }
         );
       ();
@@ -201,19 +207,43 @@ let runTests = () => {
 
     it("Should works with multiple frames", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe
-      ]
+        (
+          {
+            duration: 10.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 1.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 2.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 100.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+      ];
 
       Type.initialState
       ->ReShape.Entity.create(~entity=name, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldFloatName, 
-        ~value=0.0,
+          ~entity="",
+          ~state=_,
+          ~name=fieldFloatName,
+          ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
           ~component=FieldFloat(fieldFloatName),
@@ -270,12 +300,8 @@ let runTests = () => {
           state => {
             let newState = tick(100.0, state);
             // _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
-            _assert(
-              getAnimation(newState, name).isPlaying === false,
-            );
-            _assert(
-              getAnimation(newState, name).currentTime === 0.0,
-            );
+            _assert(getAnimation(newState, name).isPlaying === false);
+            _assert(getAnimation(newState, name).currentTime === 0.0);
           }
         );
       ();
@@ -283,57 +309,81 @@ let runTests = () => {
 
     it("Should works with looped animations", _assert => {
       let keyframes = [
-        {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 1.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 2.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-        {duration: 100.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe
-      ]
+        (
+          {
+            duration: 10.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 1.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 2.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+        (
+          {
+            duration: 100.0,
+            timingFunction: Linear,
+            valueRange: Float((0.0, 1.0)),
+          }: Type.keyframe
+        ),
+      ];
 
-      let _ = Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
-      ->ReShape.Component.FieldFloat.create(
-        ~entity="",
-        ~state=_,
-        ~name=fieldFloatName, 
-        ~value=0.0,
-        )
-      ->ReShape.Component.Animation.create(
-          ~component=FieldFloat(fieldFloatName),
-          ~isPlaying=true,
-          ~keyframes,
-          ~entity="",
-          ~name,
-          ~state=_,
-          ~wrapMode=Loop,
-          (),
-        )
-      -> tick(2000.0, _)
-      ->(
-          state => {
-            let newState = tick(2000.0, state);
-
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.66);
-            _assert(getAnimation(newState, name).isFinished === true);
-            _assert(
-              getAnimation(newState, name).isPlaying === true,
-            );
-            _assert(
-              getAnimation(newState, name).currentTime === 66.0,
-            );
-
-            newState;
-          })
+      let _ =
+        Type.initialState
+        ->ReShape.Entity.create(~entity=name, ~state=_)
+        ->ReShape.Component.FieldFloat.create(
+            ~entity="",
+            ~state=_,
+            ~name=fieldFloatName,
+            ~value=0.0,
+          )
+        ->ReShape.Component.Animation.create(
+            ~component=FieldFloat(fieldFloatName),
+            ~isPlaying=true,
+            ~keyframes,
+            ~entity="",
+            ~name,
+            ~state=_,
+            ~wrapMode=Loop,
+            (),
+          )
+        ->tick(2000.0, _)
         ->(
-          // Second tick should reset isFinished flag
-          state => {
-            let newState = tick(2010.0, state);
+            state => {
+              let newState = tick(2000.0, state);
 
-            _assert(getAnimation(newState, name).isFinished === false);
-            _assert(getAnimation(newState, name).currentTime === 76.0);
+              _assert(
+                getFieldFloat(newState, fieldFloatName).value === 0.66,
+              );
+              _assert(getAnimation(newState, name).isFinished === true);
+              _assert(getAnimation(newState, name).isPlaying === true);
+              _assert(getAnimation(newState, name).currentTime === 66.0);
 
-            newState;
-          }
-        );
+              newState;
+            }
+          )
+        ->(
+            // Second tick should reset isFinished flag
+            state => {
+              let newState = tick(2010.0, state);
+
+              _assert(getAnimation(newState, name).isFinished === false);
+              _assert(getAnimation(newState, name).currentTime === 76.0);
+
+              newState;
+            }
+          );
 
       ();
     });
@@ -346,7 +396,13 @@ let runTests = () => {
         currentTime: 0.0,
         component: FieldFloat("testFieldFloat"),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}:  Type.keyframe
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -367,7 +423,13 @@ let runTests = () => {
         currentTime: 5.0,
         component: FieldFloat("testFieldFloat"),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -388,8 +450,20 @@ let runTests = () => {
         currentTime: 10.5,
         component: FieldFloat("testFieldFloat"),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -410,10 +484,34 @@ let runTests = () => {
         currentTime: 2000.0,
         component: FieldFloat("testFieldFloat"),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 2.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 100.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Once,
@@ -435,10 +533,34 @@ let runTests = () => {
         currentTime: 2000.0,
         component: FieldFloat("testFieldFloat"),
         keyframes: [
-          {duration: 10.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 1.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 2.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
-          {duration: 100.0, timingFunction: Linear, valueRange: Float((0.0, 1.0))}: Type.keyframe,
+          (
+            {
+              duration: 10.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 1.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 2.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
+          (
+            {
+              duration: 100.0,
+              timingFunction: Linear,
+              valueRange: Float((0.0, 1.0)),
+            }: Type.keyframe
+          ),
         ],
         isFinished: false,
         wrapMode: Loop,
