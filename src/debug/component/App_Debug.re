@@ -38,9 +38,14 @@ let make = () => {
       | Some(state) => state
       | None => Type.initialState
       };
-    SyncState.getStateFromLocalStorage(initialState)
-    ->App_Context.SetState
-    ->setAppContext;
+
+    switch(SyncState.getStateFromLocalStorage(initialState)) {
+    | Some(state) => 
+      state
+      ->App_Context.SetState
+      ->setAppContext;
+    | None => ()
+    };
 
     Some(() => {()});
   });

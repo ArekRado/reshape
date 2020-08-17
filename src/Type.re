@@ -41,8 +41,8 @@ type field('a) = {
 };
 
 type animatedComponent =
-  | FieldFloat(entity)
-  | FieldVector(entity)
+  | FieldFloat(entity, string)
+  | FieldVector(entity, string)
   | TransformLocalPosition(entity);
 
 type animationValueRange =
@@ -101,7 +101,14 @@ type time = {
   delta: float,
 };
 
-type asset = {sprite: Belt.List.t(string)};
+type assetSprite = {
+  src: string,
+  name: string,
+};
+
+type asset = {
+  sprite: Belt.List.t(assetSprite)
+};
 
 type state = {
   entity: Belt.List.t(string),
@@ -112,6 +119,7 @@ type state = {
   collideCircle: Belt.Map.String.t(collideCircle),
   fieldFloat: Belt.Map.String.t(field(float)),
   fieldVector: Belt.Map.String.t(field(Vector_Util.t)),
+  fieldString: Belt.Map.String.t(field(string)),
   mutable mouseButtons: int,
   mutable mousePosition: vector,
   time,
@@ -127,6 +135,7 @@ let initialState: state = {
   collideBox: Belt.Map.String.empty,
   collideCircle: Belt.Map.String.empty,
   fieldFloat: Belt.Map.String.empty,
+  fieldString: Belt.Map.String.empty,
   fieldVector: Belt.Map.String.empty,
   time: {
     timeNow: 0.0,
@@ -138,4 +147,8 @@ let initialState: state = {
   asset: {
     sprite: [],
   },
+
+  // TODO
+  // event
+  // scene
 };

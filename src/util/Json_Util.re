@@ -134,12 +134,18 @@ module Parse = {
       | Some(value) => stringWithDefault(value, "")
       | None => ""
       };
+    
+    let name =
+      switch (Belt.Array.get(animatedComponent, 2)) {
+      | Some(value) => stringWithDefault(value, "")
+      | None => ""
+      };
 
     switch (animationType) {
-    | "FieldFloat" => Type.FieldFloat(animationEntity)
-    | "FieldVector" => Type.FieldVector(animationEntity)
+    | "FieldFloat" => Type.FieldFloat(animationEntity, name)
+    | "FieldVector" => Type.FieldVector(animationEntity, name)
     | "TransformLocalPosition" => Type.TransformLocalPosition(animationEntity)
-    | _ => Type.FieldFloat(animationEntity)
+    | _ => Type.FieldFloat(animationEntity, name)
     };
   };
 
@@ -492,6 +498,28 @@ module Parse = {
               Type.field(float)
           )
         ),
+    fieldString:
+      stateObj
+      ->maybeProperty("fieldString", emptyObject)
+      ->dictToMapString((fieldString) =>
+          (
+            {
+              entity:
+                fieldString
+                ->maybeProperty("entity", emptyString)
+                ->stringWithDefault(""),
+              name:
+                fieldString
+                ->maybeProperty("name", emptyString)
+                ->stringWithDefault(""),
+              value:
+                fieldString
+                ->maybeProperty("value", emptyString)
+                ->stringWithDefault(""),
+            }:
+              Type.field(string)
+          )
+        ),
     fieldVector:
       stateObj
       ->maybeProperty("fieldVector", emptyObject)
@@ -524,7 +552,26 @@ module Parse = {
                   ->maybeProperty("sprite", emptyArray)
                   ->maybeArray(array => array)
                   ->Belt.List.fromArray
-                  ->Belt.List.map(sprite => stringWithDefault(sprite, "")),
+                  ->Belt.List.map(sprite => 
+                    sprite
+                    ->maybeObject((maybeObj): Type.assetSprite => {
+                      let obj = switch (maybeObj) {
+                      | Some(obj) => obj
+                      | None => Js.Dict.empty()
+                      };
+
+                      {
+                        src:
+                          obj
+                          ->maybeProperty("src", emptyString)
+                          ->stringWithDefault(""),
+                        name:
+                          obj
+                          ->maybeProperty("name", emptyString)
+                          ->stringWithDefault(""),
+                      }
+                    })
+                  ),
               }
             | None => Type.initialState.asset
             }: Type.asset
@@ -654,10 +701,10 @@ module Stringify = {
             animationDict,
             "component",
             switch (x.component) {
-            | FieldFloat(entity) =>
-              Js.Json.stringArray([|"FieldFloat", entity|])
-            | FieldVector(entity) =>
-              Js.Json.stringArray([|"FieldVector", entity|])
+            | FieldFloat(entity, name) =>
+              Js.Json.stringArray([|"FieldFloat", entity, name|])
+            | FieldVector(entity, name) =>
+              Js.Json.stringArray([|"FieldVector", entity, name|])
             | TransformLocalPosition(entity) =>
               Js.Json.stringArray([|"TransformLocalPosition", entity|])
             },
@@ -813,6 +860,27 @@ module Stringify = {
     Js.Json.object_(dict);
   };
 
+  let fieldString = fieldString => {
+    let dict = Js.Dict.empty();
+
+    ignore(
+      Belt.Map.String.mapWithKey(
+        fieldString,
+        (entity, x: Type.field(string)) => {
+          let fieldString = Js.Dict.empty();
+
+          Js.Dict.set(fieldString, "entity", Js.Json.string(x.entity));
+          Js.Dict.set(fieldString, "name", Js.Json.string(x.name));
+          Js.Dict.set(fieldString, "value", Js.Json.string(x.value));
+
+          Js.Dict.set(dict, entity, Js.Json.object_(fieldString));
+        },
+      ),
+    );
+
+    Js.Json.object_(dict);
+  };
+
   let fieldVector = fieldVector => {
     let dict = Js.Dict.empty();
 
@@ -845,11 +913,25 @@ module Stringify = {
 
   let asset = (asset: Type.asset) => {
     let dict = Js.Dict.empty();
+    
+    let sprite =
+      Belt.List.map(
+        asset.sprite,
+        (x: Type.assetSprite) => {
+          let assetSprite = Js.Dict.empty();
+
+          Js.Dict.set(assetSprite, "src", Js.Json.string(x.src));
+          Js.Dict.set(assetSprite, "name", Js.Json.string(x.name));
+
+          // Js.Json.object_(assetSprite);
+          assetSprite
+        },
+      );
 
     Js.Dict.set(
       dict,
       "sprite",
-      asset.sprite->Belt.List.toArray->Js.Json.stringArray,
+      sprite->Belt.List.toArray->Js.Json.objectArray,
     );
 
     Js.Json.object_(dict);
@@ -865,6 +947,7 @@ module Stringify = {
     Js.Dict.set(dict, "collideBox", collideBox(state.collideBox));
     Js.Dict.set(dict, "collideCircle", collideCircle(state.collideCircle));
     Js.Dict.set(dict, "fieldFloat", fieldFloat(state.fieldFloat));
+    Js.Dict.set(dict, "fieldString", fieldString(state.fieldString));
     Js.Dict.set(dict, "fieldVector", fieldVector(state.fieldVector));
     Js.Dict.set(dict, "time", time(state.time));
     Js.Dict.set(dict, "asset", asset(state.asset));

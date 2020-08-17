@@ -80,19 +80,19 @@ let componentEntitiesList =
 
 let getComponentEntity = (component: Type.animatedComponent): string =>
   switch (component) {
-  | FieldFloat(entity) => entity
-  | FieldVector(entity) => entity
+  | FieldFloat(entity, _) => entity
+  | FieldVector(entity, _) => entity
   | TransformLocalPosition(entity) => entity
   };
 
 let mapTextToComponent = (component: string): Type.animatedComponent =>
   switch (component) {
-  | "FieldFloat" => FieldFloat("")
-  | "FieldVector" => FieldVector("")
+  | "FieldFloat" => FieldFloat("", "")
+  | "FieldVector" => FieldVector("", "")
   | "TransformLocalPosition" => TransformLocalPosition("")
   | _ =>
     Js.log("Wrong switch option");
-    FieldFloat("");
+    FieldFloat("", "");
   };
 
 let mapComponentToText = (component: Type.animatedComponent): string =>
@@ -112,8 +112,8 @@ let setAnimationComponent =
     ) => {
   let animatedComponent =
     switch (component) {
-    | Type.FieldFloat(_) => Type.FieldFloat(componentEntity)
-    | Type.FieldVector(_) => Type.FieldVector(componentEntity)
+    | Type.FieldFloat(_, name) => Type.FieldFloat(componentEntity, name)
+    | Type.FieldVector(_, name) => Type.FieldVector(componentEntity, name)
     | Type.TransformLocalPosition(_) =>
       Type.TransformLocalPosition(componentEntity)
     };

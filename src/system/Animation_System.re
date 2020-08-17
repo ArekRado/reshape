@@ -62,7 +62,7 @@ let rec getActiveKeyframe =
       getActiveKeyframe(
         {
           ...animation,
-          // mod_float prevents from unnecessary loops, instantly moves to last loop
+          // mod_float prevents from unnecessary loops, instantly moves to last keyframe
           currentTime: mod_float(animation.currentTime, sum),
         },
         true,
@@ -200,6 +200,7 @@ let update = (~state: Type.state): Type.state =>
         getActiveKeyframe(animation, false);
 
       if (timeExceeded === true && animation.wrapMode === Once) {
+        Js.log("test");
         Animation_Component.set(
           ~state=acc,
           ~name,
@@ -244,12 +245,12 @@ let update = (~state: Type.state): Type.state =>
               );
 
             switch (animation.component) {
-            | FieldFloat(fieldFloatName) =>
+            | FieldFloat(entity, fieldFloatName) =>
               FieldFloat_Component.setValue(
                 ~state=stateWithNewAnimation,
                 ~name=fieldFloatName,
                 ~value,
-                ~entity=animation.entity,
+                ~entity,
               )
             | FieldVector(_) => state
             | TransformLocalPosition(_) => state
@@ -273,16 +274,14 @@ let update = (~state: Type.state): Type.state =>
                 ~entity=animation.entity,
               );
 
-            // Js.log2(value);
-
             switch (animation.component) {
             | FieldFloat(_) => state
-            | FieldVector(fieldVectorName) =>
+            | FieldVector(entity, fieldVectorName) =>
               FieldVector_Component.setValue(
                 ~state=stateWithNewAnimation,
                 ~name=fieldVectorName,
                 ~value,
-                ~entity=animation.entity,
+                ~entity,
               )
             | TransformLocalPosition(entity) =>
               Transform_Component.setLocalPosition(

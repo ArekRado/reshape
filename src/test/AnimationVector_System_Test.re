@@ -3,30 +3,20 @@ let runTests = () => {
     let tick = (performanceNow, state) =>
       ReShape.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
-    let name = "test";
+    let entity = "test";
+    let animationName = "animationName";
     let fieldVectorName = "testFieldVector";
 
-    // let defaultAnimation: Type.animation = {
-    //   entity: "",
-    //   name: "",
-    //   keyframes: [],
-    //   isPlaying: false,
-    //   currentTime: 0.0,
-    //   component: FieldVector(fieldVectorName),
-    //   isFinished: false,
-    //   wrapMode: Once,
-    // };
-
-    let getAnimation = (state: Type.state, name: string) =>
-      switch (Belt.Map.String.get(state.animation, name)) {
+    let getAnimation = (state: Type.state) =>
+      switch (Animation_Component.get(~state, ~name=animationName, ~entity)) {
       | Some(animation) => animation
-      | None => failwith("Can't find animation " ++ name) //defaultAnimation
+      | None => failwith("Can't find animation " ++ animationName) //defaultAnimation
       };
 
-    let getFieldVector = (state: Type.state, name: Type.entity) =>
-      switch (Belt.Map.String.get(state.fieldVector, name)) {
+    let getFieldVector = (state: Type.state) =>
+      switch (FieldVector_Component.get(~state, ~name=fieldVectorName, ~entity)) {
       | Some(field) => field
-      | None => failwith("Can't find fieldVector " ++ name)
+      | None => failwith("Can't find fieldVector " ++ fieldVectorName)
       };
 
     it("Linear animation should change value in proper way", _assert => {
@@ -41,19 +31,19 @@ let runTests = () => {
       };
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldVector.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldVectorName,
           ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldVector(fieldVectorName),
+          ~component=FieldVector(entity, fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
@@ -62,7 +52,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.zero,
               ),
             );
@@ -74,7 +64,7 @@ let runTests = () => {
             let newState = tick(1.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.zero,
               ),
             );
@@ -86,7 +76,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.1, 0.1),
               ),
             );
@@ -98,7 +88,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.2, 0.2),
               ),
             );
@@ -110,7 +100,7 @@ let runTests = () => {
             let newState = tick(10.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.2, 0.2),
               ),
             );
@@ -122,7 +112,7 @@ let runTests = () => {
             let newState = tick(10.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(1.0, 1.0),
               ),
             );
@@ -134,7 +124,7 @@ let runTests = () => {
             let newState = tick(12.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(1.0, 1.0),
               ),
             );
@@ -154,19 +144,19 @@ let runTests = () => {
           )),
       };
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldVector.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldVectorName,
           ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldVector(fieldVectorName),
+          ~component=FieldVector(entity, fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
@@ -175,7 +165,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.0, 0.0),
               ),
             );
@@ -187,7 +177,7 @@ let runTests = () => {
             let newState = tick(20.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.0, 0.0),
               ),
             );
@@ -199,7 +189,7 @@ let runTests = () => {
             let newState = tick(40.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(1.0, 1.0),
               ),
             );
@@ -220,19 +210,19 @@ let runTests = () => {
       };
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldVector.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldVectorName,
           ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldVector(fieldVectorName),
+          ~component=FieldVector(entity, fieldVectorName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
@@ -241,7 +231,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 (0.0, 0.0),
               ),
             );
@@ -253,7 +243,7 @@ let runTests = () => {
             let newState = tick(1.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 (0.0, 0.0),
               ),
             );
@@ -265,7 +255,7 @@ let runTests = () => {
             let newState = tick(22.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 ((-0.1), (-0.1)),
               ),
             );
@@ -277,7 +267,7 @@ let runTests = () => {
             let newState = tick(22.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 ((-2.0), (-2.0)),
               ),
             );
@@ -289,7 +279,7 @@ let runTests = () => {
             let newState = tick(2.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 ((-2.0), (-2.0)),
               ),
             );
@@ -331,19 +321,19 @@ let runTests = () => {
       ];
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldVector.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldVectorName,
           ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldVector(fieldVectorName),
+          ~component=FieldVector(entity, fieldVectorName),
           ~isPlaying=true,
           ~keyframes,
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
@@ -352,7 +342,7 @@ let runTests = () => {
             let newState = tick(0.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.0, 0.0),
               ),
             );
@@ -364,7 +354,7 @@ let runTests = () => {
             let newState = tick(5.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.0, 0.0),
               ),
             );
@@ -376,7 +366,7 @@ let runTests = () => {
             let newState = tick(10.5, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.5, 0.5),
               ),
             );
@@ -388,7 +378,7 @@ let runTests = () => {
             let newState = tick(12.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.5, 0.5),
               ),
             );
@@ -400,7 +390,7 @@ let runTests = () => {
             let newState = tick(100.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.5, 0.5),
               ),
             );
@@ -412,7 +402,7 @@ let runTests = () => {
             let newState = tick(300.0, state);
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.87, 0.87),
               ),
             );
@@ -422,8 +412,8 @@ let runTests = () => {
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getAnimation(newState, name).isPlaying === false);
-            _assert(getAnimation(newState, name).currentTime === 0.0);
+            _assert(getAnimation(newState).isPlaying === false);
+            _assert(getAnimation(newState).currentTime === 0.0);
           }
         );
       ();
@@ -462,19 +452,19 @@ let runTests = () => {
       ];
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldVector.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldVectorName,
           ~value=Vector_Util.zero,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldVector(fieldVectorName),
+          ~component=FieldVector(entity, fieldVectorName),
           ~isPlaying=true,
           ~keyframes,
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           ~wrapMode=Loop,
           (),
@@ -486,13 +476,13 @@ let runTests = () => {
 
             _assert(
               Vector_Util.isEqual(
-                getFieldVector(newState, fieldVectorName).value,
+                getFieldVector(newState).value,
                 Vector_Util.create(0.66, 0.66),
               ),
             );
-            _assert(getAnimation(newState, name).isFinished === true);
-            _assert(getAnimation(newState, name).isPlaying === true);
-            _assert(getAnimation(newState, name).currentTime === 66.0);
+            _assert(getAnimation(newState).isFinished === true);
+            _assert(getAnimation(newState).isPlaying === true);
+            _assert(getAnimation(newState).currentTime === 66.0);
 
             newState;
           }
@@ -502,7 +492,7 @@ let runTests = () => {
           state => {
             let newState = tick(2000.0, state);
 
-            _assert(getAnimation(newState, name).isFinished === false);
+            _assert(getAnimation(newState).isFinished === false);
           }
         );
       ();
@@ -514,7 +504,7 @@ let runTests = () => {
         name: "",
         isPlaying: true,
         currentTime: 0.0,
-        component: FieldVector(fieldVectorName),
+        component: FieldVector(entity, fieldVectorName),
         keyframes: [
           (
             {
@@ -541,7 +531,7 @@ let runTests = () => {
         name: "",
         isPlaying: true,
         currentTime: 5.0,
-        component: FieldVector(fieldVectorName),
+        component: FieldVector(entity, fieldVectorName),
         keyframes: [
           (
             {
@@ -568,7 +558,7 @@ let runTests = () => {
         name: "",
         isPlaying: true,
         currentTime: 10.5,
-        component: FieldVector(fieldVectorName),
+        component: FieldVector(entity, fieldVectorName),
         keyframes: [
           (
             {
@@ -602,7 +592,7 @@ let runTests = () => {
         name: "",
         isPlaying: true,
         currentTime: 2000.0,
-        component: FieldVector(fieldVectorName),
+        component: FieldVector(entity, fieldVectorName),
         keyframes: [
           (
             {
@@ -651,7 +641,7 @@ let runTests = () => {
         name: "",
         isPlaying: true,
         currentTime: 2000.0,
-        component: FieldVector(fieldVectorName),
+        component: FieldVector(entity, fieldVectorName),
         keyframes: [
           (
             {

@@ -47,8 +47,8 @@ let getStateFromLocalStorage = (initialState: Type.state) => {
   | Some(item) =>
     let save = item->Js.Json.parseExn->Json_Util.Parse.state;
 
-    {...save, asset: initialState.asset};
-  | None => Type.initialState
+    Some({...save, asset: initialState.asset});
+  | None => None;
   };
 };
 

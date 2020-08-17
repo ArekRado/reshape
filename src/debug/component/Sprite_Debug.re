@@ -36,9 +36,9 @@ let make = (~sprite: option(Type.sprite)) => {
                 ),
               )
             }
-            options={Belt.List.map(appState.asset.sprite, (src) =>
+            options={Belt.List.map(appState.asset.sprite, (sprite) =>
               (
-                {value: src, text: src, disabled: false}: Select_UI.selectOption
+                {value: sprite.name, text: sprite.src, disabled: false}: Select_UI.selectOption
               )
             )}
           />

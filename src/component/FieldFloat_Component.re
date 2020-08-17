@@ -34,5 +34,5 @@ let setValue =
     ),
 };
 
-let get = (entity: Type.entity, ~state: Type.state, ~name: string) => 
+let get = (~entity: Type.entity, ~state: Type.state, ~name: string) => 
   Belt.Map.String.get(state.fieldFloat, entity ++ name)

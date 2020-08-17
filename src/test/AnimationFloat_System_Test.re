@@ -3,19 +3,20 @@ let runTests = () => {
     let tick = (performanceNow, state) =>
       ReShape.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
-    let name = "test";
+    let entity = "test";
+    let animationName = "animationName";
     let fieldFloatName = "testFieldFloat";
 
-    let getAnimation = (state: Type.state, name: Type.entity) =>
-      switch (Belt.Map.String.get(state.animation, name)) {
+    let getAnimation = (state: Type.state) =>
+      switch (Animation_Component.get(~state, ~name=animationName, ~entity)) {
       | Some(animation) => animation
-      | None => failwith("Can't find animation " ++ name)
+      | None => failwith("Can't find animation " ++ animationName)
       };
 
-    let getFieldFloat = (state: Type.state, name: Type.entity) =>
-      switch (Belt.Map.String.get(state.fieldFloat, name)) {
+    let getFieldFloat = (state: Type.state) =>
+      switch (FieldFloat_Component.get(~state, ~name=fieldFloatName, ~entity)) {
       | Some(field) => field
-      | None => failwith("Can't find fieldFloat " ++ name)
+      | None => failwith("Can't find fieldFloat " ++ fieldFloatName)
       };
 
     it("Linear animation should change value in proper way", _assert => {
@@ -25,69 +26,68 @@ let runTests = () => {
         valueRange: Float((0.0, 1.0)),
       };
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldFloatName,
           ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldFloat(fieldFloatName),
+          ~component=FieldFloat(entity, fieldFloatName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            Js.log(getFieldFloat(newState, fieldFloatName).value === 0.0);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.1);
+            _assert(getFieldFloat(newState).value === 0.1);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(2.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.2);
+            _assert(getFieldFloat(newState).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.2);
+            _assert(getFieldFloat(newState).value === 0.2);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 1.0);
+            _assert(getFieldFloat(newState).value === 1.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 1.0);
+            _assert(getFieldFloat(newState).value === 1.0);
           }
         );
       ();
@@ -100,40 +100,40 @@ let runTests = () => {
         valueRange: Float((0.0, 1.0)),
       };
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldFloatName,
           ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldFloat(fieldFloatName),
+          ~component=FieldFloat(entity, fieldFloatName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(20.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(40.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 1.0);
+            _assert(getFieldFloat(newState).value === 1.0);
           }
         );
       ();
@@ -146,33 +146,33 @@ let runTests = () => {
         valueRange: Float(((-1.0), (-2.0))),
       };
       Type.initialState
-      ->ReShape.Entity.create(~entity="", ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldFloatName,
           ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldFloat(fieldFloatName),
+          ~component=FieldFloat(entity, fieldFloatName),
           ~isPlaying=true,
           ~keyframes=[keyframe],
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(1.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
@@ -180,7 +180,7 @@ let runTests = () => {
           state => {
             let newState = tick(22.0, state);
             _assert(
-              getFieldFloat(newState, fieldFloatName).value === (-0.1),
+              getFieldFloat(newState).value === (-0.1),
             );
             newState;
           }
@@ -189,7 +189,7 @@ let runTests = () => {
           state => {
             let newState = tick(22.0, state);
             _assert(
-              getFieldFloat(newState, fieldFloatName).value === (-2.0),
+              getFieldFloat(newState).value === (-2.0),
             );
             newState;
           }
@@ -198,7 +198,7 @@ let runTests = () => {
           state => {
             let newState = tick(2.0, state);
             _assert(
-              getFieldFloat(newState, fieldFloatName).value === (-2.0),
+              getFieldFloat(newState).value === (-2.0),
             );
           }
         );
@@ -238,70 +238,70 @@ let runTests = () => {
       ];
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=name, ~state=_)
+      ->ReShape.Entity.create(~entity, ~state=_)
       ->ReShape.Component.FieldFloat.create(
-          ~entity="",
+          ~entity,
           ~state=_,
           ~name=fieldFloatName,
           ~value=0.0,
         )
       ->ReShape.Component.Animation.create(
-          ~component=FieldFloat(fieldFloatName),
+          ~component=FieldFloat(entity, fieldFloatName),
           ~isPlaying=true,
           ~keyframes,
-          ~entity="",
-          ~name,
+          ~entity,
+          ~name=animationName,
           ~state=_,
           (),
         )
       ->(
           state => {
             let newState = tick(0.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(5.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
+            _assert(getFieldFloat(newState).value === 0.0);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(10.5, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.5);
+            _assert(getFieldFloat(newState).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(12.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.5);
+            _assert(getFieldFloat(newState).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.5);
+            _assert(getFieldFloat(newState).value === 0.5);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(300.0, state);
-            _assert(getFieldFloat(newState, fieldFloatName).value === 0.87);
+            _assert(getFieldFloat(newState).value === 0.87);
             newState;
           }
         )
       ->(
           state => {
             let newState = tick(100.0, state);
-            // _assert(getFieldFloat(newState, fieldFloatName).value === 0.0);
-            _assert(getAnimation(newState, name).isPlaying === false);
-            _assert(getAnimation(newState, name).currentTime === 0.0);
+            // _assert(getFieldFloat(newState).value === 0.0);
+            _assert(getAnimation(newState).isPlaying === false);
+            _assert(getAnimation(newState).currentTime === 0.0);
           }
         );
       ();
@@ -341,19 +341,19 @@ let runTests = () => {
 
       let _ =
         Type.initialState
-        ->ReShape.Entity.create(~entity=name, ~state=_)
+        ->ReShape.Entity.create(~entity, ~state=_)
         ->ReShape.Component.FieldFloat.create(
-            ~entity="",
+            ~entity,
             ~state=_,
             ~name=fieldFloatName,
             ~value=0.0,
           )
         ->ReShape.Component.Animation.create(
-            ~component=FieldFloat(fieldFloatName),
+            ~component=FieldFloat(entity, fieldFloatName),
             ~isPlaying=true,
             ~keyframes,
-            ~entity="",
-            ~name,
+            ~entity,
+            ~name=animationName,
             ~state=_,
             ~wrapMode=Loop,
             (),
@@ -364,11 +364,11 @@ let runTests = () => {
               let newState = tick(2000.0, state);
 
               _assert(
-                getFieldFloat(newState, fieldFloatName).value === 0.66,
+                getFieldFloat(newState).value === 0.66,
               );
-              _assert(getAnimation(newState, name).isFinished === true);
-              _assert(getAnimation(newState, name).isPlaying === true);
-              _assert(getAnimation(newState, name).currentTime === 66.0);
+              _assert(getAnimation(newState).isFinished === true);
+              _assert(getAnimation(newState).isPlaying === true);
+              _assert(getAnimation(newState).currentTime === 66.0);
 
               newState;
             }
@@ -378,8 +378,8 @@ let runTests = () => {
             state => {
               let newState = tick(2010.0, state);
 
-              _assert(getAnimation(newState, name).isFinished === false);
-              _assert(getAnimation(newState, name).currentTime === 76.0);
+              _assert(getAnimation(newState).isFinished === false);
+              _assert(getAnimation(newState).currentTime === 76.0);
 
               newState;
             }
@@ -390,11 +390,11 @@ let runTests = () => {
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Type.animation = {
-        entity: "",
-        name: "",
+        entity,
+        name: animationName,
         isPlaying: true,
         currentTime: 0.0,
-        component: FieldFloat("testFieldFloat"),
+        component: FieldFloat(entity, fieldFloatName),
         keyframes: [
           (
             {
@@ -418,10 +418,10 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Type.animation = {
         entity: "",
-        name: "",
+        name: animationName,
         isPlaying: true,
         currentTime: 5.0,
-        component: FieldFloat("testFieldFloat"),
+        component: FieldFloat(entity, fieldFloatName),
         keyframes: [
           (
             {
@@ -445,10 +445,10 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Type.animation = {
         entity: "",
-        name: "",
+        name: animationName,
         isPlaying: true,
         currentTime: 10.5,
-        component: FieldFloat("testFieldFloat"),
+        component: FieldFloat(entity, fieldFloatName),
         keyframes: [
           (
             {
@@ -479,10 +479,10 @@ let runTests = () => {
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Type.animation = {
         entity: "",
-        name: "",
+        name: animationName,
         isPlaying: true,
         currentTime: 2000.0,
-        component: FieldFloat("testFieldFloat"),
+        component: FieldFloat(entity, fieldFloatName),
         keyframes: [
           (
             {
@@ -528,10 +528,10 @@ let runTests = () => {
     it("getActiveFrame - should works with Loop animation", _assert => {
       let animation: Type.animation = {
         entity: "",
-        name: "",
+        name: animationName,
         isPlaying: true,
         currentTime: 2000.0,
-        component: FieldFloat("testFieldFloat"),
+        component: FieldFloat(entity, fieldFloatName),
         keyframes: [
           (
             {

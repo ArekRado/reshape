@@ -52,7 +52,7 @@ let reducer = (state, action): Type.state => {
     | CreateFieldVector(_) => state //FieldVector_Component.create(~entity, ~state);
     | CreateAnimation(entity) =>
       Animation_Component.create(
-        ~component=Type.FieldFloat(""),
+        ~component=Type.FieldFloat(entity, ""),
         ~entity,
         ~state,
         ~name=Uuid_Util.v4(),

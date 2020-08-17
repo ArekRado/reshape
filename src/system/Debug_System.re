@@ -6,11 +6,15 @@ let update = (~state: Type.state, ~debug: bool): Type.state =>
 
       {...state, isDebugInitialized: true};
     } else {
-      switch (SyncState.get(Game)) {
-      | Some(editorState) => {...editorState, isDebugInitialized: true}
-      | None => state
-      // SyncState.set(state, Editor);
-      };
+      if(state.time.delta !== 0.0) {
+        SyncState.set(state, Editor);
+        state;
+      } else {
+        switch (SyncState.get(Game)) {
+        | Some(editorState) => {...editorState, isDebugInitialized: true}
+        | None => state
+        };
+      }
     };
   } else {
     state;

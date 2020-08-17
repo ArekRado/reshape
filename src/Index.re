@@ -16,7 +16,7 @@ let initialState: state = {
   game: {
     yourState: "",
   },
-  engine: ReShape.Asset.addSprite(~state=Type.initialState, ~sprite=example),
+  engine: ReShape.Asset.addSprite(~state=Type.initialState, ~src=example, ~name="example"),
 };
 
 let rec logic = (state: state) => {

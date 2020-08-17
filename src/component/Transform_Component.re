@@ -101,5 +101,5 @@ let setLocalPosition =
     ),
 };
 
-let get = (entity: Type.entity, ~state: Type.state) => 
+let get = (~entity: Type.entity, ~state: Type.state) => 
   Belt.Map.String.get(state.transform, entity)

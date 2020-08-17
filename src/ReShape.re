@@ -16,6 +16,7 @@ module Component = {
   module CollideCircle = CollideCircle_Component;
   module FieldFloat = FieldFloat_Component;
   module FieldVector = FieldVector_Component;
+  module FieldString = FieldString_Component;
 };
 
 module Util = {

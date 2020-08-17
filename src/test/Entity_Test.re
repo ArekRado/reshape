@@ -16,7 +16,7 @@ let runTests = () => {
           )
         ->Sprite_Component.create(~entity, ~src="", ~state=_)
         ->Animation_Component.create(
-            ~component=Type.FieldFloat(""),
+            ~component=Type.FieldFloat(entity, ""),
             ~keyframes=[],
             ~entity,
             ~name="AnimationFloat",

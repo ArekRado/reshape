@@ -25,5 +25,5 @@ let setSrc = (~state: Type.state, ~entity: Type.entity, ~src: Type.spriteSrc) =>
 };
 
 
-let get = (entity: Type.entity, ~state: Type.state) => 
+let get = (~entity: Type.entity, ~state: Type.state) => 
   Belt.Map.String.get(state.sprite, entity)
