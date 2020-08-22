@@ -25,7 +25,7 @@ let create =
   animation:
     Belt.Map.String.set(
       state.animation,
-      name,
+      entity ++ name,
       {
         entity,
         name,
@@ -62,9 +62,16 @@ let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
 };
 
 let set =
-    (~entity: Type.entity, ~name: string, ~state: Type.state, ~animation) => {
+    (~entity: Type.entity, ~name: string, ~state: Type.state, ~animation: Type.animation) => {
   ...state,
-  animation: Belt.Map.String.set(state.animation, entity ++ name, animation),
+    animation:
+    // Belt.Map.String.update(state.animation, entity ++ name, item =>
+    //   switch (item) {
+    //   | Some(animation) => Some(animation)
+    //   | None => None
+    //   }
+    // ),
+    Belt.Map.String.set(state.animation, entity ++ name, animation),
 };
 
 let setComponent =

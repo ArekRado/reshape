@@ -411,7 +411,7 @@ let runTests = () => {
         )
       ->(
           state => {
-            let newState = tick(100.0, state);
+            let newState = tick(400.0, state);
             _assert(getAnimation(newState).isPlaying === false);
             _assert(getAnimation(newState).currentTime === 0.0);
           }
