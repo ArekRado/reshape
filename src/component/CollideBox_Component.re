@@ -31,5 +31,5 @@ let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
     ),
 };
 
-let get = (~entity: Type.entity, ~state: Type.state, ~name: string) => 
-  Belt.Map.String.get(state.collideBox, entity ++ name)
+let get = (~entity: Type.entity, ~state: Type.state, ~name: string) =>
+  Belt.Map.String.get(state.collideBox, entity ++ name);

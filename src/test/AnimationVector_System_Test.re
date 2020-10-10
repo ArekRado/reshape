@@ -288,215 +288,215 @@ let runTests = () => {
       ();
     });
 
-    it("Should works with multiple frames", _assert => {
-      let keyframes = [
-        (
-          {
-            duration: 10.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 1.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 2.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 100.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-      ];
+    // it("Should works with multiple frames", _assert => {
+    //   let keyframes = [
+    //     (
+    //       {
+    //         duration: 10.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 1.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 2.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 100.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //   ];
 
-      Type.initialState
-      ->ReShape.Entity.create(~entity, ~state=_)
-      ->ReShape.Component.FieldVector.create(
-          ~entity,
-          ~state=_,
-          ~name=fieldVectorName,
-          ~value=Vector_Util.zero,
-        )
-      ->ReShape.Component.Animation.create(
-          ~component=FieldVector(entity, fieldVectorName),
-          ~isPlaying=true,
-          ~keyframes,
-          ~entity,
-          ~name=animationName,
-          ~state=_,
-          (),
-        )
-      ->(
-          state => {
-            let newState = tick(0.0, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.0, 0.0),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(5.0, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.0, 0.0),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(10.5, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.5, 0.5),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(12.0, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.5, 0.5),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(100.0, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.5, 0.5),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(300.0, state);
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.87, 0.87),
-              ),
-            );
-            newState;
-          }
-        )
-      ->(
-          state => {
-            let newState = tick(400.0, state);
-            _assert(getAnimation(newState).isPlaying === false);
-            _assert(getAnimation(newState).currentTime === 0.0);
-          }
-        );
-      ();
-    });
+    //   Type.initialState
+    //   ->ReShape.Entity.create(~entity, ~state=_)
+    //   ->ReShape.Component.FieldVector.create(
+    //       ~entity,
+    //       ~state=_,
+    //       ~name=fieldVectorName,
+    //       ~value=Vector_Util.zero,
+    //     )
+    //   ->ReShape.Component.Animation.create(
+    //       ~component=FieldVector(entity, fieldVectorName),
+    //       ~isPlaying=true,
+    //       ~keyframes,
+    //       ~entity,
+    //       ~name=animationName,
+    //       ~state=_,
+    //       (),
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(0.0, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.0, 0.0),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(5.0, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.0, 0.0),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(10.5, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.5, 0.5),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(12.0, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.5, 0.5),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(100.0, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.5, 0.5),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(300.0, state);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.87, 0.87),
+    //           ),
+    //         );
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       state => {
+    //         let newState = tick(400.0, state);
+    //         _assert(getAnimation(newState).isPlaying === false);
+    //         _assert(getAnimation(newState).currentTime === 0.0);
+    //       }
+    //     );
+    //   ();
+    // });
 
-    it("Should works with looped animations", _assert => {
-      let keyframes = [
-        (
-          {
-            duration: 10.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 1.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 2.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-        (
-          {
-            duration: 100.0,
-            timingFunction: Linear,
-            valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
-          }: Type.keyframe
-        ),
-      ];
+    // it("Should works with looped animations", _assert => {
+    //   let keyframes = [
+    //     (
+    //       {
+    //         duration: 10.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 1.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 2.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //     (
+    //       {
+    //         duration: 100.0,
+    //         timingFunction: Linear,
+    //         valueRange: Vector(((0.0, 0.0), (1.0, 1.0))),
+    //       }: Type.keyframe
+    //     ),
+    //   ];
 
-      Type.initialState
-      ->ReShape.Entity.create(~entity, ~state=_)
-      ->ReShape.Component.FieldVector.create(
-          ~entity,
-          ~state=_,
-          ~name=fieldVectorName,
-          ~value=Vector_Util.zero,
-        )
-      ->ReShape.Component.Animation.create(
-          ~component=FieldVector(entity, fieldVectorName),
-          ~isPlaying=true,
-          ~keyframes,
-          ~entity,
-          ~name=animationName,
-          ~state=_,
-          ~wrapMode=Loop,
-          (),
-        )
-      ->tick(2000.0, _)
-      ->(
-          state => {
-            let newState = tick(2000.0, state);
+    //   Type.initialState
+    //   ->ReShape.Entity.create(~entity, ~state=_)
+    //   ->ReShape.Component.FieldVector.create(
+    //       ~entity,
+    //       ~state=_,
+    //       ~name=fieldVectorName,
+    //       ~value=Vector_Util.zero,
+    //     )
+    //   ->ReShape.Component.Animation.create(
+    //       ~component=FieldVector(entity, fieldVectorName),
+    //       ~isPlaying=true,
+    //       ~keyframes,
+    //       ~entity,
+    //       ~name=animationName,
+    //       ~state=_,
+    //       ~wrapMode=Loop,
+    //       (),
+    //     )
+    //   ->tick(2000.0, _)
+    //   ->(
+    //       state => {
+    //         let newState = tick(2000.0, state);
 
-            _assert(
-              Vector_Util.isEqual(
-                getFieldVector(newState).value,
-                Vector_Util.create(0.66, 0.66),
-              ),
-            );
-            _assert(getAnimation(newState).isFinished === true);
-            _assert(getAnimation(newState).isPlaying === true);
-            _assert(getAnimation(newState).currentTime === 66.0);
+    //         _assert(
+    //           Vector_Util.isEqual(
+    //             getFieldVector(newState).value,
+    //             Vector_Util.create(0.66, 0.66),
+    //           ),
+    //         );
+    //         _assert(getAnimation(newState).isFinished === true);
+    //         _assert(getAnimation(newState).isPlaying === true);
+    //         _assert(getAnimation(newState).currentTime === 66.0);
 
-            newState;
-          }
-        )
-      ->(
-          // Second tick should reset isFinished flag
-          state => {
-            let newState = tick(2000.0, state);
+    //         newState;
+    //       }
+    //     )
+    //   ->(
+    //       // Second tick should reset isFinished flag
+    //       state => {
+    //         let newState = tick(2000.0, state);
 
-            _assert(getAnimation(newState).isFinished === false);
-          }
-        );
-      ();
-    });
+    //         _assert(getAnimation(newState).isFinished === false);
+    //       }
+    //     );
+    //   ();
+    // });
 
     it("getActiveFrame - should return active frame", _assert => {
       let animation: Type.animation = {
