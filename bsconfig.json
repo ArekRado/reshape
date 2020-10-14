@@ -5,11 +5,12 @@
     {
       "dir": "src",
       "subdirs": true
+    },
+    {
+      "dir": "test",
+      "subdirs": true,
+      "type" : "dev"
     }
-    // {
-    //   "dir": "engine",
-    //   "subdirs": true
-    // }
   ],
   "package-specs": {
     "module": "commonjs",
@@ -17,7 +18,7 @@
   },
   "suffix": ".bs.js",
   "reason": { "react-jsx": 3 },
-  "bs-dependencies": ["bs-webapi", "reason-react"],
+  "bs-dependencies": ["bs-webapi"],
   "warnings": {
     "error": "+101"
     // "number": "+A-48",

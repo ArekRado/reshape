@@ -1,7 +1,7 @@
 let runTests = () => {
   Test_Util.describe("Collide_System", it => {
     let tick = (performanceNow, state) =>
-      ReShape.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
+      Util.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
     let getEntity = collideBox => {
       switch (collideBox) {
@@ -46,37 +46,37 @@ let runTests = () => {
     });
 
     it("detect collisions box-box", _assert => {
-      let entity1 = ReShape.Entity.generate("e1");
-      let entity2 = ReShape.Entity.generate("e2");
-      let entity3 = ReShape.Entity.generate("e3");
+      let entity1 = Entity.generate("e1");
+      let entity2 = Entity.generate("e2");
+      let entity3 = Entity.generate("e3");
 
-      let id1 = ReShape.Entity.generate("id1");
-      let id2 = ReShape.Entity.generate("id2");
-      let id3 = ReShape.Entity.generate("id3");
+      let id1 = Entity.generate("id1");
+      let id2 = Entity.generate("id2");
+      let id3 = Entity.generate("id3");
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=entity1, ~state=_)
-      ->ReShape.Entity.create(~entity=entity2, ~state=_)
-      ->ReShape.Entity.create(~entity=entity3, ~state=_)
-      ->ReShape.Component.Transform.create(
+      ->Entity.create(~entity=entity1, ~state=_)
+      ->Entity.create(~entity=entity2, ~state=_)
+      ->Entity.create(~entity=entity3, ~state=_)
+      ->Transform_Component.create(
           ~entity=entity1,
           ~localPosition=(0.0, 0.0),
           ~state=_,
           (),
         )
-      ->ReShape.Component.Transform.create(
+      ->Transform_Component.create(
           ~entity=entity2,
           ~localPosition=(1.0, 1.0),
           ~state=_,
           (),
         )
-      ->ReShape.Component.Transform.create(
+      ->Transform_Component.create(
           ~entity=entity3,
           ~localPosition=(3.5, 3.5),
           ~state=_,
           (),
         )
-      ->ReShape.Component.CollideBox.create(
+      ->Component.CollideBox.create(
           ~entity=entity1,
           ~name=id1,
           ~size=(1.5, 1.5),
@@ -84,7 +84,7 @@ let runTests = () => {
           ~state=_,
           (),
         )
-      ->ReShape.Component.CollideBox.create(
+      ->Component.CollideBox.create(
           ~entity=entity2,
           ~name=id2,
           ~size=(1.0, 1.0),
@@ -92,7 +92,7 @@ let runTests = () => {
           ~state=_,
           (),
         )
-      ->ReShape.Component.CollideBox.create(
+      ->Component.CollideBox.create(
           ~entity=entity3,
           ~name=id3,
           ~size=(1.0, 1.0),

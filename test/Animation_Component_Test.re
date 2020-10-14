@@ -1,8 +1,5 @@
 let runTests = () => {
   Test_Util.describe("Animation_Component", it => {
-    let tick = (performanceNow, state) =>
-      ReShape.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
-
     let entity = "-entity-";
     let animationName = "-animationName-";
     let fieldFloatName = "-fieldFloat-";
@@ -10,22 +7,22 @@ let runTests = () => {
     let getAnimation = (state: Type.state) =>
       switch (Animation_Component.get(~state, ~name=animationName, ~entity)) {
       | Some(animation) => animation
-      | None => {
+      | None =>
         Js.log("Can't find animation " ++ animationName);
         failwith("Can't find animation " ++ animationName);
-      }
       };
 
     it("create", _assert => {
-      let newState = Animation_Component.create(
-        ~name=animationName,
-        ~isPlaying=true,
-        ~keyframes=[],
-        ~entity,
-        ~state=Type.initialState,
-        ~component=FieldFloat(entity, fieldFloatName),
-        ()
-      );
+      let newState =
+        Animation_Component.create(
+          ~name=animationName,
+          ~isPlaying=true,
+          ~keyframes=[],
+          ~entity,
+          ~state=Type.initialState,
+          ~component=FieldFloat(entity, fieldFloatName),
+          (),
+        );
 
       _assert(getAnimation(newState).entity === entity);
       _assert(getAnimation(newState).name === animationName);
@@ -40,23 +37,25 @@ let runTests = () => {
     });
 
     it("remove", _assert => {
-      let stateWithAnimation = Animation_Component.create(
-        ~name=animationName,
-        ~isPlaying=true,
-        ~keyframes=[],
-        ~entity,
-        ~state=Type.initialState,
-        ~component=FieldFloat(entity, fieldFloatName),
-        ()
-      );
+      let stateWithAnimation =
+        Animation_Component.create(
+          ~name=animationName,
+          ~isPlaying=true,
+          ~keyframes=[],
+          ~entity,
+          ~state=Type.initialState,
+          ~component=FieldFloat(entity, fieldFloatName),
+          (),
+        );
 
       _assert(Belt.Map.String.size(stateWithAnimation.animation) === 1);
 
-      let stateWithoutAnimation = Animation_Component.remove(
-        ~name=animationName,
-        ~entity,
-        ~state=stateWithAnimation,
-      );
+      let stateWithoutAnimation =
+        Animation_Component.remove(
+          ~name=animationName,
+          ~entity,
+          ~state=stateWithAnimation,
+        );
 
       _assert(Belt.Map.String.size(stateWithoutAnimation.animation) === 0);
 
@@ -64,22 +63,24 @@ let runTests = () => {
     });
 
     it("removeByEntity", _assert => {
-      let stateWithAnimation = Animation_Component.create(
-        ~name=animationName,
-        ~isPlaying=true,
-        ~keyframes=[],
-        ~entity,
-        ~state=Type.initialState,
-        ~component=FieldFloat(entity, fieldFloatName),
-        ()
-      );
+      let stateWithAnimation =
+        Animation_Component.create(
+          ~name=animationName,
+          ~isPlaying=true,
+          ~keyframes=[],
+          ~entity,
+          ~state=Type.initialState,
+          ~component=FieldFloat(entity, fieldFloatName),
+          (),
+        );
 
       _assert(Belt.Map.String.size(stateWithAnimation.animation) === 1);
 
-      let stateWithoutAnimation = Animation_Component.removeByEntity(
-        ~entity,
-        ~state=stateWithAnimation,
-      );
+      let stateWithoutAnimation =
+        Animation_Component.removeByEntity(
+          ~entity,
+          ~state=stateWithAnimation,
+        );
 
       _assert(Belt.Map.String.size(stateWithoutAnimation.animation) === 0);
 
@@ -87,37 +88,38 @@ let runTests = () => {
     });
 
     it("set", _assert => {
-      let state = Animation_Component.create(
-        ~name=animationName,
-        ~isPlaying=true,
-        ~keyframes=[],
-        ~entity,
-        ~state=Type.initialState,
-        ~component=FieldFloat(entity, fieldFloatName),
-        ()
-      );
+      let state =
+        Animation_Component.create(
+          ~name=animationName,
+          ~isPlaying=true,
+          ~keyframes=[],
+          ~entity,
+          ~state=Type.initialState,
+          ~component=FieldFloat(entity, fieldFloatName),
+          (),
+        );
 
-      let newState = Animation_Component.set(
-        ~entity,
-        ~name=animationName,
-        ~state,
-        ~animation={
-          ...getAnimation(state),
-          isPlaying: false,
-          isFinished: true,
-          currentTime: -99.9,
-          wrapMode: Loop,
-        },
-      );
+      let newState =
+        Animation_Component.set(
+          ~entity,
+          ~name=animationName,
+          ~state,
+          ~animation={
+            ...getAnimation(state),
+            isPlaying: false,
+            isFinished: true,
+            currentTime: (-99.9),
+            wrapMode: Loop,
+          },
+        );
 
       _assert(getAnimation(newState).entity === entity);
       _assert(getAnimation(newState).name === animationName);
       _assert(getAnimation(newState).isPlaying === false);
       _assert(getAnimation(newState).isFinished === true);
-      _assert(getAnimation(newState).currentTime === -99.9);
+      _assert(getAnimation(newState).currentTime === (-99.9));
       _assert(getAnimation(newState).keyframes === []);
       _assert(getAnimation(newState).wrapMode === Loop);
-
 
       // let test = Belt.Map.String.empty
       // ->Belt.Map.String.set(_, "1", "11")

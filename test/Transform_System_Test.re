@@ -1,7 +1,7 @@
 let runTests = () => {
   Test_Util.describe("Transform_System", it => {
     let tick = (performanceNow, state) =>
-      ReShape.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
+      Util.runOneFrame(~state, ~enableDraw=false, ~performanceNow, ());
 
     let defaultTransform: Type.transform = {
       rotation: 0.0,
@@ -22,38 +22,38 @@ let runTests = () => {
     it(
       "should set proper position using localPosition and parent.position",
       _assert => {
-      let entity1 = ReShape.Entity.generate("e1");
-      let entity2 = ReShape.Entity.generate("e2");
-      let entity3 = ReShape.Entity.generate("e3");
-      let entity4 = ReShape.Entity.generate("e4");
+      let entity1 = Entity.generate("e1");
+      let entity2 = Entity.generate("e2");
+      let entity3 = Entity.generate("e3");
+      let entity4 = Entity.generate("e4");
 
       Type.initialState
-      ->ReShape.Entity.create(~entity=entity1, ~state=_)
-      ->ReShape.Entity.create(~entity=entity2, ~state=_)
-      ->ReShape.Entity.create(~entity=entity3, ~state=_)
-      ->ReShape.Entity.create(~entity=entity4, ~state=_)
-      ->ReShape.Component.Transform.create(
+      ->Entity.create(~entity=entity1, ~state=_)
+      ->Entity.create(~entity=entity2, ~state=_)
+      ->Entity.create(~entity=entity3, ~state=_)
+      ->Entity.create(~entity=entity4, ~state=_)
+      ->Transform_Component.create(
           ~entity=entity3,
           ~localPosition=((-10.0), (-10.0)),
           ~parent=Some(entity2),
           ~state=_,
           (),
         )
-      ->ReShape.Component.Transform.create(
+      ->Transform_Component.create(
           ~entity=entity2,
           ~localPosition=(1.0, 1.0),
           ~parent=Some(entity1),
           ~state=_,
           (),
         )
-      ->ReShape.Component.Transform.create(
+      ->Transform_Component.create(
           ~entity=entity4,
           ~localPosition=(10.0, 10.0),
           ~parent=Some(entity2),
           ~state=_,
           (),
         )
-      ->ReShape.Component.Transform.create(
+      ->Transform_Component.create(
           ~entity=entity1,
           ~localPosition=(1.0, 1.0),
           ~state=_,

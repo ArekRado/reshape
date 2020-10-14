@@ -155,145 +155,107 @@ let updateVectorAnimation =
   );
 };
 
-// type setValueValue =
-//   | Float(float)
-//   | Vector(Vector_Util.t);
+let updateAnimation =
+    (acc: Type.state, _: string, animation: Type.animation) => 
+  if (animation.isPlaying) {
+    let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
+      getActiveKeyframe(animation, false);
 
-// let setValue = (
-//   ~value: setValueValue,
-//   ~state,
-// ) =>
-//   switch (value) {
-//   | Float(value) =>
-//     switch (animation.value) {
-//     | FieldFloat(fieldFloatName) =>
-//       FieldFloat_Component.setValue(
-//         ~state,
-//         ~name=fieldFloatName,
-//         ~value,
-//       );
-//     | FieldVector(fieldVectorName) => state
-//     | TransformLocalPosition(entity) => state
-//     };
-//   | Vector(value) =>
-//     switch (animation.value) {
-//     | FieldFloat(fieldFloatName) => state
-//     | FieldVector(fieldVectorName) =>
-//       FieldVector_Component.setValue(
-//         ~state,
-//         ~name=fieldVectorName,
-//         ~value,
-//       );
-//     | TransformLocalPosition(entity) =>
-//       Transform_Component.setLocalPosition(
-//         ~state,
-//         ~entity,
-//         ~localPosition=value,
-//       );
-//     };
-//   };
+    if (timeExceeded === true && animation.wrapMode === Once) {
+      Animation_Component.set(
+        ~state=acc,
+        ~name=animation.name,
+        ~entity=animation.entity,
+        ~animation={
+          ...animation,
+          currentTime: 0.0,
+          isPlaying: false,
+          isFinished: true,
+        },
+      );
+    } else {
+      switch (Belt.List.get(animation.keyframes, keyframeIndex)) {
+      | None => acc
+      | Some(keyframe) =>
+        let progress =
+          getPercentageProgress(
+            keyframeCurrentTime,
+            keyframe.duration,
+            keyframe.timingFunction,
+          );
 
-let update = (~state: Type.state): Type.state =>
-  Belt.Map.String.reduce(state.animation, state, (acc, name, animation) =>
-    if (animation.isPlaying) {
-      let {keyframeCurrentTime, keyframeIndex, timeExceeded} =
-        getActiveKeyframe(animation, false);
-
-      if (timeExceeded === true && animation.wrapMode === Once) {
-        Js.log("test");
-        Animation_Component.set(
-          ~state=acc,
-          ~name,
-          ~entity=animation.entity,
-          ~animation={
-            ...animation,
-            currentTime: 0.0,
-            // value: 0.0, // todo add option to back to prev value
-            isPlaying: false,
-            isFinished: true,
-          },
-        );
-      } else {
-        switch (Belt.List.get(animation.keyframes, keyframeIndex)) {
-        | None => acc
-        | Some(keyframe) =>
-          let progress =
-            getPercentageProgress(
-              keyframeCurrentTime,
-              keyframe.duration,
-              keyframe.timingFunction,
+        switch (keyframe.valueRange) {
+        | Type.Float(_) =>
+          let (value, updatedAnimation) =
+            updateFloatAnimation(
+              ~keyframe,
+              ~time=acc.time,
+              ~animation,
+              ~progress,
+              ~keyframeCurrentTime,
+              ~timeExceeded,
             );
 
-          switch (keyframe.valueRange) {
-          | Type.Float(_) =>
-            let (value, updatedAnimation) =
-              updateFloatAnimation(
-                ~keyframe,
-                ~time=state.time,
-                ~animation,
-                ~progress,
-                ~keyframeCurrentTime,
-                ~timeExceeded,
-              );
+          let stateWithNewAnimation =
+            Animation_Component.set(
+              ~state=acc,
+              ~name=animation.name,
+              ~animation=updatedAnimation,
+              ~entity=animation.entity,
+            );
 
-            let stateWithNewAnimation =
-              Animation_Component.set(
-                ~state=acc,
-                ~name,
-                ~animation=updatedAnimation,
-                ~entity=animation.entity,
-              );
+          switch (animation.component) {
+          | FieldFloat(entity, fieldFloatName) =>
+            FieldFloat_Component.setValue(
+              ~state=stateWithNewAnimation,
+              ~name=fieldFloatName,
+              ~value,
+              ~entity,
+            )
+          | FieldVector(_) => acc
+          | TransformLocalPosition(_) => acc
+          };
+        | Type.Vector(_) =>
+          let (value, updatedAnimation) =
+            updateVectorAnimation(
+              ~keyframe,
+              ~time=acc.time,
+              ~animation,
+              ~progress,
+              ~keyframeCurrentTime,
+              ~timeExceeded,
+            );
 
-            switch (animation.component) {
-            | FieldFloat(entity, fieldFloatName) =>
-              FieldFloat_Component.setValue(
-                ~state=stateWithNewAnimation,
-                ~name=fieldFloatName,
-                ~value,
-                ~entity,
-              )
-            | FieldVector(_) => state
-            | TransformLocalPosition(_) => state
-            };
-          | Type.Vector(_) =>
-            let (value, updatedAnimation) =
-              updateVectorAnimation(
-                ~keyframe,
-                ~time=state.time,
-                ~animation,
-                ~progress,
-                ~keyframeCurrentTime,
-                ~timeExceeded,
-              );
+          let stateWithNewAnimation =
+            Animation_Component.set(
+              ~state=acc,
+              ~name=animation.name,
+              ~animation=updatedAnimation,
+              ~entity=animation.entity,
+            );
 
-            let stateWithNewAnimation =
-              Animation_Component.set(
-                ~state=acc,
-                ~name,
-                ~animation=updatedAnimation,
-                ~entity=animation.entity,
-              );
-
-            switch (animation.component) {
-            | FieldFloat(_) => state
-            | FieldVector(entity, fieldVectorName) =>
-              FieldVector_Component.setValue(
-                ~state=stateWithNewAnimation,
-                ~name=fieldVectorName,
-                ~value,
-                ~entity,
-              )
-            | TransformLocalPosition(entity) =>
-              Transform_Component.setLocalPosition(
-                ~state=stateWithNewAnimation,
-                ~entity,
-                ~localPosition=value,
-              )
-            };
+          switch (animation.component) {
+          | FieldFloat(_) => acc
+          | FieldVector(entity, fieldVectorName) =>
+            FieldVector_Component.setValue(
+              ~state=stateWithNewAnimation,
+              ~name=fieldVectorName,
+              ~value,
+              ~entity,
+            )
+          | TransformLocalPosition(entity) =>
+            Transform_Component.setLocalPosition(
+              ~state=stateWithNewAnimation,
+              ~entity,
+              ~localPosition=value,
+            )
           };
         };
       };
-    } else {
-      acc;
-    }
-  );
+    };
+  } else {
+    acc;
+  };
+
+let update = (~state: Type.state): Type.state =>
+  Belt.Map.String.reduce(state.animation, state, updateAnimation);

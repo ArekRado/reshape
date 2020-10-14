@@ -1,3 +1,4 @@
+// TOOD why?
 let mapParamToKeyframes = (keyframes: Belt.List.t(Type.keyframe)) =>
   Belt.List.map(keyframes, (keyframe) =>
     (
@@ -62,17 +63,25 @@ let removeByEntity = (~entity: Type.entity, ~state: Type.state): Type.state => {
 };
 
 let set =
-    (~entity: Type.entity, ~name: string, ~state: Type.state, ~animation: Type.animation) => {
+    (
+      ~entity: Type.entity,
+      ~name: string,
+      ~state: Type.state,
+      ~animation: Type.animation,
+    ) => {
   ...state,
-    animation:
-    // Belt.Map.String.update(state.animation, entity ++ name, item =>
-    //   switch (item) {
-    //   | Some(animation) => Some(animation)
-    //   | None => None
-    //   }
-    // ),
-    Belt.Map.String.set(state.animation, entity ++ name, animation),
+  animation: Belt.Map.String.set(state.animation, entity ++ name, animation),
 };
+
+let get = (~entity: Type.entity, ~state: Type.state, ~name: string) =>
+  Belt.Map.String.get(state.animation, entity ++ name);
+
+let unsafeGet =
+    (~entity: Type.entity, ~state: Type.state, ~name: string): Type.animation =>
+  switch (Belt.Map.String.get(state.animation, entity ++ name)) {
+  | Some(x) => x
+  | None => failwith("animation (" ++ entity ++ name ++ ") doesnt exist")
+  };
 
 let setComponent =
     (~entity: Type.entity, ~name: string, ~state: Type.state, ~component) => {
@@ -86,5 +95,50 @@ let setComponent =
     ),
 };
 
-let get = (~entity: Type.entity, ~state: Type.state, ~name: string) => 
-  Belt.Map.String.get(state.animation, entity ++ name);
+let setKeyframes =
+    (
+      ~entity: Type.entity,
+      ~name: string,
+      ~state: Type.state,
+      ~keyframes: Belt.List.t(Type.keyframe),
+    )
+    : Type.state => {
+  switch (get(~entity, ~state, ~name)) {
+  | Some(animation) =>
+    set(~entity, ~state, ~name, ~animation={...animation, keyframes})
+  | None => failwith("animation (" ++ entity ++ name ++ ") doesnt exist")
+  };
+};
+
+let setKeyframe =
+    (
+      ~entity: Type.entity,
+      ~name: string,
+      ~state: Type.state,
+      ~index: int,
+      ~keyframe: Type.keyframe,
+    )
+    : Type.state => {
+  switch (get(~entity, ~state, ~name)) {
+  | Some(animation) =>
+    set(
+      ~entity,
+      ~state,
+      ~name,
+      ~animation={
+        ...animation,
+        keyframes:
+          Belt.List.mapWithIndex(animation.keyframes, (i, value) =>
+            i === index ? keyframe : value
+          ),
+      },
+    )
+  | None => failwith("animation (" ++ entity ++ name ++ ") doesnt exist")
+  };
+};
+
+let emptyKeyframe = (duration): Type.keyframe => {
+  duration,
+  timingFunction: Linear,
+  valueRange: Float((0.0, 0.0)),
+};
