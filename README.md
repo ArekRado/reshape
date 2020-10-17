@@ -125,7 +125,6 @@ let initialState: state = {
 let rec logic = (state: state) => {
   let newEngine = Reshape.runOneFrame(
     ~state=state.engine, // Reshape.Type.state
-    ~debug=true, // Will enable debug UI
     // ~enableDraw=false, // Usefull to avoid canvas rendering during a unit tests
     // ~performanceNow=1000.0 // Usefull to mock unit tests
     ()

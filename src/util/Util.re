@@ -3,12 +3,11 @@ module Vector = Vector_Util;
 module Test = Test_Util;
 
 let runOneFrame =
-    (~state: Type.state, ~enableDraw=true, ~debug=false, ~performanceNow=?, ())
+    (~state: Type.state, ~enableDraw=true, ~performanceNow=?, ())
     : Type.state => {
       
   let newState =
     state
-    // ->Debug_System.update(~state=_, ~debug)
     ->Time_System.update(~performanceNowOverride=?performanceNow, ~state=_, ())
     ->IO_System.update(~state=_)
     ->Transform_System.update(~state=_)

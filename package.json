@@ -20,17 +20,20 @@
   "bugs": {
     "url": "https://github.com/ArekRado/reshape/issues"
   },
+  "engines": {
+    "node": "10.22.1"
+  },
   "homepage": "https://github.com/ArekRado/reshape#readme",
   "dependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
     "babel-loader": "^8.1.0",
-    "bs-platform": "^8.2.0",
+    "bs-platform": "^8.3.1",
     "bs-webapi": "^0.17.1",
     "bsb-js": "^1.1.7",
     "file-loader": "^6.0.0",
-    "nodemon": "^2.0.4",
-    "pixi.js": "^5.2.4",
+    "nodemon": "^2.0.5",
+    "pixi.js": "^5.3.3",
     "uuid": "^3.3.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
